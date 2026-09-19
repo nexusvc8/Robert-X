@@ -79,7 +79,7 @@
             display: flex; align-items: center; gap: 6px; box-shadow: 0 0 10px rgba(0,242,254,0.15);
         }
 
-        /* Live Cluster Status Banner With Network Indicator Dot */
+        /* Live Cluster Status Banner */
         .pro-banner {
             background: linear-gradient(135deg, rgba(0, 242, 254, 0.12), rgba(0, 114, 255, 0.15));
             border: 1px solid var(--border-glow); border-radius: 16px; padding: 12px 16px; margin: 12px 0 16px 0;
@@ -87,7 +87,6 @@
         }
         .pro-banner-left { display: flex; align-items: center; gap: 10px; }
         
-        /* The Live Network Dot */
         .live-dot {
             width: 10px; height: 10px; border-radius: 50%;
             background: var(--neon-blue);
@@ -302,7 +301,7 @@
         </div>
     </div>
 
-    <!-- ================= FULL SCREEN WORKSPACE DETAILS PAGE (SHOWS ALL ACTIVE PASSES) ================= -->
+    <!-- ================= FULL SCREEN WORKSPACE DETAILS PAGE ================= -->
     <div id="workspaceDetailsPage">
         <button onclick="closeWorkspaceDetails()" style="background:transparent; border:1px solid var(--border-glow); color:var(--neon-blue); padding:10px 16px; border-radius:12px; font-weight:700; font-size:0.82rem; cursor:pointer; width:max-content; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
             <i class="fa-solid fa-arrow-left"></i> Back to Tasks
@@ -317,7 +316,7 @@
 
         <div style="background:rgba(0, 242, 254, 0.06); border:1px dashed var(--border-glow); border-radius:14px; padding:14px; font-size:0.72rem; color:var(--text-dim); line-height:1.5; text-align:center; margin-top:10px;">
             <i class="fa-solid fa-shield-halved" style="color:var(--neon-blue); margin-bottom:4px; display:block; font-size:1.2rem;"></i>
-            All active licenses run concurrently on your cloud node. Total quotas are aggregated into your daily task pool.
+            All active licenses run concurrently. Each pass has its own separate quota and reward rate. Tasks reset every 24 hours at midnight.
         </div>
     </div>
 
@@ -330,7 +329,7 @@
             </div>
         </header>
 
-        <!-- Live Status Banner With Dynamic Blue/Red Indicator Dot -->
+        <!-- Live Status Banner -->
         <div class="pro-banner">
             <div class="pro-banner-left">
                 <div class="live-dot" id="networkLiveDot"></div>
@@ -343,16 +342,16 @@
         <div id="view-tasks" class="tab-view active">
             <div class="stat-banner">
                 <div>
-                    <small>Daily Task Quota</small>
+                    <small>Today's Total Tasks</small>
                     <strong id="taskQuotaDisplay">2 Tasks Left</strong>
                 </div>
                 <div>
-                    <small>Primary Workspace</small>
+                    <small>Active Licenses</small>
                     <strong id="passStatusName" style="color:var(--neon-blue);">Junior QA (Free)</strong>
                 </div>
             </div>
 
-            <!-- Button to open Full Screen View Showing ALL Active Passes -->
+            <!-- Button to open Workspace Details -->
             <button class="btn-workspace-info" onclick="openWorkspaceDetails()">
                 <span><i class="fa-solid fa-sliders" style="margin-right:6px;"></i> View Active Workspace Details</span>
                 <i class="fa-solid fa-chevron-right"></i>
@@ -369,14 +368,14 @@
 
             <div class="section-header">
                 Evaluation Protocols
-                <span id="ratePerTaskNotice" style="font-size:0.72rem; color:var(--neon-blue); font-weight:600;">Rate: Rs 1.00 / Unit</span>
+                <span id="ratePerTaskNotice" style="font-size:0.72rem; color:var(--neon-blue); font-weight:600;">Daily Cloud Allocations</span>
             </div>
 
             <div id="tasksContainer"></div>
             <div id="loadMoreContainer"></div>
         </div>
 
-        <!-- ================= VIEW 2: PASSES (UPDATED REWARDS) ================= -->
+        <!-- ================= VIEW 2: PASSES ================= -->
         <div id="view-passes" class="tab-view">
             <div class="section-header">
                 Workspace Passes
@@ -408,7 +407,7 @@
                 </button>
             </div>
 
-            <!-- Pass 2: Senior (Updated to Rs 3.54) -->
+            <!-- Pass 2: Senior (Rs 3.54) -->
             <div class="pass-card">
                 <span class="pass-badge">Tier 2</span>
                 <h4 style="font-size:1.05rem;">Senior Auditor Pass</h4>
@@ -423,7 +422,7 @@
                 </button>
             </div>
 
-            <!-- Pass 3: Lead (Updated to Rs 5.14) -->
+            <!-- Pass 3: Lead (Rs 5.14) -->
             <div class="pass-card">
                 <span class="pass-badge">Tier 3</span>
                 <h4 style="font-size:1.05rem;">Lead Specialist Pass</h4>
@@ -438,7 +437,7 @@
                 </button>
             </div>
 
-            <!-- Pass 4: Enterprise (Updated to Rs 7.60) -->
+            <!-- Pass 4: Enterprise (Rs 7.60) -->
             <div class="pass-card">
                 <span class="pass-badge">Tier 4</span>
                 <h4 style="font-size:1.05rem;">Enterprise Analyst Pass</h4>
@@ -453,7 +452,7 @@
                 </button>
             </div>
 
-            <!-- Pass 5: Principal (Updated to Rs 10.71) -->
+            <!-- Pass 5: Principal (Rs 10.71) -->
             <div class="pass-card">
                 <span class="pass-badge">Tier 5</span>
                 <h4 style="font-size:1.05rem;">Principal Architect Pass</h4>
@@ -468,7 +467,7 @@
                 </button>
             </div>
 
-            <!-- Pass 6: Apex Director (Updated to Rs 55.56) -->
+            <!-- Pass 6: Apex Director (Rs 55.56) -->
             <div class="pass-card" style="border-color:var(--border-glow);">
                 <span class="pass-badge">Apex Executive</span>
                 <h4 style="font-size:1.15rem; color:var(--neon-blue);">Apex Director Pass</h4>
@@ -614,7 +613,7 @@
         <div class="modal-content">
             <div style="font-size:2rem; color:var(--neon-blue); margin-bottom:8px;"><i class="fa-solid fa-circle-check"></i></div>
             <h3 id="modalTaskTitle" style="font-size:1rem; margin-bottom:4px; color:#fff;">Audit Verification Complete</h3>
-            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:12px;">Telemetry response has been validated successfully.</p>
+            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:12px;" id="modalTaskSub">Telemetry response has been validated successfully.</p>
             <div style="background:rgba(0,242,254,0.08); border:1px solid var(--border-glow); border-radius:10px; padding:10px; margin-bottom:14px;">
                 <span style="font-size:0.72rem; color:var(--text-dim);">Allocated Compensation:</span>
                 <strong style="display:block; font-size:1.15rem; color:var(--neon-blue);" id="modalRewardText">+Rs 1.00</strong>
@@ -656,13 +655,12 @@
             username: "Contributor",
             balance: 0.00,
             tierName: "Junior QA (Free)",
-            dailyQuota: 2,
-            rewardPerTask: 1.00,
             referralCode: "",
             networkEarnings: 0.00,
             activePasses: {}
         };
 
+        let activeTaskContext = null; // Holds currently auditing task details
         let selectedPassForModal = null;
         let authMode = 'login';
         let chosenChannel = 'JazzCash';
@@ -716,7 +714,7 @@
             }
         }
 
-        // ================= 4. AUTH & USER DATA FETCH =================
+        // ================= 4. AUTH & USER DATA FETCH WITH AUTO 24H RESET =================
         auth.onAuthStateChanged(user => {
             if (user) {
                 currentUser = user;
@@ -737,6 +735,8 @@
                 const val = snap.val();
                 if (val) {
                     userData = val;
+                    // Auto reset tasks every 24 hours at midnight
+                    checkAndResetDailyQuotas();
                     syncUI();
                     if (callback) callback();
                 } else {
@@ -745,6 +745,32 @@
             }).catch(err => {
                 console.error("User fetch error:", err);
             });
+        }
+
+        // Automatic Midnight / 24-Hour Reset Function
+        function checkAndResetDailyQuotas() {
+            if (!currentUser || !userData.activePasses) return;
+            const todayStr = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+
+            // If new day detected
+            if (userData.lastResetDate !== todayStr) {
+                const updates = {};
+                updates[`lastResetDate`] = todayStr;
+
+                Object.keys(userData.activePasses).forEach(k => {
+                    const pass = userData.activePasses[k];
+                    const fullQuota = pass.dailyQuota || 2;
+                    updates[`activePasses/${k}/remainingToday`] = fullQuota;
+                });
+
+                db.ref(`users/${currentUser.uid}`).update(updates).then(() => {
+                    userData.lastResetDate = todayStr;
+                    Object.keys(userData.activePasses).forEach(k => {
+                        userData.activePasses[k].remainingToday = userData.activePasses[k].dailyQuota;
+                    });
+                    syncUI();
+                });
+            }
         }
 
         async function handleAuthSubmit() {
@@ -791,11 +817,13 @@
             const inputRefCode = document.getElementById('authReferralInput').value.trim().toUpperCase();
             const inputUsername = document.getElementById('authUsername').value.trim() || user.email.split('@')[0];
             const code = 'RX-' + Math.floor(100000 + Math.random() * 900000);
+            const todayStr = new Date().toISOString().split('T')[0];
 
             const initialPasses = {
                 "free_default": {
                     passName: "Junior QA (Free)",
                     dailyQuota: 2,
+                    remainingToday: 2,
                     rewardPerTask: 1.00,
                     activatedAt: firebase.database.ServerValue.TIMESTAMP
                 }
@@ -806,8 +834,7 @@
                 email: user.email,
                 balance: 0.00,
                 tierName: "Junior QA (Free)",
-                dailyQuota: 2,
-                rewardPerTask: 1.00,
+                lastResetDate: todayStr,
                 referralCode: code,
                 referredBy: inputRefCode || null,
                 networkEarnings: 0.00,
@@ -872,7 +899,7 @@
 
         function handleLogout() { auth.signOut(); }
 
-        // ================= VOUCHER SYSTEM (ENGLISH ALERTS & LIMIT COMPLIANT) =================
+        // ================= VOUCHER SYSTEM =================
         function applyPromoCode() {
             if (!currentUser) return;
             const input = document.getElementById('promoCodeInput');
@@ -930,43 +957,69 @@
             });
         }
 
-        // ================= 5. TASKS =================
+        // ================= 5. MULTI-PASS TASK ENGINE (SEPARATE TASKS & REWARDS PER PASS) =================
+        function getAllActiveTasks() {
+            const taskList = [];
+            const passes = userData.activePasses || {};
+
+            Object.keys(passes).forEach(passKey => {
+                const p = passes[passKey];
+                const remaining = p.remainingToday !== undefined ? p.remainingToday : (p.dailyQuota || 0);
+                const reward = parseFloat(p.rewardPerTask) || 1.00;
+                const name = p.passName || "License";
+
+                for (let i = 1; i <= remaining; i++) {
+                    taskList.push({
+                        passKey: passKey,
+                        passName: name,
+                        protocolNum: i,
+                        reward: reward
+                    });
+                }
+            });
+
+            return taskList;
+        }
+
         function renderTasks() {
             const container = document.getElementById('tasksContainer');
             const loadMoreContainer = document.getElementById('loadMoreContainer');
             container.innerHTML = '';
             loadMoreContainer.innerHTML = '';
 
-            const quota = userData.dailyQuota || 0;
-            const reward = parseFloat(userData.rewardPerTask || 1.00);
+            const allTasks = getAllActiveTasks();
+            const totalRemaining = allTasks.length;
 
-            if (quota <= 0) {
-                container.innerHTML = `<div style="text-align:center; padding:22px; background:var(--card-grad); border-radius:14px; font-size:0.8rem; color:var(--text-dim);">Allocations completed for today. Upgrade pass or return tomorrow!</div>`;
+            if (totalRemaining === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:22px; background:var(--card-grad); border-radius:14px; font-size:0.8rem; color:var(--text-dim); line-height:1.6;">
+                    Allocations completed for today. All licenses will automatically reset at midnight (24h). Return tomorrow or activate a new license!
+                </div>`;
                 return;
             }
 
-            const renderCount = Math.min(quota, visibleTaskLimit);
+            const renderCount = Math.min(totalRemaining, visibleTaskLimit);
 
-            for (let i = 1; i <= renderCount; i++) {
+            for (let i = 0; i < renderCount; i++) {
+                const t = allTasks[i];
                 const card = document.createElement('div');
                 card.className = 'task-card';
                 card.innerHTML = `
                     <div>
-                        <h4>AI Telemetry Protocol #${i}</h4>
-                        <p>Verify dataset synchronization</p>
-                        <div style="font-size:0.75rem; color:var(--neon-blue); font-weight:700;">+Rs ${reward.toFixed(2)} | QA Unit</div>
+                        <span style="font-size:0.65rem; color:var(--text-dim); text-transform:uppercase; font-weight:700;">${t.passName}</span>
+                        <h4 style="margin-top:2px;">AI Telemetry Protocol #${t.protocolNum}</h4>
+                        <div style="font-size:0.75rem; color:var(--neon-blue); font-weight:700;">+Rs ${t.reward.toFixed(2)} | QA Unit</div>
                     </div>
-                    <button class="btn-audit-task" onclick="openTaskModal('Protocol #${i}')">
+                    <button class="btn-audit-task" onclick="openTaskModal('${t.passKey}', '${t.passName}', ${t.protocolNum}, ${t.reward})">
                         <i class="fa-solid fa-shield-check"></i> Audit
                     </button>
                 `;
                 container.appendChild(card);
             }
 
-            if (quota > visibleTaskLimit) {
+            if (totalRemaining > visibleTaskLimit) {
                 const loadBtn = document.createElement('button');
                 loadBtn.className = 'btn-load-more';
-                loadBtn.innerHTML = `<i class="fa-solid fa-angles-down"></i> Load More Tasks (${quota - visibleTaskLimit} Remaining)`;
+                loadBtn.innerHTML = `<i class="fa-solid fa-angles-down"></i> Load More Tasks (${totalRemaining - visibleTaskLimit} Remaining)`;
                 loadBtn.onclick = () => {
                     visibleTaskLimit += 8;
                     renderTasks();
@@ -975,22 +1028,27 @@
             }
         }
 
-        function openTaskModal(title) {
-            const reward = parseFloat(userData.rewardPerTask || 1.00);
-            document.getElementById('modalTaskTitle').innerText = `${title} Verified ✓`;
+        function openTaskModal(passKey, passName, protocolNum, reward) {
+            activeTaskContext = { passKey, passName, protocolNum, reward };
+            document.getElementById('modalTaskTitle').innerText = `${passName} Protocol #${protocolNum} Verified ✓`;
+            document.getElementById('modalTaskSub').innerText = `Dataset telemetry has been verified.`;
             document.getElementById('modalRewardText').innerText = `+Rs ${reward.toFixed(2)}`;
             document.getElementById('taskModal').classList.add('active');
         }
 
         function claimTask() {
-            if (!currentUser) return;
-            const reward = parseFloat(userData.rewardPerTask || 1.00);
-            
-            db.ref('users/' + currentUser.uid).transaction(user => {
-                if (user) {
-                    if ((user.dailyQuota || 0) > 0) {
+            if (!currentUser || !activeTaskContext) return;
+            const { passKey, reward } = activeTaskContext;
+
+            // Only decrement the specific pass that owns this task
+            db.ref(`users/${currentUser.uid}`).transaction(user => {
+                if (user && user.activePasses && user.activePasses[passKey]) {
+                    const targetPass = user.activePasses[passKey];
+                    const currentRem = targetPass.remainingToday !== undefined ? targetPass.remainingToday : targetPass.dailyQuota;
+
+                    if (currentRem > 0) {
+                        targetPass.remainingToday = currentRem - 1;
                         user.balance = (user.balance || 0) + reward;
-                        user.dailyQuota = user.dailyQuota - 1;
                     }
                 }
                 return user;
@@ -1006,6 +1064,7 @@
 
         function closeTaskModal() {
             document.getElementById('taskModal').classList.remove('active');
+            activeTaskContext = null;
         }
 
         // ================= 6. ALL ACTIVE PASSES FULL-SCREEN DETAIL PAGE =================
@@ -1016,44 +1075,37 @@
             const passesObj = userData.activePasses || {};
             const passKeys = Object.keys(passesObj);
 
-            if (passKeys.length === 0) {
-                container.innerHTML = `
-                    <div class="ws-detail-card">
-                        <h4 style="font-size:1rem; color:#fff;">${userData.tierName || "Junior QA (Free)"}</h4>
-                        <div class="ws-stat-row"><span>Daily Task Quota</span><strong>${userData.dailyQuota || 2} Tasks</strong></div>
-                        <div class="ws-stat-row"><span>Per Task Allocation</span><strong style="color:var(--neon-blue);">Rs ${(userData.rewardPerTask || 1).toFixed(2)}</strong></div>
+            document.getElementById('wsPageTotalActiveBadge').innerText = `${passKeys.length} Active`;
+
+            passKeys.forEach(k => {
+                const p = passesObj[k];
+                const dailyTotal = p.dailyQuota || 2;
+                const remToday = p.remainingToday !== undefined ? p.remainingToday : dailyTotal;
+                const r = parseFloat(p.rewardPerTask) || 1.00;
+                const dailyEarn = (dailyTotal * r).toFixed(2);
+
+                const card = document.createElement('div');
+                card.className = 'ws-detail-card';
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <h4 style="font-size:1.05rem; color:#fff;">${p.passName}</h4>
+                        <span class="status-badge status-Approved">Active</span>
+                    </div>
+                    <div class="ws-stat-row">
+                        <span>Tasks Left Today</span>
+                        <strong style="color:var(--neon-blue);">${remToday} / ${dailyTotal} Tasks</strong>
+                    </div>
+                    <div class="ws-stat-row">
+                        <span>Reward per Verified Unit</span>
+                        <strong style="color:var(--success);">Rs ${r.toFixed(2)}</strong>
+                    </div>
+                    <div class="ws-stat-row">
+                        <span>Daily Earning Potential</span>
+                        <strong style="color:var(--neon-blue);">Rs ${dailyEarn} / Day</strong>
                     </div>
                 `;
-                document.getElementById('wsPageTotalActiveBadge').innerText = "1 Active";
-            } else {
-                document.getElementById('wsPageTotalActiveBadge').innerText = `${passKeys.length} Active`;
-
-                passKeys.forEach(k => {
-                    const p = passesObj[k];
-                    const dailyEarn = (p.dailyQuota * p.rewardPerTask).toFixed(2);
-                    const card = document.createElement('div');
-                    card.className = 'ws-detail-card';
-                    card.innerHTML = `
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                            <h4 style="font-size:1.05rem; color:#fff;">${p.passName}</h4>
-                            <span class="status-badge status-Approved">Active</span>
-                        </div>
-                        <div class="ws-stat-row">
-                            <span>Daily Tasks Allotted</span>
-                            <strong style="color:var(--neon-blue);">${p.dailyQuota} Tasks / Day</strong>
-                        </div>
-                        <div class="ws-stat-row">
-                            <span>Reward per Verified Unit</span>
-                            <strong style="color:var(--success);">Rs ${parseFloat(p.rewardPerTask).toFixed(2)}</strong>
-                        </div>
-                        <div class="ws-stat-row">
-                            <span>Estimated Daily Capacity</span>
-                            <strong style="color:var(--neon-blue);">Rs ${dailyEarn} / Day</strong>
-                        </div>
-                    `;
-                    container.appendChild(card);
-                });
-            }
+                container.appendChild(card);
+            });
 
             document.getElementById('workspaceDetailsPage').classList.add('active');
         }
@@ -1062,7 +1114,7 @@
             document.getElementById('workspaceDetailsPage').classList.remove('active');
         }
 
-        // ================= 7. PIN ACTIVATION =================
+        // ================= 7. PIN ACTIVATION (SEPARATE ACCUMULATION) =================
         function openPinModal(passName) {
             selectedPassForModal = passName;
             document.getElementById('pinModalPassTitle').innerText = `Enter PIN for ${passName}`;
@@ -1111,31 +1163,29 @@
                 });
 
                 const passKey = targetPass.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+                const newQuota = parseInt(pinData.quota) || 10;
+                const newReward = parseFloat(pinData.reward) || 3.00;
+
                 const newPassRecord = {
                     passName: targetPass,
-                    dailyQuota: pinData.quota || 10,
-                    rewardPerTask: parseFloat(pinData.reward) || 5.00,
+                    dailyQuota: newQuota,
+                    remainingToday: newQuota, // Fresh tasks for today
+                    rewardPerTask: newReward,
                     activatedAt: firebase.database.ServerValue.TIMESTAMP
                 };
 
-                const newQuota = (userData.dailyQuota || 0) + (pinData.quota || 10);
-                const newReward = Math.max(userData.rewardPerTask || 1.00, parseFloat(pinData.reward) || 1.00);
-
+                // Add to active passes without modifying other passes' rates
                 db.ref(`users/${currentUser.uid}/activePasses/${passKey}`).set(newPassRecord);
                 db.ref(`users/${currentUser.uid}`).update({
-                    tierName: targetPass,
-                    dailyQuota: newQuota,
-                    rewardPerTask: newReward
+                    tierName: targetPass
                 }).then(() => {
                     userData.tierName = targetPass;
-                    userData.dailyQuota = newQuota;
-                    userData.rewardPerTask = newReward;
                     if (!userData.activePasses) userData.activePasses = {};
                     userData.activePasses[passKey] = newPassRecord;
                     syncUI();
 
                     closePinModal();
-                    showToast(`🎉 Activated: ${targetPass}! Added to active licenses.`);
+                    showToast(`🎉 Activated: ${targetPass}! Added to your active licenses.`);
                     distributeCommissions(pinData.price || 0);
                 });
             }).catch(err => {
@@ -1293,7 +1343,6 @@
             }
         }
 
-        // Bulletproof Copy Function (Zero Clipboard Permission Errors)
         function copyPartnerUrl() {
             const input = document.getElementById('referralLinkField');
             const textToCopy = input.value;
@@ -1388,18 +1437,21 @@
             });
         }
 
-        // ================= DYNAMIC BASE URL LINK CREATOR =================
         function syncUI() {
             document.getElementById('walletBalanceVal').innerText = `Rs ${(userData.balance || 0).toFixed(2)}`;
-            document.getElementById('taskQuotaDisplay').innerText = `${userData.dailyQuota || 0} Tasks Left`;
-            document.getElementById('passStatusName').innerText = userData.tierName || "Junior QA (Free)";
+
+            // Calculate total remaining tasks across ALL separate active passes
+            const allTasks = getAllActiveTasks();
+            document.getElementById('taskQuotaDisplay').innerText = `${allTasks.length} Tasks Left`;
+
+            const passKeys = Object.keys(userData.activePasses || {});
+            document.getElementById('passStatusName').innerText = passKeys.length > 1 ? `${passKeys.length} Passes Active` : (userData.tierName || "Junior QA (Free)");
             document.getElementById('headerUsername').innerText = userData.username || "Contributor";
             document.getElementById('settingsUsernameDisplay').innerText = `@${userData.username || "contributor"}`;
-            document.getElementById('ratePerTaskNotice').innerText = `Rate: Rs ${(userData.rewardPerTask || 1.00).toFixed(2)} / Unit`;
             document.getElementById('settingsLevelIndicator').innerText = userData.tierName || "Junior QA";
             document.getElementById('totalNetworkEarnings').innerText = `Rs ${(userData.networkEarnings || 0).toFixed(2)}`;
 
-            // Dynamically create the exact domain link for Vercel or custom domain
+            // Dynamically set referral link with current domain
             if (userData.referralCode) {
                 const currentBaseUrl = window.location.origin + window.location.pathname;
                 document.getElementById('referralLinkField').value = `${currentBaseUrl}?ref=${userData.referralCode}`;
@@ -1407,7 +1459,7 @@
             renderTasks();
         }
 
-        // ================= AUTO-CAPTURE REFERRAL CODE ON PAGE LOAD =================
+        // Auto-detect referral code from URL parameter
         function checkUrlReferralCode() {
             const urlParams = new URLSearchParams(window.location.search);
             const refCode = urlParams.get('ref') || urlParams.get('code');
