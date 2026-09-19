@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ROBERT X - Enterprise Cloud QA & Telemetry Hub</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- Firebase Compat SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <style>
+        :root {
+            --neon-blue: #00f2fe;
+            --neon-glow: #00d2ff;
+            --deep-blue: #0072ff;
+            --neon-grad: linear-gradient(135deg, #00f2fe 0%, #0072ff 100%);
+            --card-grad: linear-gradient(180deg, rgba(14, 24, 48, 0.9) 0%, rgba(8, 14, 28, 0.98) 100%);
+            --bg-base: #040814;
+            --bg-card: #0b1326;
+            --bg-card-alt: #101b33;
+            --border: #162648;
+            --border-glow: rgba(0, 242, 254, 0.35);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --success: #10b981;
+            --gold: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-base); color: var(--text-main); padding-bottom: 95px; overflow-x: hidden; }
+        .app-shell { max-width: 480px; margin: 0 auto; min-height: 100vh; padding: 16px; position: relative; }
+
+        /* Auth Screen */
+        #auth-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg-base); z-index: 5000;
+            display: flex; align-items: center; justify-content: center; padding: 20px;
+        }
+        .auth-card {
+            background: var(--card-grad); border: 1px solid var(--border-glow);
+            border-radius: 24px; padding: 26px; width: 100%; max-width: 400px;
+            box-shadow: 0 0 35px rgba(0, 242, 254, 0.15);
+        }
+        .auth-brand { text-align: center; margin-bottom: 20px; font-size: 1.5rem; font-weight: 800; }
+        .auth-brand span { background: var(--neon-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .auth-tabs { display: flex; gap: 8px; margin-bottom: 18px; }
+        .auth-tab {
+            flex: 1; padding: 10px; background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border); border-radius: 12px;
+            color: var(--text-dim); font-weight: 700; font-size: 0.85rem; cursor: pointer; text-align: center;
+        }
+        .auth-tab.active { background: var(--deep-blue); border-color: var(--neon-blue); color: #fff; box-shadow: 0 0 15px rgba(0,210,255,0.3); }
+        .auth-input-group { margin-bottom: 12px; }
+        .auth-input-group label { display: block; font-size: 0.75rem; color: var(--text-dim); margin-bottom: 5px; }
+        .auth-input-group input {
+            width: 100%; padding: 12px 14px; background: var(--bg-base);
+            border: 1px solid var(--border); border-radius: 10px; color: #fff; font-size: 0.85rem; outline: none;
+        }
+        .auth-input-group input:focus { border-color: var(--neon-blue); }
+        .btn-auth {
+            width: 100%; padding: 13px; background: var(--neon-grad);
+            color: #000; border: none; border-radius: 12px; font-weight: 800; font-size: 0.9rem; cursor: pointer; margin-top: 8px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+
+        /* Top Header */
+        .top-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+        .brand-title { font-size: 1.35rem; font-weight: 800; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px; }
+        .brand-title span { background: var(--neon-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 15px rgba(0,242,254,0.3); }
+        .user-pill {
+            background: rgba(0, 242, 254, 0.1); border: 1px solid var(--neon-blue);
+            padding: 5px 12px; border-radius: 30px; font-size: 0.72rem; font-weight: 700; color: var(--neon-blue);
+            display: flex; align-items: center; gap: 6px; box-shadow: 0 0 10px rgba(0,242,254,0.15);
+        }
+
+        /* Live Cluster Status Banner With Network Indicator Dot */
+        .pro-banner {
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.12), rgba(0, 114, 255, 0.15));
+            border: 1px solid var(--border-glow); border-radius: 16px; padding: 12px 16px; margin: 12px 0 16px 0;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .pro-banner-left { display: flex; align-items: center; gap: 10px; }
+        
+        /* The Live Network Dot (Neon Blue when Online, Red when Offline) */
+        .live-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: var(--neon-blue);
+            box-shadow: 0 0 10px var(--neon-blue);
+            transition: all 0.3s ease;
+            animation: pulseDot 1.5s infinite;
+        }
+        .live-dot.offline {
+            background: var(--danger) !important;
+            box-shadow: 0 0 10px var(--danger) !important;
+            animation: none;
+        }
+        @keyframes pulseDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        /* Views */
+        .tab-view { display: none; animation: viewIn 0.25s ease-out; padding-top: 14px; }
+        .tab-view.active { display: block; }
+        @keyframes viewIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section-header { font-size: 0.95rem; font-weight: 700; margin: 16px 0 10px 0; display: flex; justify-content: space-between; align-items: center; }
+
+        /* Stat Banner */
+        .stat-banner {
+            background: var(--card-grad);
+            border: 1px solid var(--border); border-radius: 18px; padding: 16px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .stat-banner small { font-size: 0.7rem; color: var(--text-dim); display: block; }
+        .stat-banner strong { font-size: 1.25rem; color: #fff; font-weight: 800; }
+
+        .btn-workspace-info {
+            width: 100%; padding: 11px 14px; background: rgba(0, 242, 254, 0.08);
+            border: 1px solid var(--border-glow); border-radius: 12px; color: var(--neon-blue);
+            font-size: 0.78rem; font-weight: 700; cursor: pointer; display: flex;
+            align-items: center; justify-content: space-between; margin-bottom: 14px;
+        }
+
+        /* Full Screen Workspace Detail Sub-Page (Shows ALL Active Passes) */
+        #workspaceDetailsPage {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg-base); z-index: 4500;
+            display: none; flex-direction: column; overflow-y: auto; padding: 20px 16px 90px 16px;
+        }
+        #workspaceDetailsPage.active { display: flex; }
+        .ws-detail-card {
+            background: var(--card-grad); border: 1px solid var(--border-glow);
+            border-radius: 20px; padding: 18px; margin-bottom: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6); position: relative;
+        }
+        .ws-stat-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
+        .ws-stat-row:last-child { border-bottom: none; }
+
+        /* Tasks */
+        .task-card {
+            background: var(--card-grad); border: 1px solid var(--border);
+            border-radius: 14px; padding: 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .task-card h4 { font-size: 0.88rem; font-weight: 600; margin-bottom: 3px; }
+        .task-card p { font-size: 0.72rem; color: var(--text-dim); margin-bottom: 4px; }
+        .btn-audit-task {
+            background: var(--neon-grad); color: #000; border: none; padding: 9px 16px;
+            border-radius: 8px; font-size: 0.78rem; font-weight: 800; cursor: pointer;
+            display: flex; align-items: center; gap: 5px; box-shadow: 0 0 12px rgba(0,242,254,0.3);
+        }
+
+        .btn-load-more {
+            width: 100%; padding: 12px; background: rgba(0, 242, 254, 0.08);
+            border: 1px dashed var(--neon-blue); border-radius: 12px; color: var(--neon-blue);
+            font-size: 0.8rem; font-weight: 700; cursor: pointer; margin-top: 6px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+
+        /* Passes Cards */
+        .pass-card {
+            border-radius: 20px; padding: 20px; margin-bottom: 16px; position: relative;
+            background: var(--card-grad); border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden;
+        }
+        .pass-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--neon-grad); }
+        .pass-badge {
+            position: absolute; top: 16px; right: 16px; font-size: 0.68rem; font-weight: 800;
+            padding: 4px 10px; border-radius: 20px; text-transform: uppercase;
+            background: rgba(0, 242, 254, 0.15); color: var(--neon-blue); border: 1px solid var(--neon-blue);
+        }
+        .pass-price { font-size: 1.45rem; font-weight: 800; color: #fff; margin: 8px 0; }
+        .pass-specs { list-style: none; font-size: 0.78rem; color: var(--text-dim); margin: 12px 0 16px 0; }
+        .pass-specs li { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+        .pass-specs li i { color: var(--neon-blue); font-size: 0.75rem; }
+
+        .btn-pin-only {
+            width: 100%; padding: 12px; border: none; border-radius: 12px;
+            font-size: 0.85rem; font-weight: 800; color: #000; cursor: pointer;
+            background: var(--neon-grad); display: flex; align-items: center; justify-content: center; gap: 8px;
+            box-shadow: 0 0 18px rgba(0, 242, 254, 0.35);
+        }
+
+        /* Affiliate */
+        .network-stat-card {
+            background: var(--card-grad); border: 1px solid var(--border-glow);
+            border-radius: 18px; padding: 18px; margin-bottom: 14px;
+        }
+        .net-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .level-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+        .level-tab-btn {
+            flex: 1; padding: 10px 4px; background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 10px; color: var(--text-dim); font-size: 0.72rem; font-weight: 700; cursor: pointer; text-align: center;
+        }
+        .level-tab-btn.active { background: var(--deep-blue); border-color: var(--neon-blue); color: #fff; box-shadow: 0 0 10px rgba(0,210,255,0.3); }
+
+        .member-row {
+            background: var(--card-grad); border: 1px solid var(--border);
+            border-radius: 14px; padding: 12px 16px; margin-bottom: 8px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        /* Wallet */
+        .wallet-card {
+            background: linear-gradient(135deg, #061838, #0b2554);
+            border: 1px solid var(--border-glow); border-radius: 20px; padding: 22px; text-align: center; margin-bottom: 16px;
+            box-shadow: 0 0 25px rgba(0, 210, 255, 0.2);
+        }
+        .wallet-card h2 { font-size: 2.2rem; font-weight: 800; color: #fff; margin: 6px 0; text-shadow: 0 0 15px rgba(0,242,254,0.4); }
+        .channel-picker { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+        .channel-opt {
+            background: var(--bg-card); border: 2px solid var(--border); border-radius: 12px;
+            padding: 8px; display: flex; flex-direction: column; align-items: center; cursor: pointer; height: 90px; justify-content: center;
+        }
+        .channel-opt.selected { border-color: var(--neon-blue); background: rgba(0, 242, 254, 0.08); box-shadow: 0 0 12px rgba(0,242,254,0.25); }
+        .channel-opt img { width: 44px; height: 44px; object-fit: cover; border-radius: 8px; margin-bottom: 5px; }
+        .channel-opt span { font-size: 0.7rem; font-weight: 600; color: var(--text-dim); }
+        .channel-opt.selected span { color: #fff; }
+
+        .history-item {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .status-badge { font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
+        .status-Pending { background: rgba(245, 158, 11, 0.15); color: var(--gold); }
+        .status-Approved { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .status-Rejected { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(4, 8, 20, 0.88); backdrop-filter: blur(5px);
+            display: none; align-items: center; justify-content: center; padding: 20px; z-index: 6000;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: var(--card-grad); border: 1px solid var(--border-glow);
+            border-radius: 20px; padding: 22px; width: 100%; max-width: 380px; text-align: center;
+            box-shadow: 0 0 30px rgba(0,242,254,0.2);
+        }
+
+        /* Bottom Fixed Bar */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; background: #060c1c;
+            border-top: 1px solid var(--border); display: flex; justify-content: space-around;
+            padding: 8px 0; max-width: 480px; margin: 0 auto; z-index: 1000;
+        }
+        .nav-btn {
+            background: transparent; border: none; color: var(--text-dim); display: flex;
+            flex-direction: column; align-items: center; gap: 4px; font-size: 0.68rem; cursor: pointer; padding: 4px 8px;
+        }
+        .nav-btn i { font-size: 1.15rem; }
+        .nav-btn.active { color: var(--neon-blue); font-weight: 700; text-shadow: 0 0 8px rgba(0,242,254,0.4); }
+
+        .toast-popup {
+            position: fixed; bottom: 75px; left: 50%; transform: translateX(-50%);
+            background: #0f1c38; border: 1px solid var(--neon-blue); color: #fff;
+            padding: 10px 18px; border-radius: 30px; font-size: 0.78rem; display: none; z-index: 9999;
+            box-sizing: border-box; max-width: 90vw; width: max-content; word-break: break-word; text-align: center;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ================= AUTH OVERLAY ================= -->
+    <div id="auth-overlay">
+        <div class="auth-card">
+            <div class="auth-brand">
+                ROBERT <span>X</span> <small style="display:block; font-size:0.75rem; color:var(--text-dim); font-weight:500;">AI Telemetry & Cloud QA Hub</small>
+            </div>
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tabLoginBtn" onclick="switchAuthMode('login')">Log In</button>
+                <button class="auth-tab" id="tabRegisterBtn" onclick="switchAuthMode('register')">Register</button>
+            </div>
+
+            <div class="auth-input-group" id="userFieldGroup" style="display:none;">
+                <label>Contributor Username</label>
+                <input type="text" id="authUsername" placeholder="e.g. ali_khan">
+            </div>
+
+            <div class="auth-input-group">
+                <label>Contributor Email</label>
+                <input type="email" id="authEmail" placeholder="contributor@example.com">
+            </div>
+            <div class="auth-input-group">
+                <label>Access Password (Min. 6 chars)</label>
+                <input type="password" id="authPassword" placeholder="••••••••">
+            </div>
+            <div class="auth-input-group" id="refFieldGroup" style="display:none;">
+                <label>Partner / Invitation Code (Optional)</label>
+                <input type="text" id="authReferralInput" placeholder="e.g. RX-918234">
+            </div>
+            <button class="btn-auth" id="authSubmitBtn" onclick="handleAuthSubmit()">
+                <span>Log In to Workspace</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ================= FULL SCREEN WORKSPACE DETAILS PAGE (SHOWS ALL ACTIVE PASSES) ================= -->
+    <div id="workspaceDetailsPage">
+        <button onclick="closeWorkspaceDetails()" style="background:transparent; border:1px solid var(--border-glow); color:var(--neon-blue); padding:10px 16px; border-radius:12px; font-weight:700; font-size:0.82rem; cursor:pointer; width:max-content; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+            <i class="fa-solid fa-arrow-left"></i> Back to Tasks
+        </button>
+
+        <div style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+            <h3 style="font-size:1.05rem; color:#fff;">Active Cloud Licenses</h3>
+            <span class="status-badge status-Approved" id="wsPageTotalActiveBadge">1 Active</span>
+        </div>
+
+        <!-- Dynamic Container for ALL Activated Passes -->
+        <div id="activePassesListContainer"></div>
+
+        <div style="background:rgba(0, 242, 254, 0.06); border:1px dashed var(--border-glow); border-radius:14px; padding:14px; font-size:0.72rem; color:var(--text-dim); line-height:1.5; text-align:center; margin-top:10px;">
+            <i class="fa-solid fa-shield-halved" style="color:var(--neon-blue); margin-bottom:4px; display:block; font-size:1.2rem;"></i>
+            All active licenses run concurrently on your cloud node. Total quotas are aggregated into your daily task pool.
+        </div>
+    </div>
+
+    <!-- ================= MAIN APP SHELL ================= -->
+    <div class="app-shell">
+        <header class="top-header">
+            <div class="brand-title">ROBERT <span>X</span></div>
+            <div class="user-pill" id="headerBadge">
+                <i class="fa-solid fa-user-check"></i> <span id="headerUsername">Contributor</span>
+            </div>
+        </header>
+
+        <!-- Live Status Banner With Dynamic Blue/Red Indicator Dot -->
+        <div class="pro-banner">
+            <div class="pro-banner-left">
+                <!-- Browser-native Online/Offline Dot (Zero Database Overhead) -->
+                <div class="live-dot" id="networkLiveDot"></div>
+                <small style="font-size:0.72rem; font-weight:700; color:#fff;" id="clusterStatusText">Cloud QA Cluster Online</small>
+            </div>
+            <small style="font-size:0.68rem; color:var(--neon-blue); font-weight:700;">Zero-Fee Instant Payouts</small>
+        </div>
+
+        <!-- ================= VIEW 1: TASKS ================= -->
+        <div id="view-tasks" class="tab-view active">
+            <div class="stat-banner">
+                <div>
+                    <small>Daily Task Quota</small>
+                    <strong id="taskQuotaDisplay">2 Tasks Left</strong>
+                </div>
+                <div>
+                    <small>Primary Workspace</small>
+                    <strong id="passStatusName" style="color:var(--neon-blue);">Junior QA (Free)</strong>
+                </div>
+            </div>
+
+            <!-- Button to open Full Screen View Showing ALL Active Passes -->
+            <button class="btn-workspace-info" onclick="openWorkspaceDetails()">
+                <span><i class="fa-solid fa-sliders" style="margin-right:6px;"></i> View Active Workspace Details</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+
+            <!-- Promo Voucher -->
+            <div style="background:var(--card-grad); border:1px dashed var(--border-glow); border-radius:14px; padding:12px; margin-bottom:14px;">
+                <small style="color:var(--neon-blue); font-weight:700;"><i class="fa-solid fa-ticket"></i> Community Voucher</small>
+                <div style="display:flex; gap:8px; margin-top:6px;">
+                    <input type="text" id="promoCodeInput" placeholder="ENTER CODE" style="flex:1; background:var(--bg-base); border:1px solid var(--border); border-radius:8px; padding:9px 12px; color:#fff; font-size:0.8rem; text-transform:uppercase; outline:none;">
+                    <button onclick="applyPromoCode()" style="background:var(--neon-grad); color:#000; border:none; padding:9px 14px; border-radius:8px; font-weight:800; font-size:0.75rem; cursor:pointer;">Redeem</button>
+                </div>
+            </div>
+
+            <div class="section-header">
+                Evaluation Protocols
+                <span id="ratePerTaskNotice" style="font-size:0.72rem; color:var(--neon-blue); font-weight:600;">Rate: Rs 1.00 / Unit</span>
+            </div>
+
+            <!-- 8 Tasks Pagination Container -->
+            <div id="tasksContainer"></div>
+            <div id="loadMoreContainer"></div>
+        </div>
+
+        <!-- ================= VIEW 2: PASSES ================= -->
+        <div id="view-passes" class="tab-view">
+            <div class="section-header">
+                Workspace Passes
+            </div>
+
+            <!-- Free Default Tier Card -->
+            <div class="pass-card">
+                <span class="pass-badge">Active Free</span>
+                <h4 style="font-size:1.05rem;">Junior QA (Standard)</h4>
+                <div class="pass-price">Free Tier</div>
+                <ul class="pass-specs">
+                    <li><i class="fa-solid fa-check"></i> 2 Daily AI Telemetry Evaluations</li>
+                    <li><i class="fa-solid fa-check"></i> Rs 1.00 per task allocation</li>
+                </ul>
+            </div>
+
+            <!-- Pass 1: Associate -->
+            <div class="pass-card">
+                <span class="pass-badge">Tier 1</span>
+                <h4 style="font-size:1.05rem;">Associate QA Pass</h4>
+                <div class="pass-price">Rs 350 <small style="font-size:0.7rem; color:var(--text-dim);">License Key</small></div>
+                <ul class="pass-specs">
+                    <li><i class="fa-solid fa-check"></i> 6 Daily Evaluation Tasks</li>
+                    <li><i class="fa-solid fa-check"></i> Rs 3.00 Reward Per Task</li>
+                    <li><i class="fa-solid fa-check"></i> 10% Level 1 Qualified</li>
+                </ul>
+                <button class="btn-pin-only" onclick="openPinModal('Associate QA Pass')">
+                    <i class="fa-solid fa-key"></i> Activate with PIN
+                </button>
+            </div>
+
+            <!-- Pass 2: Senior -->
+            <div class="pass-card">
+                <span class="pass-badge">Tier 2</span>
+                <h4 style="font-size:1.05rem;">Senior Auditor Pass</h4>
+                <div class="pass-price">Rs 850 <small style="font-size:0.7rem; color:var(--text-dim);">License Key</small></div>
+                <ul class="pass-specs">
+                    <li><i class="fa-solid fa-check"></i> 12 Daily Evaluation Tasks</li>
+                    <li><i class="fa-solid fa-check"></i> Rs 6.00 Reward Per Task</li>
+                    <li><i class="fa-solid fa-check"></i> Priority Settlement Clearance</li>
+                </ul>
+                <button class="btn-pin-only" onclick="openPinModal('Senior Auditor Pass')">
+                    <i class="fa-solid fa-key"></i> Activate with PIN
+                </button>
+            </div>
+
+            <!-- Pass 3: Lead -->
+            <div class="pass-card">
+                <span class="pass-badge">Tier 3</span>
+                <h4 style="font-size:1.05rem;">Lead Specialist Pass</h4>
+                <div class="pass-price">Rs 1,850 <small style="font-size:0.7rem; color:var(--text-dim);">License Key</small></div>
+                <ul class="pass-specs">
+                    <li><i class="fa-solid fa-check"></i> 18 Daily Evaluation Tasks</li>
+                    <li><i class="fa-solid fa-check"></i> Rs 12.00 Reward Per Task</li>
+                    <li><i class="fa-solid fa-check"></i> 3-Tier Network Qualified (10%, 3%, 1%)</li>
+                </ul>
+                <button class="btn-pin-only" onclick="openPinModal('Lead Specialist Pass')">
+                    <i class="fa-solid fa-key"></i> Activate with PIN
+                </button>
+            </div>
+
+            <!-- Pass 4: Enterprise -->
+            <div class="pass-card">
+                <span class="pass-badge">Tier 4</span>
+                <h4 style="font-size:1.05rem;">Enterprise Analyst Pass</h4>
+                <div class="pass-price">Rs 3,800 <small style="font-size:0.7rem; color:var(--text-dim);">License Key</small></div>
+                <ul class="pass-specs">
+                    <li><i class="fa-solid fa-check"></i> 25 Daily Evaluation Tasks</li>
+                    <li><i class="fa-solid fa-check"></i> Rs 20.00 Reward Per Task</li>
+                    <li><i class="fa-solid fa-check"></i> Dedicated Support Routing</li>
+                </ul>
+                <button class="btn-pin-only" onclick="openPinModal('Enterprise Analyst Pass')">
+                    <i class="fa-solid fa-key"></i> Activate with PIN
+                </button>
+            </div>
+
+            <!-- Pass 5: Principal -->
+            <div class="pass-card">
+                <span class="pass-badge">Tier 5</span>
+                <h4 style="font-size:1.05rem;">Principal Architect Pass</h4>
+                <div class="pass-price">Rs 7,500 <small style="font-size:0.7rem; color:var(--text-dim);">License Key</small></div>
+                <ul class="pass-specs">
+                    <li><i class="fa-solid fa-check"></i> 35 Daily Evaluation Tasks</li>
+                    <li><i class="fa-solid fa-check"></i> Rs 32.00 Reward Per Task</li>
+                    <li><i class="fa-solid fa-check"></i> Maximum Evaluation Bandwidth</li>
+                </ul>
+                <button class="btn-pin-only" onclick="openPinModal('Principal Architect Pass')">
+                    <i class="fa-solid fa-key"></i> Activate with PIN
+                </button>
+            </div>
+
+            <!-- Pass 6: Apex Director -->
+            <div class="pass-card" style="border-color:var(--border-glow);">
+                <span class="pass-badge">Apex Executive</span>
+                <h4 style="font-size:1.15rem; color:var(--neon-blue);">Apex Director Pass</h4>
+                <div class="pass-price" style="color:var(--neon-blue);">Rs 50,000 <small style="font-size:0.7rem; color:var(--text-dim);">Enterprise Key</small></div>
+                <ul class="pass-specs">
+                    <li><i class="fa-solid fa-check"></i> 45 Daily Evaluation Tasks</li>
+                    <li><i class="fa-solid fa-check"></i> Rs 120.00 Reward Per Task</li>
+                    <li><i class="fa-solid fa-check"></i> Executive Level Network Clearance</li>
+                </ul>
+                <button class="btn-pin-only" onclick="openPinModal('Apex Director Pass')">
+                    <i class="fa-solid fa-crown"></i> Activate with PIN
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= VIEW 3: NETWORK / 3-LEVEL AFFILIATE ================= -->
+        <div id="view-team" class="tab-view">
+            <div class="network-stat-card">
+                <h4 style="font-size:0.9rem; margin-bottom:4px; color:#fff;">Affiliate Performance</h4>
+                <div class="net-grid">
+                    <div>
+                        <small style="font-size:0.7rem; color:var(--text-dim);">Total Network Earnings</small>
+                        <strong id="totalNetworkEarnings" style="font-size:1.3rem; color:var(--neon-blue);">Rs 0.00</strong>
+                    </div>
+                    <div>
+                        <small style="font-size:0.7rem; color:var(--text-dim);">Total Contributors</small>
+                        <strong id="totalNetworkMembers" style="font-size:1.3rem; color:#fff;">0 Members</strong>
+                    </div>
+                </div>
+                <div style="display:flex; gap:8px; margin-top:14px;">
+                    <input type="text" id="referralLinkField" value="Loading link..." readonly style="flex:1; background:var(--bg-base); border:1px solid var(--border); padding:10px 12px; border-radius:8px; color:#fff; font-size:0.8rem; outline:none;">
+                    <button onclick="copyPartnerUrl()" style="background:var(--neon-grad); color:#000; border:none; padding:10px 14px; border-radius:8px; font-weight:800; font-size:0.85rem; cursor:pointer;"><i class="fa-regular fa-copy"></i></button>
+                </div>
+            </div>
+
+            <!-- 3 Level Tabs: Level 1 (10%), Level 2 (3%), Level 3 (1%) -->
+            <div class="level-tabs">
+                <button class="level-tab-btn active" onclick="switchAffiliateLevel(1, this)">Level 1 (10%)</button>
+                <button class="level-tab-btn" onclick="switchAffiliateLevel(2, this)">Level 2 (3%)</button>
+                <button class="level-tab-btn" onclick="switchAffiliateLevel(3, this)">Level 3 (1%)</button>
+            </div>
+
+            <div class="section-header">
+                My Team Members
+            </div>
+            
+            <div id="tierContainer1"></div>
+            <div id="tierContainer2" style="display:none;"></div>
+            <div id="tierContainer3" style="display:none;"></div>
+        </div>
+
+        <!-- ================= VIEW 4: WALLET ================= -->
+        <div id="view-wallet" class="tab-view">
+            <div class="wallet-card">
+                <p style="font-size:0.75rem; color:#c7d2fe;">Available Compensation Balance</p>
+                <h2 id="walletBalanceVal">Rs 0.00</h2>
+                <span style="font-size:0.68rem; background:rgba(0, 242, 254, 0.15); color:var(--neon-blue); padding:3px 10px; border-radius:12px; border:1px solid var(--border-glow);">Realtime Cloud Ledger</span>
+            </div>
+
+            <div class="section-header">Payout Channels <span id="minLimitNotice" style="font-size:0.72rem; color:var(--neon-blue);">Min: Rs 50</span></div>
+
+            <div class="channel-picker">
+                <div class="channel-opt selected" id="opt-JazzCash" onclick="pickChannel('JazzCash')">
+                    <img src="https://i.ibb.co/LX2pqZBV/Screenshot-20260816-074727-3.jpg" alt="JazzCash">
+                    <span>JazzCash</span>
+                </div>
+                <div class="channel-opt" id="opt-Easypaisa" onclick="pickChannel('Easypaisa')">
+                    <img src="https://i.ibb.co/cXv3yLJd/8031c6abd95fcee33da6ecb67264eaa2.jpg" alt="Easypaisa">
+                    <span>Easypaisa</span>
+                </div>
+                <div class="channel-opt" id="opt-Bank" onclick="pickChannel('Bank Transfer')">
+                    <img src="https://i.ibb.co/4nVJdkQG/Screenshot-20260816-075035-1.jpg" alt="Bank Transfer">
+                    <span>Bank Transfer</span>
+                </div>
+            </div>
+
+            <div style="background:var(--card-grad); border:1px solid var(--border); border-radius:14px; padding:16px;">
+                <div class="auth-input-group" id="bankNameFieldGroup" style="display:none;">
+                    <label>Bank Name (e.g. Meezan Bank, HBL)</label>
+                    <input type="text" id="destBankName" placeholder="Enter full Bank Name">
+                </div>
+                <div class="auth-input-group">
+                    <label id="accountFieldLabel">JazzCash Mobile Account Number / Title</label>
+                    <input type="text" id="destAccountNumber" placeholder="03XXXXXXXXX">
+                </div>
+                <div class="auth-input-group">
+                    <label>Withdrawal Amount (Rs)</label>
+                    <input type="number" id="destAmount" placeholder="Enter amount">
+                </div>
+                <button class="btn-auth" id="btnWithdrawSubmit" onclick="submitWithdrawal()">
+                    Submit Settlement Request
+                </button>
+            </div>
+
+            <div class="section-header">Recent Settlements <span style="font-size:0.7rem; color:var(--text-dim);">(Last 10 Records)</span></div>
+            <div id="userWithdrawalHistory">
+                <div style="text-align:center; padding:16px; font-size:0.75rem; color:var(--text-dim);">No transactions logged yet.</div>
+            </div>
+        </div>
+
+        <!-- ================= VIEW 5: SETTINGS ================= -->
+        <div id="view-settings" class="tab-view">
+            <div class="section-header">Account Profile</div>
+            <div style="background:var(--card-grad); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:14px;">
+                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); font-size:0.82rem;">
+                    <span>Username</span>
+                    <strong id="settingsUsernameDisplay" style="color:var(--neon-blue);">contributor</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); font-size:0.82rem;">
+                    <span>Email</span>
+                    <span id="settingsUserEmail" style="font-weight:600;">Loading...</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:10px 0; font-size:0.82rem;">
+                    <span>Primary License</span>
+                    <span style="color:var(--neon-blue); font-weight:700;" id="settingsLevelIndicator">Junior QA</span>
+                </div>
+            </div>
+
+            <div class="section-header">Official Support Channel</div>
+            <a href="https://whatsapp.com/channel/0029VbDr6OfCnA7paJ5BoJ3U" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:10px; background:#25d366; color:#000; font-weight:800; font-size:0.88rem; padding:14px; border-radius:12px; text-decoration:none; margin:14px 0;">
+                <i class="fa-brands fa-whatsapp" style="font-size:1.3rem;"></i> Join Official WhatsApp Channel
+            </a>
+
+            <button onclick="handleLogout()" style="width:100%; padding:12px; background:rgba(239, 68, 68, 0.12); border:1px solid var(--danger); color:var(--danger); border-radius:10px; font-weight:700; font-size:0.85rem; cursor:pointer;">
+                Sign Out of Workspace
+            </button>
+        </div>
+    </div>
+
+    <!-- PIN Modal -->
+    <div class="modal-overlay" id="pinModal">
+        <div class="modal-content">
+            <h3 style="font-size:1.1rem; margin-bottom:4px; color:#fff;"><i class="fa-solid fa-key" style="color:var(--neon-blue);"></i> Activate License PIN</h3>
+            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:12px;" id="pinModalPassTitle">Enter your 8-digit key</p>
+            <input type="text" id="licensePinInput" placeholder="RX-XXXX-XXXX" style="width:100%; padding:12px; background:var(--bg-base); border:1px solid var(--border); border-radius:10px; color:#fff; font-size:1.1rem; text-align:center; letter-spacing:2px; text-transform:uppercase; outline:none; margin-bottom:12px;">
+            <button class="btn-auth" id="btnApplyPin" onclick="verifyAndApplyPin()">Activate License</button>
+            <button onclick="closePinModal()" style="margin-top:8px; width:100%; padding:9px; background:transparent; border:1px solid var(--border); color:var(--text-dim); border-radius:10px; cursor:pointer;">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Task Audit Modal -->
+    <div class="modal-overlay" id="taskModal">
+        <div class="modal-content">
+            <div style="font-size:2rem; color:var(--neon-blue); margin-bottom:8px;"><i class="fa-solid fa-circle-check"></i></div>
+            <h3 id="modalTaskTitle" style="font-size:1rem; margin-bottom:4px; color:#fff;">Audit Verification Complete</h3>
+            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:12px;">Telemetry response has been validated successfully.</p>
+            <div style="background:rgba(0,242,254,0.08); border:1px solid var(--border-glow); border-radius:10px; padding:10px; margin-bottom:14px;">
+                <span style="font-size:0.72rem; color:var(--text-dim);">Allocated Compensation:</span>
+                <strong style="display:block; font-size:1.15rem; color:var(--neon-blue);" id="modalRewardText">+Rs 1.00</strong>
+            </div>
+            <button class="btn-auth" onclick="claimTask()">Done & Collect Allocation</button>
+            <button onclick="closeTaskModal()" style="margin-top:8px; width:100%; padding:9px; background:transparent; border:1px solid var(--border); color:var(--text-dim); border-radius:10px; cursor:pointer;">Dismiss</button>
+        </div>
+    </div>
+
+    <!-- Fixed Bottom Bar -->
+    <nav class="bottom-nav">
+        <button class="nav-btn active" onclick="switchNav('tasks', this)"><i class="fa-solid fa-list-check"></i><span>Tasks</span></button>
+        <button class="nav-btn" onclick="switchNav('passes', this)"><i class="fa-solid fa-cubes"></i><span>Passes</span></button>
+        <button class="nav-btn" onclick="switchNav('team', this)"><i class="fa-solid fa-network-wired"></i><span>Network</span></button>
+        <button class="nav-btn" onclick="switchNav('wallet', this)"><i class="fa-solid fa-wallet"></i><span>Wallet</span></button>
+        <button class="nav-btn" onclick="switchNav('settings', this)"><i class="fa-solid fa-gear"></i><span>Settings</span></button>
+    </nav>
+
+    <div class="toast-popup" id="toast">Alert</div>
+
+    <script>
+        // ================= 1. FIREBASE CONFIGURATION =================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAnsEFuQromVRui078KYLbApxkwKte7dnw",
+            authDomain: "robert-728a0.firebaseapp.com",
+            databaseURL: "https://robert-728a0-default-rtdb.firebaseio.com",
+            projectId: "robert-728a0",
+            storageBucket: "robert-728a0.firebasestorage.app",
+            messagingSenderId: "1080403430649",
+            appId: "1:1080403430649:web:01090d5f6610caf3472628"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
+
+        let currentUser = null;
+        let userData = {
+            username: "Contributor",
+            balance: 0.00,
+            tierName: "Junior QA (Free)",
+            dailyQuota: 2,
+            rewardPerTask: 1.00,
+            referralCode: "",
+            networkEarnings: 0.00,
+            activePasses: {}
+        };
+
+        let selectedPassForModal = null;
+        let authMode = 'login';
+        let chosenChannel = 'JazzCash';
+        let visibleTaskLimit = 8;
+        let networkDataLoaded = false;
+        let withdrawalsLoaded = false;
+
+        // ================= 2. NETWORK CONNECTION LISTENER (ZERO DB OVERHEAD) =================
+        function updateNetworkDotStatus(isOnline) {
+            const dot = document.getElementById('networkLiveDot');
+            const text = document.getElementById('clusterStatusText');
+            if (dot) {
+                if (isOnline) {
+                    dot.classList.remove('offline');
+                    if (text) text.innerText = 'Cloud QA Cluster Online';
+                } else {
+                    dot.classList.add('offline');
+                    if (text) text.innerText = 'Cluster Offline (Reconnecting...)';
+                }
+            }
+        }
+
+        // Native browser events - No persistent database listener needed!
+        window.addEventListener('online', () => updateNetworkDotStatus(true));
+        window.addEventListener('offline', () => updateNetworkDotStatus(false));
+        updateNetworkDotStatus(navigator.onLine);
+
+        // ================= 3. CLIENT FINGERPRINT / IP LIMIT =================
+        async function getSanitizedClientIp() {
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                return data.ip ? data.ip.replace(/[.:]/g, '_') : null;
+            } catch (e) {
+                let token = localStorage.getItem('rx_dev_token');
+                if (!token) {
+                    token = 'dev_' + Math.random().toString(36).substring(2, 10);
+                    localStorage.setItem('rx_dev_token', token);
+                }
+                return token;
+            }
+        }
+
+        function setBtnLoading(btn, isLoading, defaultText) {
+            if (!btn) return;
+            if (isLoading) {
+                btn.disabled = true;
+                btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Please wait...`;
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = `<span>${defaultText}</span>`;
+            }
+        }
+
+        // ================= 4. AUTH & USER DATA FETCH (.once FOR FREE QUOTA SAFETY) =================
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('auth-overlay').style.display = 'none';
+                document.getElementById('settingsUserEmail').innerText = user.email;
+
+                // Single read to keep concurrent connections free
+                refreshUserData();
+            } else {
+                currentUser = null;
+                networkDataLoaded = false;
+                withdrawalsLoaded = false;
+                document.getElementById('auth-overlay').style.display = 'flex';
+            }
+        });
+
+        function refreshUserData(callback) {
+            if (!currentUser) return;
+            db.ref('users/' + currentUser.uid).once('value').then(snap => {
+                const val = snap.val();
+                if (val) {
+                    userData = val;
+                    syncUI();
+                    if (callback) callback();
+                } else {
+                    initUser(currentUser);
+                }
+            }).catch(err => {
+                console.error("User fetch error:", err);
+            });
+        }
+
+        async function handleAuthSubmit() {
+            const email = document.getElementById('authEmail').value.trim();
+            const pass = document.getElementById('authPassword').value.trim();
+            const username = document.getElementById('authUsername').value.trim();
+            const submitBtn = document.getElementById('authSubmitBtn');
+
+            if (!email || !pass) { showToast("Enter email and password"); return; }
+            if (authMode === 'register' && !username) { showToast("Please choose a username"); return; }
+            if (pass.length < 6) { showToast("Password must be 6+ chars"); return; }
+
+            setBtnLoading(submitBtn, true, "");
+
+            if (authMode === 'login') {
+                auth.signInWithEmailAndPassword(email, pass).catch(err => {
+                    setBtnLoading(submitBtn, false, "Log In to Workspace");
+                    showToast(err.message);
+                });
+            } else {
+                const sanitizedIp = await getSanitizedClientIp();
+                if (sanitizedIp) {
+                    const ipSnap = await db.ref(`ipRegistrations/${sanitizedIp}`).once('value');
+                    const currentCount = ipSnap.val() || 0;
+                    if (currentCount >= 2) {
+                        setBtnLoading(submitBtn, false, "Register Contributor");
+                        showToast("Account registration limit reached on this network. Please log in.");
+                        return;
+                    }
+                }
+
+                auth.createUserWithEmailAndPassword(email, pass).then(cred => {
+                    if (sanitizedIp) {
+                        db.ref(`ipRegistrations/${sanitizedIp}`).transaction(c => (c || 0) + 1);
+                    }
+                }).catch(err => {
+                    setBtnLoading(submitBtn, false, "Register Contributor");
+                    showToast(err.message);
+                });
+            }
+        }
+
+        function initUser(user) {
+            const inputRefCode = document.getElementById('authReferralInput').value.trim().toUpperCase();
+            const inputUsername = document.getElementById('authUsername').value.trim() || user.email.split('@')[0];
+            const code = 'RX-' + Math.floor(100000 + Math.random() * 900000);
+
+            const initialPasses = {
+                "free_default": {
+                    passName: "Junior QA (Free)",
+                    dailyQuota: 2,
+                    rewardPerTask: 1.00,
+                    activatedAt: firebase.database.ServerValue.TIMESTAMP
+                }
+            };
+
+            const initialData = {
+                username: inputUsername,
+                email: user.email,
+                balance: 0.00,
+                tierName: "Junior QA (Free)",
+                dailyQuota: 2,
+                rewardPerTask: 1.00,
+                referralCode: code,
+                referredBy: inputRefCode || null,
+                networkEarnings: 0.00,
+                activePasses: initialPasses,
+                createdAt: firebase.database.ServerValue.TIMESTAMP
+            };
+
+            db.ref('users/' + user.uid).set(initialData).then(() => {
+                userData = initialData;
+                if (inputRefCode) linkReferral(user.uid, inputRefCode);
+                syncUI();
+            });
+        }
+
+        function linkReferral(newUid, refCode) {
+            db.ref('users').orderByChild('referralCode').equalTo(refCode).once('value', snap => {
+                const p1 = snap.val();
+                if (!p1) return;
+                const uid1 = Object.keys(p1)[0];
+                db.ref(`referrals/${uid1}/tier1/${newUid}`).set({
+                    uid: newUid,
+                    username: userData.username || currentUser.email.split('@')[0],
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                });
+
+                if (p1[uid1].referredBy) {
+                    db.ref('users').orderByChild('referralCode').equalTo(p1[uid1].referredBy).once('value', snap2 => {
+                        const p2 = snap2.val();
+                        if (!p2) return;
+                        const uid2 = Object.keys(p2)[0];
+                        db.ref(`referrals/${uid2}/tier2/${newUid}`).set({
+                            uid: newUid,
+                            username: userData.username || currentUser.email.split('@')[0],
+                            timestamp: firebase.database.ServerValue.TIMESTAMP
+                        });
+
+                        if (p2[uid2].referredBy) {
+                            db.ref('users').orderByChild('referralCode').equalTo(p2[uid2].referredBy).once('value', snap3 => {
+                                const p3 = snap3.val();
+                                if (!p3) return;
+                                const uid3 = Object.keys(p3)[0];
+                                db.ref(`referrals/${uid3}/tier3/${newUid}`).set({
+                                    uid: newUid,
+                                    username: userData.username || currentUser.email.split('@')[0],
+                                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                                });
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        function switchAuthMode(mode) {
+            authMode = mode;
+            document.getElementById('tabLoginBtn').classList.toggle('active', mode === 'login');
+            document.getElementById('tabRegisterBtn').classList.toggle('active', mode === 'register');
+            document.getElementById('userFieldGroup').style.display = mode === 'register' ? 'block' : 'none';
+            document.getElementById('refFieldGroup').style.display = mode === 'register' ? 'block' : 'none';
+            document.getElementById('authSubmitBtn').innerHTML = mode === 'login' ? '<span>Log In to Workspace</span>' : '<span>Register Contributor</span>';
+        }
+
+        function handleLogout() { auth.signOut(); }
+
+        // Voucher System
+        function applyPromoCode() {
+            if (!currentUser) return;
+            const input = document.getElementById('promoCodeInput');
+            const code = input.value.trim().toUpperCase();
+            if (!code) { showToast("Enter code"); return; }
+
+            db.ref(`users/${currentUser.uid}/redeemedCodes/${code}`).once('value', snap => {
+                if (snap.exists()) { showToast("Voucher already used"); return; }
+                db.ref(`promoCodes/${code}`).once('value', codeSnap => {
+                    const val = codeSnap.val();
+                    let reward = val ? (typeof val === 'object' ? parseFloat(val.reward) : parseFloat(val)) : 0;
+                    if (reward > 0) {
+                        db.ref('users/' + currentUser.uid + '/balance').transaction(b => (b || 0) + reward, (err, commited) => {
+                            if (commited) {
+                                db.ref(`users/${currentUser.uid}/redeemedCodes/${code}`).set(true);
+                                userData.balance = (userData.balance || 0) + reward;
+                                syncUI();
+                                input.value = "";
+                                showToast(`🎉 Voucher Applied: +Rs ${reward.toFixed(2)}`);
+                            }
+                        });
+                    } else {
+                        showToast("Invalid code. Check WhatsApp channel!");
+                    }
+                });
+            });
+        }
+
+        // ================= 5. TASKS (8 AT A TIME) =================
+        function renderTasks() {
+            const container = document.getElementById('tasksContainer');
+            const loadMoreContainer = document.getElementById('loadMoreContainer');
+            container.innerHTML = '';
+            loadMoreContainer.innerHTML = '';
+
+            const quota = userData.dailyQuota || 0;
+            const reward = parseFloat(userData.rewardPerTask || 1.00);
+
+            if (quota <= 0) {
+                container.innerHTML = `<div style="text-align:center; padding:22px; background:var(--card-grad); border-radius:14px; font-size:0.8rem; color:var(--text-dim);">Allocations completed for today. Upgrade pass or return tomorrow!</div>`;
+                return;
+            }
+
+            const renderCount = Math.min(quota, visibleTaskLimit);
+
+            for (let i = 1; i <= renderCount; i++) {
+                const card = document.createElement('div');
+                card.className = 'task-card';
+                card.innerHTML = `
+                    <div>
+                        <h4>AI Telemetry Protocol #${i}</h4>
+                        <p>Verify dataset synchronization</p>
+                        <div style="font-size:0.75rem; color:var(--neon-blue); font-weight:700;">+Rs ${reward.toFixed(2)} | QA Unit</div>
+                    </div>
+                    <button class="btn-audit-task" onclick="openTaskModal('Protocol #${i}')">
+                        <i class="fa-solid fa-shield-check"></i> Audit
+                    </button>
+                `;
+                container.appendChild(card);
+            }
+
+            if (quota > visibleTaskLimit) {
+                const loadBtn = document.createElement('button');
+                loadBtn.className = 'btn-load-more';
+                loadBtn.innerHTML = `<i class="fa-solid fa-angles-down"></i> Load More Tasks (${quota - visibleTaskLimit} Remaining)`;
+                loadBtn.onclick = () => {
+                    visibleTaskLimit += 8;
+                    renderTasks();
+                };
+                loadMoreContainer.appendChild(loadBtn);
+            }
+        }
+
+        function openTaskModal(title) {
+            const reward = parseFloat(userData.rewardPerTask || 1.00);
+            document.getElementById('modalTaskTitle').innerText = `${title} Verified ✓`;
+            document.getElementById('modalRewardText').innerText = `+Rs ${reward.toFixed(2)}`;
+            document.getElementById('taskModal').classList.add('active');
+        }
+
+        function claimTask() {
+            if (!currentUser) return;
+            const reward = parseFloat(userData.rewardPerTask || 1.00);
+            
+            // Transaction based update to prevent balance inconsistencies
+            db.ref('users/' + currentUser.uid).transaction(user => {
+                if (user) {
+                    if ((user.dailyQuota || 0) > 0) {
+                        user.balance = (user.balance || 0) + reward;
+                        user.dailyQuota = user.dailyQuota - 1;
+                    }
+                }
+                return user;
+            }, (error, committed, snapshot) => {
+                if (committed && snapshot.exists()) {
+                    userData = snapshot.val();
+                    syncUI();
+                    closeTaskModal();
+                    showToast(`Allocation Claimed: +Rs ${reward.toFixed(2)}`);
+                }
+            });
+        }
+
+        function closeTaskModal() {
+            document.getElementById('taskModal').classList.remove('active');
+        }
+
+        // ================= 6. ALL ACTIVE PASSES FULL-SCREEN DETAIL PAGE =================
+        function openWorkspaceDetails() {
+            const container = document.getElementById('activePassesListContainer');
+            container.innerHTML = '';
+
+            const passesObj = userData.activePasses || {};
+            const passKeys = Object.keys(passesObj);
+
+            if (passKeys.length === 0) {
+                container.innerHTML = `
+                    <div class="ws-detail-card">
+                        <h4 style="font-size:1rem; color:#fff;">${userData.tierName || "Junior QA (Free)"}</h4>
+                        <div class="ws-stat-row"><span>Daily Task Quota</span><strong>${userData.dailyQuota || 2} Tasks</strong></div>
+                        <div class="ws-stat-row"><span>Per Task Allocation</span><strong style="color:var(--neon-blue);">Rs ${(userData.rewardPerTask || 1).toFixed(2)}</strong></div>
+                    </div>
+                `;
+                document.getElementById('wsPageTotalActiveBadge').innerText = "1 Active";
+            } else {
+                document.getElementById('wsPageTotalActiveBadge').innerText = `${passKeys.length} Active`;
+
+                passKeys.forEach(k => {
+                    const p = passesObj[k];
+                    const dailyEarn = (p.dailyQuota * p.rewardPerTask).toFixed(2);
+                    const card = document.createElement('div');
+                    card.className = 'ws-detail-card';
+                    card.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                            <h4 style="font-size:1.05rem; color:#fff;">${p.passName}</h4>
+                            <span class="status-badge status-Approved">Active</span>
+                        </div>
+                        <div class="ws-stat-row">
+                            <span>Daily Tasks Allotted</span>
+                            <strong style="color:var(--neon-blue);">${p.dailyQuota} Tasks / Day</strong>
+                        </div>
+                        <div class="ws-stat-row">
+                            <span>Reward per Verified Unit</span>
+                            <strong style="color:var(--success);">Rs ${parseFloat(p.rewardPerTask).toFixed(2)}</strong>
+                        </div>
+                        <div class="ws-stat-row">
+                            <span>Estimated Daily Capacity</span>
+                            <strong style="color:var(--neon-blue);">Rs ${dailyEarn} / Day</strong>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+
+            document.getElementById('workspaceDetailsPage').classList.add('active');
+        }
+
+        function closeWorkspaceDetails() {
+            document.getElementById('workspaceDetailsPage').classList.remove('active');
+        }
+
+        // ================= 7. PIN ACTIVATION =================
+        function openPinModal(passName) {
+            selectedPassForModal = passName;
+            document.getElementById('pinModalPassTitle').innerText = `Enter PIN for ${passName}`;
+            document.getElementById('licensePinInput').value = '';
+            document.getElementById('pinModal').classList.add('active');
+        }
+
+        function closePinModal() {
+            document.getElementById('pinModal').classList.remove('active');
+            selectedPassForModal = null;
+        }
+
+        function verifyAndApplyPin() {
+            if (!currentUser) return;
+            const pin = document.getElementById('licensePinInput').value.trim().toUpperCase();
+            const btn = document.getElementById('btnApplyPin');
+
+            if (!pin) { showToast("Enter your 8-digit PIN"); return; }
+            setBtnLoading(btn, true, "");
+
+            db.ref(`licensePins/${pin}`).once('value').then(snap => {
+                setBtnLoading(btn, false, "Activate License");
+                const pinData = snap.val();
+
+                if (!pinData || typeof pinData !== 'object') {
+                    showToast("Invalid License PIN");
+                    return;
+                }
+                if (pinData.used === true) {
+                    showToast("This PIN has already been used");
+                    return;
+                }
+
+                const targetPass = pinData.passName || selectedPassForModal;
+                if (selectedPassForModal && pinData.passName && pinData.passName !== selectedPassForModal) {
+                    showToast(`This PIN is for ${pinData.passName}, not ${selectedPassForModal}`);
+                    return;
+                }
+
+                // Mark PIN used
+                db.ref(`licensePins/${pin}`).update({
+                    used: true,
+                    usedBy: currentUser.uid,
+                    usedByUsername: userData.username || currentUser.email.split('@')[0],
+                    usedAt: firebase.database.ServerValue.TIMESTAMP
+                });
+
+                const passKey = targetPass.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+                const newPassRecord = {
+                    passName: targetPass,
+                    dailyQuota: pinData.quota || 10,
+                    rewardPerTask: pinData.reward || 5.00,
+                    activatedAt: firebase.database.ServerValue.TIMESTAMP
+                };
+
+                const newQuota = (userData.dailyQuota || 0) + (pinData.quota || 10);
+                const newReward = Math.max(userData.rewardPerTask || 1.00, pinData.reward || 1.00);
+
+                db.ref(`users/${currentUser.uid}/activePasses/${passKey}`).set(newPassRecord);
+                db.ref(`users/${currentUser.uid}`).update({
+                    tierName: targetPass,
+                    dailyQuota: newQuota,
+                    rewardPerTask: newReward
+                }).then(() => {
+                    userData.tierName = targetPass;
+                    userData.dailyQuota = newQuota;
+                    userData.rewardPerTask = newReward;
+                    if (!userData.activePasses) userData.activePasses = {};
+                    userData.activePasses[passKey] = newPassRecord;
+                    syncUI();
+
+                    closePinModal();
+                    showToast(`🎉 Activated: ${targetPass}! Added to active licenses.`);
+                    distributeCommissions(pinData.price || 0);
+                });
+            }).catch(err => {
+                setBtnLoading(btn, false, "Activate License");
+                showToast("Connection error. Try again.");
+            });
+        }
+
+        function distributeCommissions(packPrice) {
+            if (!userData.referredBy || packPrice <= 0) return;
+
+            db.ref('users').orderByChild('referralCode').equalTo(userData.referredBy).once('value').then(snap1 => {
+                const p1 = snap1.val();
+                if (!p1) return;
+                const uid1 = Object.keys(p1)[0];
+                const comm1 = packPrice * 0.10;
+                db.ref(`users/${uid1}/balance`).transaction(b => (b || 0) + comm1);
+                db.ref(`users/${uid1}/networkEarnings`).transaction(b => (b || 0) + comm1);
+                db.ref(`commissions/${uid1}/tier1/${currentUser.uid}`).transaction(c => (c || 0) + comm1);
+
+                if (p1[uid1].referredBy) {
+                    db.ref('users').orderByChild('referralCode').equalTo(p1[uid1].referredBy).once('value').then(snap2 => {
+                        const p2 = snap2.val();
+                        if (!p2) return;
+                        const uid2 = Object.keys(p2)[0];
+                        const comm2 = packPrice * 0.03;
+                        db.ref(`users/${uid2}/balance`).transaction(b => (b || 0) + comm2);
+                        db.ref(`users/${uid2}/networkEarnings`).transaction(b => (b || 0) + comm2);
+                        db.ref(`commissions/${uid2}/tier2/${currentUser.uid}`).transaction(c => (c || 0) + comm2);
+
+                        if (p2[uid2].referredBy) {
+                            db.ref('users').orderByChild('referralCode').equalTo(p2[uid2].referredBy).once('value').then(snap3 => {
+                                const p3 = snap3.val();
+                                if (!p3) return;
+                                const uid3 = Object.keys(p3)[0];
+                                const comm3 = packPrice * 0.01;
+                                db.ref(`users/${uid3}/balance`).transaction(b => (b || 0) + comm3);
+                                db.ref(`users/${uid3}/networkEarnings`).transaction(b => (b || 0) + comm3);
+                                db.ref(`commissions/${uid3}/tier3/${currentUser.uid}`).transaction(c => (c || 0) + comm3);
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        // ================= 8. WALLET (LAZY LOADED & PAGINATED) =================
+        function maskNumber(acc) {
+            if (!acc || acc.length < 6) return acc || "---";
+            const start = acc.substring(0, 4);
+            const end = acc.substring(acc.length - 3);
+            return `${start}****${end}`;
+        }
+
+        function pickChannel(ch) {
+            chosenChannel = ch;
+            document.querySelectorAll('.channel-opt').forEach(c => c.classList.remove('selected'));
+            document.getElementById(`opt-${ch.split(' ')[0]}`).classList.add('selected');
+            document.getElementById('bankNameFieldGroup').style.display = ch === 'Bank Transfer' ? 'block' : 'none';
+            document.getElementById('minLimitNotice').innerText = ch === 'Bank Transfer' ? 'Min: Rs 500' : 'Min: Rs 50';
+            document.getElementById('accountFieldLabel').innerText = ch === 'Bank Transfer' ? 'Bank Account / IBAN' : `${ch} Mobile Number / Title`;
+        }
+
+        function submitWithdrawal() {
+            if (!currentUser) return;
+            const amt = parseFloat(document.getElementById('destAmount').value);
+            const acc = document.getElementById('destAccountNumber').value.trim();
+            const bank = document.getElementById('destBankName').value.trim();
+            const min = chosenChannel === 'Bank Transfer' ? 500 : 50;
+
+            if (!acc || isNaN(amt) || amt < min || amt > (userData.balance || 0)) {
+                showToast(`Invalid request. Min: Rs ${min}, check available balance.`);
+                return;
+            }
+
+            const ref = db.ref('withdrawals').push();
+            const withdrawData = {
+                id: ref.key,
+                uid: currentUser.uid,
+                email: currentUser.email,
+                username: userData.username || "Contributor",
+                channel: chosenChannel,
+                bankName: bank || null,
+                accountNumber: acc,
+                amount: amt,
+                status: "Pending",
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            };
+
+            ref.set(withdrawData).then(() => {
+                db.ref('users/' + currentUser.uid + '/balance').transaction(b => (b || 0) - amt, (err, commited) => {
+                    if (commited) {
+                        userData.balance = (userData.balance || 0) - amt;
+                        syncUI();
+                        document.getElementById('destAmount').value = '';
+                        document.getElementById('destAccountNumber').value = '';
+                        showToast("Withdrawal request submitted!");
+                        fetchWithdrawals(true); // reload list once
+                    }
+                });
+            });
+        }
+
+        // Optimized: Uses .once() & limitToLast(10) instead of persistent full database stream
+        function fetchWithdrawals(forceReload = false) {
+            if (!currentUser) return;
+            if (withdrawalsLoaded && !forceReload) return;
+
+            db.ref('withdrawals')
+                .orderByChild('uid')
+                .equalTo(currentUser.uid)
+                .limitToLast(10)
+                .once('value').then(snap => {
+                    withdrawalsLoaded = true;
+                    const container = document.getElementById('userWithdrawalHistory');
+                    container.innerHTML = '';
+                    const val = snap.val();
+
+                    if (!val) { 
+                        container.innerHTML = '<div style="text-align:center; padding:12px; font-size:0.75rem; color:var(--text-dim);">No transactions yet.</div>'; 
+                        return; 
+                    }
+
+                    // Reverse to show latest first
+                    const keys = Object.keys(val).reverse();
+                    keys.forEach(k => {
+                        const itm = val[k];
+                        const div = document.createElement('div');
+                        div.className = 'history-item';
+                        div.innerHTML = `
+                            <div>
+                                <strong>${itm.channel}</strong>
+                                <div style="font-size:0.7rem; color:var(--text-dim);">${maskNumber(itm.accountNumber)}</div>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-weight:800; color:var(--neon-blue);">Rs ${parseFloat(itm.amount).toFixed(2)}</div>
+                                <span class="status-badge status-${itm.status}">${itm.status}</span>
+                            </div>
+                        `;
+                        container.appendChild(div);
+                    });
+                });
+        }
+
+        // ================= 9. NAVIGATION & AFFILIATE (OPTIMIZED LAZY LOAD) =================
+        function switchNav(tab, btn) {
+            document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`view-${tab}`).classList.add('active');
+            btn.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Lazy Load: Only query database when user navigates to specific tabs
+            if (tab === 'team' && !networkDataLoaded) {
+                fetchNetworkData();
+            } else if (tab === 'wallet' && !withdrawalsLoaded) {
+                fetchWithdrawals();
+            }
+        }
+
+        function copyPartnerUrl() {
+            const input = document.getElementById('referralLinkField');
+            const textToCopy = input.value;
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    showToast("Referral link copied!");
+                }).catch(() => fallbackCopy(input, textToCopy));
+            } else {
+                fallbackCopy(input, textToCopy);
+            }
+        }
+
+        function fallbackCopy(inputElem, text) {
+            try {
+                inputElem.focus();
+                inputElem.select();
+                inputElem.setSelectionRange(0, 99999);
+                const successful = document.execCommand('copy');
+                if (successful) showToast("Referral link copied!");
+                else promptManualCopy(text);
+            } catch (err) {
+                promptManualCopy(text);
+            }
+        }
+
+        function promptManualCopy(text) {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            ta.style.position = "fixed";
+            ta.style.top = "-9999px";
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            try {
+                document.execCommand('copy');
+                showToast("Referral link copied!");
+            } catch (e) {
+                prompt("Copy your referral link manually:", text);
+            }
+            document.body.removeChild(ta);
+        }
+
+        function switchAffiliateLevel(lvl, btn) {
+            document.querySelectorAll('.level-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('tierContainer1').style.display = lvl === 1 ? 'block' : 'none';
+            document.getElementById('tierContainer2').style.display = lvl === 2 ? 'block' : 'none';
+            document.getElementById('tierContainer3').style.display = lvl === 3 ? 'block' : 'none';
+        }
+
+        // Optimized: Single read instead of persistent listener, batch reads commissions
+        function fetchNetworkData() {
+            if (!currentUser) return;
+            networkDataLoaded = true;
+            let totalCount = 0;
+
+            // Read commissions in 1 batch to save reads
+            db.ref(`commissions/${currentUser.uid}`).once('value').then(allCommSnap => {
+                const commissionsData = allCommSnap.val() || {};
+
+                ['tier1', 'tier2', 'tier3'].forEach((tierKey, idx) => {
+                    db.ref(`referrals/${currentUser.uid}/${tierKey}`).once('value').then(snap => {
+                        const container = document.getElementById(`tierContainer${idx + 1}`);
+                        container.innerHTML = '';
+                        const val = snap.val();
+
+                        if (!val) {
+                            container.innerHTML = `<div style="text-align:center; padding:14px; font-size:0.75rem; color:var(--text-dim);">No Level ${idx + 1} members yet.</div>`;
+                            return;
+                        }
+
+                        const memberKeys = Object.keys(val);
+                        totalCount += memberKeys.length;
+                        document.getElementById('totalNetworkMembers').innerText = `${totalCount} Members`;
+
+                        const tierComm = commissionsData[tierKey] || {};
+
+                        memberKeys.forEach(memberUid => {
+                            const mData = val[memberUid];
+                            const mUsername = mData.username ? `@${mData.username}` : `@user_${memberUid.substring(0, 5)}`;
+                            const earned = parseFloat(tierComm[memberUid] || 0);
+
+                            const row = document.createElement('div');
+                            row.className = 'member-row';
+                            row.innerHTML = `
+                                <div style="font-weight:700; color:#fff; font-size:0.85rem;">${mUsername}</div>
+                                <div style="font-weight:800; color:var(--neon-blue); font-size:0.88rem;">+Rs ${earned.toFixed(2)}</div>
+                            `;
+                            container.appendChild(row);
+                        });
+                    });
+                });
+            });
+        }
+
+        function syncUI() {
+            document.getElementById('walletBalanceVal').innerText = `Rs ${(userData.balance || 0).toFixed(2)}`;
+            document.getElementById('taskQuotaDisplay').innerText = `${userData.dailyQuota || 0} Tasks Left`;
+            document.getElementById('passStatusName').innerText = userData.tierName || "Junior QA (Free)";
+            document.getElementById('headerUsername').innerText = userData.username || "Contributor";
+            document.getElementById('settingsUsernameDisplay').innerText = `@${userData.username || "contributor"}`;
+            document.getElementById('ratePerTaskNotice').innerText = `Rate: Rs ${(userData.rewardPerTask || 1.00).toFixed(2)} / Unit`;
+            document.getElementById('settingsLevelIndicator').innerText = userData.tierName || "Junior QA";
+            document.getElementById('totalNetworkEarnings').innerText = `Rs ${(userData.networkEarnings || 0).toFixed(2)}`;
+
+            if (userData.referralCode) {
+                document.getElementById('referralLinkField').value = `https://robert-x.com/ref?code=${userData.referralCode}`;
+            }
+            renderTasks();
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.style.display = 'block';
+            setTimeout(() => { t.style.display = 'none'; }, 3000);
+        }
+    </script>
+</body>
+</html>
