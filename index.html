@@ -878,21 +878,55 @@
 
         function handleLogout() { auth.signOut(); }
 
-        // Voucher System
+        // ================= VOUCHER SYSTEM (ENGLISH ALERTS) =================
         function applyPromoCode() {
             if (!currentUser) return;
             const input = document.getElementById('promoCodeInput');
             const code = input.value.trim().toUpperCase();
-            if (!code) { showToast("Enter code"); return; }
+            if (!code) { showToast("Please enter a voucher code"); return; }
 
-            db.ref(`users/${currentUser.uid}/redeemedCodes/${code}`).once('value', snap => {
-                if (snap.exists()) { showToast("Voucher already used"); return; }
-                db.ref(`promoCodes/${code}`).once('value', codeSnap => {
+            // 1. Check if contributor has already redeemed this voucher
+            db.ref(`users/${currentUser.uid}/redeemedCodes/${code}`).once('value').then(snap => {
+                if (snap.exists()) { 
+                    showToast("You have already redeemed this voucher!"); 
+                    return; 
+                }
+
+                // 2. Verify code existence from database
+                db.ref(`promoCodes/${code}`).once('value').then(codeSnap => {
                     const val = codeSnap.val();
-                    let reward = val ? (typeof val === 'object' ? parseFloat(val.reward) : parseFloat(val)) : 0;
-                    if (reward > 0) {
-                        db.ref('users/' + currentUser.uid + '/balance').transaction(b => (b || 0) + reward, (err, commited) => {
-                            if (commited) {
+                    
+                    if (!val) {
+                        showToast("Invalid voucher code. Check WhatsApp channel!");
+                        return;
+                    }
+
+                    const reward = typeof val === 'object' ? parseFloat(val.reward || 0) : parseFloat(val || 0);
+                    const maxUsers = (typeof val === 'object' && val.maxUsers) ? parseInt(val.maxUsers) : 1;
+                    const currentUsed = (typeof val === 'object' && val.usedCount) ? parseInt(val.usedCount) : 0;
+
+                    // 3. Check redemption limit
+                    if (currentUsed >= maxUsers) {
+                        showToast("This voucher has reached its maximum user limit!");
+                        return;
+                    }
+
+                    // 4. Atomic transaction on usedCount to prevent race conditions
+                    db.ref(`promoCodes/${code}/usedCount`).transaction(count => {
+                        const current = count || 0;
+                        if (current >= maxUsers) {
+                            return; // Abort if limit reached concurrently
+                        }
+                        return current + 1;
+                    }, (error, committed) => {
+                        if (error || !committed) {
+                            showToast("This voucher has reached its maximum user limit!");
+                            return;
+                        }
+
+                        // 5. Credit reward to contributor's balance
+                        db.ref(`users/${currentUser.uid}/balance`).transaction(b => (b || 0) + reward, (balErr, balCommitted) => {
+                            if (balCommitted) {
                                 db.ref(`users/${currentUser.uid}/redeemedCodes/${code}`).set(true);
                                 userData.balance = (userData.balance || 0) + reward;
                                 syncUI();
@@ -900,10 +934,10 @@
                                 showToast(`🎉 Voucher Applied: +Rs ${reward.toFixed(2)}`);
                             }
                         });
-                    } else {
-                        showToast("Invalid code. Check WhatsApp channel!");
-                    }
+                    });
                 });
+            }).catch(err => {
+                showToast("Connection error. Please try again.");
             });
         }
 
