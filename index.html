@@ -87,7 +87,7 @@
         }
         .pro-banner-left { display: flex; align-items: center; gap: 10px; }
         
-        /* The Live Network Dot (Neon Blue when Online, Red when Offline) */
+        /* The Live Network Dot */
         .live-dot {
             width: 10px; height: 10px; border-radius: 50%;
             background: var(--neon-blue);
@@ -126,7 +126,7 @@
             align-items: center; justify-content: space-between; margin-bottom: 14px;
         }
 
-        /* Full Screen Workspace Detail Sub-Page (Shows ALL Active Passes) */
+        /* Full Screen Workspace Detail Sub-Page */
         #workspaceDetailsPage {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: var(--bg-base); z-index: 4500;
@@ -313,7 +313,6 @@
             <span class="status-badge status-Approved" id="wsPageTotalActiveBadge">1 Active</span>
         </div>
 
-        <!-- Dynamic Container for ALL Activated Passes -->
         <div id="activePassesListContainer"></div>
 
         <div style="background:rgba(0, 242, 254, 0.06); border:1px dashed var(--border-glow); border-radius:14px; padding:14px; font-size:0.72rem; color:var(--text-dim); line-height:1.5; text-align:center; margin-top:10px;">
@@ -334,7 +333,6 @@
         <!-- Live Status Banner With Dynamic Blue/Red Indicator Dot -->
         <div class="pro-banner">
             <div class="pro-banner-left">
-                <!-- Browser-native Online/Offline Dot (Zero Database Overhead) -->
                 <div class="live-dot" id="networkLiveDot"></div>
                 <small style="font-size:0.72rem; font-weight:700; color:#fff;" id="clusterStatusText">Cloud QA Cluster Online</small>
             </div>
@@ -374,12 +372,11 @@
                 <span id="ratePerTaskNotice" style="font-size:0.72rem; color:var(--neon-blue); font-weight:600;">Rate: Rs 1.00 / Unit</span>
             </div>
 
-            <!-- 8 Tasks Pagination Container -->
             <div id="tasksContainer"></div>
             <div id="loadMoreContainer"></div>
         </div>
 
-        <!-- ================= VIEW 2: PASSES ================= -->
+        <!-- ================= VIEW 2: PASSES (UPDATED REWARDS) ================= -->
         <div id="view-passes" class="tab-view">
             <div class="section-header">
                 Workspace Passes
@@ -411,14 +408,14 @@
                 </button>
             </div>
 
-            <!-- Pass 2: Senior -->
+            <!-- Pass 2: Senior (Updated to Rs 3.54) -->
             <div class="pass-card">
                 <span class="pass-badge">Tier 2</span>
                 <h4 style="font-size:1.05rem;">Senior Auditor Pass</h4>
                 <div class="pass-price">Rs 850 <small style="font-size:0.7rem; color:var(--text-dim);">License Key</small></div>
                 <ul class="pass-specs">
                     <li><i class="fa-solid fa-check"></i> 12 Daily Evaluation Tasks</li>
-                    <li><i class="fa-solid fa-check"></i> Rs 6.00 Reward Per Task</li>
+                    <li><i class="fa-solid fa-check"></i> Rs 3.54 Reward Per Task</li>
                     <li><i class="fa-solid fa-check"></i> Priority Settlement Clearance</li>
                 </ul>
                 <button class="btn-pin-only" onclick="openPinModal('Senior Auditor Pass')">
@@ -426,14 +423,14 @@
                 </button>
             </div>
 
-            <!-- Pass 3: Lead -->
+            <!-- Pass 3: Lead (Updated to Rs 5.14) -->
             <div class="pass-card">
                 <span class="pass-badge">Tier 3</span>
                 <h4 style="font-size:1.05rem;">Lead Specialist Pass</h4>
                 <div class="pass-price">Rs 1,850 <small style="font-size:0.7rem; color:var(--text-dim);">License Key</small></div>
                 <ul class="pass-specs">
                     <li><i class="fa-solid fa-check"></i> 18 Daily Evaluation Tasks</li>
-                    <li><i class="fa-solid fa-check"></i> Rs 12.00 Reward Per Task</li>
+                    <li><i class="fa-solid fa-check"></i> Rs 5.14 Reward Per Task</li>
                     <li><i class="fa-solid fa-check"></i> 3-Tier Network Qualified (10%, 3%, 1%)</li>
                 </ul>
                 <button class="btn-pin-only" onclick="openPinModal('Lead Specialist Pass')">
@@ -441,14 +438,14 @@
                 </button>
             </div>
 
-            <!-- Pass 4: Enterprise -->
+            <!-- Pass 4: Enterprise (Updated to Rs 7.60) -->
             <div class="pass-card">
                 <span class="pass-badge">Tier 4</span>
                 <h4 style="font-size:1.05rem;">Enterprise Analyst Pass</h4>
                 <div class="pass-price">Rs 3,800 <small style="font-size:0.7rem; color:var(--text-dim);">License Key</small></div>
                 <ul class="pass-specs">
                     <li><i class="fa-solid fa-check"></i> 25 Daily Evaluation Tasks</li>
-                    <li><i class="fa-solid fa-check"></i> Rs 20.00 Reward Per Task</li>
+                    <li><i class="fa-solid fa-check"></i> Rs 7.60 Reward Per Task</li>
                     <li><i class="fa-solid fa-check"></i> Dedicated Support Routing</li>
                 </ul>
                 <button class="btn-pin-only" onclick="openPinModal('Enterprise Analyst Pass')">
@@ -456,14 +453,14 @@
                 </button>
             </div>
 
-            <!-- Pass 5: Principal -->
+            <!-- Pass 5: Principal (Updated to Rs 10.71) -->
             <div class="pass-card">
                 <span class="pass-badge">Tier 5</span>
                 <h4 style="font-size:1.05rem;">Principal Architect Pass</h4>
                 <div class="pass-price">Rs 7,500 <small style="font-size:0.7rem; color:var(--text-dim);">License Key</small></div>
                 <ul class="pass-specs">
                     <li><i class="fa-solid fa-check"></i> 35 Daily Evaluation Tasks</li>
-                    <li><i class="fa-solid fa-check"></i> Rs 32.00 Reward Per Task</li>
+                    <li><i class="fa-solid fa-check"></i> Rs 10.71 Reward Per Task</li>
                     <li><i class="fa-solid fa-check"></i> Maximum Evaluation Bandwidth</li>
                 </ul>
                 <button class="btn-pin-only" onclick="openPinModal('Principal Architect Pass')">
@@ -471,14 +468,14 @@
                 </button>
             </div>
 
-            <!-- Pass 6: Apex Director -->
+            <!-- Pass 6: Apex Director (Updated to Rs 55.56) -->
             <div class="pass-card" style="border-color:var(--border-glow);">
                 <span class="pass-badge">Apex Executive</span>
                 <h4 style="font-size:1.15rem; color:var(--neon-blue);">Apex Director Pass</h4>
                 <div class="pass-price" style="color:var(--neon-blue);">Rs 50,000 <small style="font-size:0.7rem; color:var(--text-dim);">Enterprise Key</small></div>
                 <ul class="pass-specs">
                     <li><i class="fa-solid fa-check"></i> 45 Daily Evaluation Tasks</li>
-                    <li><i class="fa-solid fa-check"></i> Rs 120.00 Reward Per Task</li>
+                    <li><i class="fa-solid fa-check"></i> Rs 55.56 Reward Per Task</li>
                     <li><i class="fa-solid fa-check"></i> Executive Level Network Clearance</li>
                 </ul>
                 <button class="btn-pin-only" onclick="openPinModal('Apex Director Pass')">
@@ -501,13 +498,13 @@
                         <strong id="totalNetworkMembers" style="font-size:1.3rem; color:#fff;">0 Members</strong>
                     </div>
                 </div>
+                <!-- Dynamic Link Container -->
                 <div style="display:flex; gap:8px; margin-top:14px;">
-                    <input type="text" id="referralLinkField" value="Loading link..." readonly style="flex:1; background:var(--bg-base); border:1px solid var(--border); padding:10px 12px; border-radius:8px; color:#fff; font-size:0.8rem; outline:none;">
+                    <input type="text" id="referralLinkField" value="Loading referral link..." readonly style="flex:1; background:var(--bg-base); border:1px solid var(--border); padding:10px 12px; border-radius:8px; color:#fff; font-size:0.8rem; outline:none;">
                     <button onclick="copyPartnerUrl()" style="background:var(--neon-grad); color:#000; border:none; padding:10px 14px; border-radius:8px; font-weight:800; font-size:0.85rem; cursor:pointer;"><i class="fa-regular fa-copy"></i></button>
                 </div>
             </div>
 
-            <!-- 3 Level Tabs: Level 1 (10%), Level 2 (3%), Level 3 (1%) -->
             <div class="level-tabs">
                 <button class="level-tab-btn active" onclick="switchAffiliateLevel(1, this)">Level 1 (10%)</button>
                 <button class="level-tab-btn" onclick="switchAffiliateLevel(2, this)">Level 2 (3%)</button>
@@ -673,7 +670,7 @@
         let networkDataLoaded = false;
         let withdrawalsLoaded = false;
 
-        // ================= 2. NETWORK CONNECTION LISTENER (ZERO DB OVERHEAD) =================
+        // ================= 2. NETWORK CONNECTION LISTENER =================
         function updateNetworkDotStatus(isOnline) {
             const dot = document.getElementById('networkLiveDot');
             const text = document.getElementById('clusterStatusText');
@@ -688,7 +685,6 @@
             }
         }
 
-        // Native browser events - No persistent database listener needed!
         window.addEventListener('online', () => updateNetworkDotStatus(true));
         window.addEventListener('offline', () => updateNetworkDotStatus(false));
         updateNetworkDotStatus(navigator.onLine);
@@ -720,14 +716,12 @@
             }
         }
 
-        // ================= 4. AUTH & USER DATA FETCH (.once FOR FREE QUOTA SAFETY) =================
+        // ================= 4. AUTH & USER DATA FETCH =================
         auth.onAuthStateChanged(user => {
             if (user) {
                 currentUser = user;
                 document.getElementById('auth-overlay').style.display = 'none';
                 document.getElementById('settingsUserEmail').innerText = user.email;
-
-                // Single read to keep concurrent connections free
                 refreshUserData();
             } else {
                 currentUser = null;
@@ -878,21 +872,19 @@
 
         function handleLogout() { auth.signOut(); }
 
-        // ================= VOUCHER SYSTEM (ENGLISH ALERTS) =================
+        // ================= VOUCHER SYSTEM (ENGLISH ALERTS & LIMIT COMPLIANT) =================
         function applyPromoCode() {
             if (!currentUser) return;
             const input = document.getElementById('promoCodeInput');
             const code = input.value.trim().toUpperCase();
             if (!code) { showToast("Please enter a voucher code"); return; }
 
-            // 1. Check if contributor has already redeemed this voucher
             db.ref(`users/${currentUser.uid}/redeemedCodes/${code}`).once('value').then(snap => {
                 if (snap.exists()) { 
                     showToast("You have already redeemed this voucher!"); 
                     return; 
                 }
 
-                // 2. Verify code existence from database
                 db.ref(`promoCodes/${code}`).once('value').then(codeSnap => {
                     const val = codeSnap.val();
                     
@@ -905,17 +897,15 @@
                     const maxUsers = (typeof val === 'object' && val.maxUsers) ? parseInt(val.maxUsers) : 1;
                     const currentUsed = (typeof val === 'object' && val.usedCount) ? parseInt(val.usedCount) : 0;
 
-                    // 3. Check redemption limit
                     if (currentUsed >= maxUsers) {
                         showToast("This voucher has reached its maximum user limit!");
                         return;
                     }
 
-                    // 4. Atomic transaction on usedCount to prevent race conditions
                     db.ref(`promoCodes/${code}/usedCount`).transaction(count => {
                         const current = count || 0;
                         if (current >= maxUsers) {
-                            return; // Abort if limit reached concurrently
+                            return;
                         }
                         return current + 1;
                     }, (error, committed) => {
@@ -924,7 +914,6 @@
                             return;
                         }
 
-                        // 5. Credit reward to contributor's balance
                         db.ref(`users/${currentUser.uid}/balance`).transaction(b => (b || 0) + reward, (balErr, balCommitted) => {
                             if (balCommitted) {
                                 db.ref(`users/${currentUser.uid}/redeemedCodes/${code}`).set(true);
@@ -941,7 +930,7 @@
             });
         }
 
-        // ================= 5. TASKS (8 AT A TIME) =================
+        // ================= 5. TASKS =================
         function renderTasks() {
             const container = document.getElementById('tasksContainer');
             const loadMoreContainer = document.getElementById('loadMoreContainer');
@@ -997,7 +986,6 @@
             if (!currentUser) return;
             const reward = parseFloat(userData.rewardPerTask || 1.00);
             
-            // Transaction based update to prevent balance inconsistencies
             db.ref('users/' + currentUser.uid).transaction(user => {
                 if (user) {
                     if ((user.dailyQuota || 0) > 0) {
@@ -1126,12 +1114,12 @@
                 const newPassRecord = {
                     passName: targetPass,
                     dailyQuota: pinData.quota || 10,
-                    rewardPerTask: pinData.reward || 5.00,
+                    rewardPerTask: parseFloat(pinData.reward) || 5.00,
                     activatedAt: firebase.database.ServerValue.TIMESTAMP
                 };
 
                 const newQuota = (userData.dailyQuota || 0) + (pinData.quota || 10);
-                const newReward = Math.max(userData.rewardPerTask || 1.00, pinData.reward || 1.00);
+                const newReward = Math.max(userData.rewardPerTask || 1.00, parseFloat(pinData.reward) || 1.00);
 
                 db.ref(`users/${currentUser.uid}/activePasses/${passKey}`).set(newPassRecord);
                 db.ref(`users/${currentUser.uid}`).update({
@@ -1194,7 +1182,7 @@
             });
         }
 
-        // ================= 8. WALLET (LAZY LOADED & PAGINATED) =================
+        // ================= 8. WALLET =================
         function maskNumber(acc) {
             if (!acc || acc.length < 6) return acc || "---";
             const start = acc.substring(0, 4);
@@ -1245,13 +1233,12 @@
                         document.getElementById('destAmount').value = '';
                         document.getElementById('destAccountNumber').value = '';
                         showToast("Withdrawal request submitted!");
-                        fetchWithdrawals(true); // reload list once
+                        fetchWithdrawals(true);
                     }
                 });
             });
         }
 
-        // Optimized: Uses .once() & limitToLast(10) instead of persistent full database stream
         function fetchWithdrawals(forceReload = false) {
             if (!currentUser) return;
             if (withdrawalsLoaded && !forceReload) return;
@@ -1271,7 +1258,6 @@
                         return; 
                     }
 
-                    // Reverse to show latest first
                     const keys = Object.keys(val).reverse();
                     keys.forEach(k => {
                         const itm = val[k];
@@ -1292,7 +1278,7 @@
                 });
         }
 
-        // ================= 9. NAVIGATION & AFFILIATE (OPTIMIZED LAZY LOAD) =================
+        // ================= 9. NAVIGATION & AFFILIATE =================
         function switchNav(tab, btn) {
             document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -1300,7 +1286,6 @@
             btn.classList.add('active');
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
-            // Lazy Load: Only query database when user navigates to specific tabs
             if (tab === 'team' && !networkDataLoaded) {
                 fetchNetworkData();
             } else if (tab === 'wallet' && !withdrawalsLoaded) {
@@ -1308,6 +1293,7 @@
             }
         }
 
+        // Bulletproof Copy Function (Zero Clipboard Permission Errors)
         function copyPartnerUrl() {
             const input = document.getElementById('referralLinkField');
             const textToCopy = input.value;
@@ -1359,13 +1345,11 @@
             document.getElementById('tierContainer3').style.display = lvl === 3 ? 'block' : 'none';
         }
 
-        // Optimized: Single read instead of persistent listener, batch reads commissions
         function fetchNetworkData() {
             if (!currentUser) return;
             networkDataLoaded = true;
             let totalCount = 0;
 
-            // Read commissions in 1 batch to save reads
             db.ref(`commissions/${currentUser.uid}`).once('value').then(allCommSnap => {
                 const commissionsData = allCommSnap.val() || {};
 
@@ -1404,6 +1388,7 @@
             });
         }
 
+        // ================= DYNAMIC BASE URL LINK CREATOR =================
         function syncUI() {
             document.getElementById('walletBalanceVal').innerText = `Rs ${(userData.balance || 0).toFixed(2)}`;
             document.getElementById('taskQuotaDisplay').innerText = `${userData.dailyQuota || 0} Tasks Left`;
@@ -1414,11 +1399,31 @@
             document.getElementById('settingsLevelIndicator').innerText = userData.tierName || "Junior QA";
             document.getElementById('totalNetworkEarnings').innerText = `Rs ${(userData.networkEarnings || 0).toFixed(2)}`;
 
+            // Dynamically create the exact domain link for Vercel or custom domain
             if (userData.referralCode) {
-                document.getElementById('referralLinkField').value = `https://robert-x.com/ref?code=${userData.referralCode}`;
+                const currentBaseUrl = window.location.origin + window.location.pathname;
+                document.getElementById('referralLinkField').value = `${currentBaseUrl}?ref=${userData.referralCode}`;
             }
             renderTasks();
         }
+
+        // ================= AUTO-CAPTURE REFERRAL CODE ON PAGE LOAD =================
+        function checkUrlReferralCode() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const refCode = urlParams.get('ref') || urlParams.get('code');
+
+            if (refCode) {
+                switchAuthMode('register');
+                const refInput = document.getElementById('authReferralInput');
+                if (refInput) {
+                    refInput.value = refCode.trim().toUpperCase();
+                    refInput.readOnly = true;
+                    refInput.style.borderColor = "var(--neon-blue)";
+                }
+                showToast(`Partner Invitation Applied: ${refCode.toUpperCase()}`);
+            }
+        }
+        window.addEventListener('DOMContentLoaded', checkUrlReferralCode);
 
         function showToast(msg) {
             const t = document.getElementById('toast');
