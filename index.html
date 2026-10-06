@@ -1,1488 +1,1134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ROBERT X - Enterprise Cloud QA & Telemetry Hub</title>
-    <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apex Capital | Investment & Automated Earnings</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-    <!-- Firebase Compat SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-    <style>
-        :root {
-            --neon-blue: #00f2fe;
-            --neon-glow: #00d2ff;
-            --deep-blue: #0072ff;
-            --neon-grad: linear-gradient(135deg, #00f2fe 0%, #0072ff 100%);
-            --card-grad: linear-gradient(180deg, rgba(14, 24, 48, 0.9) 0%, rgba(8, 14, 28, 0.98) 100%);
-            --bg-base: #040814;
-            --bg-card: #0b1326;
-            --bg-card-alt: #101b33;
-            --border: #162648;
-            --border-glow: rgba(0, 242, 254, 0.35);
-            --text-main: #f8fafc;
-            --text-dim: #94a3b8;
-            --success: #10b981;
-            --gold: #f59e0b;
-            --danger: #ef4444;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-base); color: var(--text-main); padding-bottom: 95px; overflow-x: hidden; }
-        .app-shell { max-width: 480px; margin: 0 auto; min-height: 100vh; padding: 16px; position: relative; }
-
-        /* Auth Screen */
-        #auth-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--bg-base); z-index: 5000;
-            display: flex; align-items: center; justify-content: center; padding: 20px;
-        }
-        .auth-card {
-            background: var(--card-grad); border: 1px solid var(--border-glow);
-            border-radius: 24px; padding: 26px; width: 100%; max-width: 400px;
-            box-shadow: 0 0 35px rgba(0, 242, 254, 0.15);
-        }
-        .auth-brand { text-align: center; margin-bottom: 20px; font-size: 1.5rem; font-weight: 800; }
-        .auth-brand span { background: var(--neon-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .auth-tabs { display: flex; gap: 8px; margin-bottom: 18px; }
-        .auth-tab {
-            flex: 1; padding: 10px; background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border); border-radius: 12px;
-            color: var(--text-dim); font-weight: 700; font-size: 0.85rem; cursor: pointer; text-align: center;
-        }
-        .auth-tab.active { background: var(--deep-blue); border-color: var(--neon-blue); color: #fff; box-shadow: 0 0 15px rgba(0,210,255,0.3); }
-        .auth-input-group { margin-bottom: 12px; }
-        .auth-input-group label { display: block; font-size: 0.75rem; color: var(--text-dim); margin-bottom: 5px; }
-        .auth-input-group input {
-            width: 100%; padding: 12px 14px; background: var(--bg-base);
-            border: 1px solid var(--border); border-radius: 10px; color: #fff; font-size: 0.85rem; outline: none;
-        }
-        .auth-input-group input:focus { border-color: var(--neon-blue); }
-        .btn-auth {
-            width: 100%; padding: 13px; background: var(--neon-grad);
-            color: #000; border: none; border-radius: 12px; font-weight: 800; font-size: 0.9rem; cursor: pointer; margin-top: 8px;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-
-        /* Top Header */
-        .top-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
-        .brand-title { font-size: 1.35rem; font-weight: 800; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px; }
-        .brand-title span { background: var(--neon-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 15px rgba(0,242,254,0.3); }
-        .user-pill {
-            background: rgba(0, 242, 254, 0.1); border: 1px solid var(--neon-blue);
-            padding: 5px 12px; border-radius: 30px; font-size: 0.72rem; font-weight: 700; color: var(--neon-blue);
-            display: flex; align-items: center; gap: 6px; box-shadow: 0 0 10px rgba(0,242,254,0.15);
-        }
-
-        /* Live Cluster Status Banner */
-        .pro-banner {
-            background: linear-gradient(135deg, rgba(0, 242, 254, 0.12), rgba(0, 114, 255, 0.15));
-            border: 1px solid var(--border-glow); border-radius: 16px; padding: 12px 16px; margin: 12px 0 16px 0;
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .pro-banner-left { display: flex; align-items: center; gap: 10px; }
-        
-        .live-dot {
-            width: 10px; height: 10px; border-radius: 50%;
-            background: var(--neon-blue);
-            box-shadow: 0 0 10px var(--neon-blue);
-            transition: all 0.3s ease;
-            animation: pulseDot 1.5s infinite;
-        }
-        .live-dot.offline {
-            background: var(--danger) !important;
-            box-shadow: 0 0 10px var(--danger) !important;
-            animation: none;
-        }
-        @keyframes pulseDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-
-        /* Views */
-        .tab-view { display: none; animation: viewIn 0.25s ease-out; padding-top: 14px; }
-        .tab-view.active { display: block; }
-        @keyframes viewIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-
-        .section-header { font-size: 0.95rem; font-weight: 700; margin: 16px 0 10px 0; display: flex; justify-content: space-between; align-items: center; }
-
-        /* Stat Banner */
-        .stat-banner {
-            background: var(--card-grad);
-            border: 1px solid var(--border); border-radius: 18px; padding: 16px;
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-        }
-        .stat-banner small { font-size: 0.7rem; color: var(--text-dim); display: block; }
-        .stat-banner strong { font-size: 1.25rem; color: #fff; font-weight: 800; }
-
-        .btn-workspace-info {
-            width: 100%; padding: 11px 14px; background: rgba(0, 242, 254, 0.08);
-            border: 1px solid var(--border-glow); border-radius: 12px; color: var(--neon-blue);
-            font-size: 0.78rem; font-weight: 700; cursor: pointer; display: flex;
-            align-items: center; justify-content: space-between; margin-bottom: 14px;
-        }
-
-        /* Full Screen Workspace Detail Sub-Page */
-        #workspaceDetailsPage {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--bg-base); z-index: 4500;
-            display: none; flex-direction: column; overflow-y: auto; padding: 20px 16px 90px 16px;
-        }
-        #workspaceDetailsPage.active { display: flex; }
-        .ws-detail-card {
-            background: var(--card-grad); border: 1px solid var(--border-glow);
-            border-radius: 20px; padding: 18px; margin-bottom: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6); position: relative;
-        }
-        .ws-stat-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
-        .ws-stat-row:last-child { border-bottom: none; }
-
-        /* Tasks */
-        .task-card {
-            background: var(--card-grad); border: 1px solid var(--border);
-            border-radius: 14px; padding: 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-        .task-card h4 { font-size: 0.88rem; font-weight: 600; margin-bottom: 3px; }
-        .task-card p { font-size: 0.72rem; color: var(--text-dim); margin-bottom: 4px; }
-        .btn-audit-task {
-            background: var(--neon-grad); color: #000; border: none; padding: 9px 16px;
-            border-radius: 8px; font-size: 0.78rem; font-weight: 800; cursor: pointer;
-            display: flex; align-items: center; gap: 5px; box-shadow: 0 0 12px rgba(0,242,254,0.3);
-        }
-
-        .btn-load-more {
-            width: 100%; padding: 12px; background: rgba(0, 242, 254, 0.08);
-            border: 1px dashed var(--neon-blue); border-radius: 12px; color: var(--neon-blue);
-            font-size: 0.8rem; font-weight: 700; cursor: pointer; margin-top: 6px;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-
-        /* Passes Cards */
-        .pass-card {
-            border-radius: 20px; padding: 20px; margin-bottom: 16px; position: relative;
-            background: var(--card-grad); border: 1px solid var(--border);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden;
-        }
-        .pass-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--neon-grad); }
-        .pass-badge {
-            position: absolute; top: 16px; right: 16px; font-size: 0.68rem; font-weight: 800;
-            padding: 4px 10px; border-radius: 20px; text-transform: uppercase;
-            background: rgba(0, 242, 254, 0.15); color: var(--neon-blue); border: 1px solid var(--neon-blue);
-        }
-        .pass-price { font-size: 1.45rem; font-weight: 800; color: #fff; margin: 8px 0; }
-        .pass-specs { list-style: none; font-size: 0.78rem; color: var(--text-dim); margin: 12px 0 16px 0; }
-        .pass-specs li { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-        .pass-specs li i { color: var(--neon-blue); font-size: 0.75rem; }
-
-        .btn-pin-only {
-            width: 100%; padding: 12px; border: none; border-radius: 12px;
-            font-size: 0.85rem; font-weight: 800; color: #000; cursor: pointer;
-            background: var(--neon-grad); display: flex; align-items: center; justify-content: center; gap: 8px;
-            box-shadow: 0 0 18px rgba(0, 242, 254, 0.35);
-        }
-
-        /* Affiliate */
-        .network-stat-card {
-            background: var(--card-grad); border: 1px solid var(--border-glow);
-            border-radius: 18px; padding: 18px; margin-bottom: 14px;
-        }
-        .net-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .level-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
-        .level-tab-btn {
-            flex: 1; padding: 10px 4px; background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 10px; color: var(--text-dim); font-size: 0.72rem; font-weight: 700; cursor: pointer; text-align: center;
-        }
-        .level-tab-btn.active { background: var(--deep-blue); border-color: var(--neon-blue); color: #fff; box-shadow: 0 0 10px rgba(0,210,255,0.3); }
-
-        .member-row {
-            background: var(--card-grad); border: 1px solid var(--border);
-            border-radius: 14px; padding: 12px 16px; margin-bottom: 8px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-
-        /* Wallet */
-        .wallet-card {
-            background: linear-gradient(135deg, #061838, #0b2554);
-            border: 1px solid var(--border-glow); border-radius: 20px; padding: 22px; text-align: center; margin-bottom: 16px;
-            box-shadow: 0 0 25px rgba(0, 210, 255, 0.2);
-        }
-        .wallet-card h2 { font-size: 2.2rem; font-weight: 800; color: #fff; margin: 6px 0; text-shadow: 0 0 15px rgba(0,242,254,0.4); }
-        .channel-picker { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
-        .channel-opt {
-            background: var(--bg-card); border: 2px solid var(--border); border-radius: 12px;
-            padding: 8px; display: flex; flex-direction: column; align-items: center; cursor: pointer; height: 90px; justify-content: center;
-        }
-        .channel-opt.selected { border-color: var(--neon-blue); background: rgba(0, 242, 254, 0.08); box-shadow: 0 0 12px rgba(0,242,254,0.25); }
-        .channel-opt img { width: 44px; height: 44px; object-fit: cover; border-radius: 8px; margin-bottom: 5px; }
-        .channel-opt span { font-size: 0.7rem; font-weight: 600; color: var(--text-dim); }
-        .channel-opt.selected span { color: #fff; }
-
-        .history-item {
-            background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
-        }
-        .status-badge { font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
-        .status-Pending { background: rgba(245, 158, 11, 0.15); color: var(--gold); }
-        .status-Approved { background: rgba(16, 185, 129, 0.15); color: var(--success); }
-        .status-Rejected { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
-
-        /* Modals */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(4, 8, 20, 0.88); backdrop-filter: blur(5px);
-            display: none; align-items: center; justify-content: center; padding: 20px; z-index: 6000;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal-content {
-            background: var(--card-grad); border: 1px solid var(--border-glow);
-            border-radius: 20px; padding: 22px; width: 100%; max-width: 380px; text-align: center;
-            box-shadow: 0 0 30px rgba(0,242,254,0.2);
-        }
-
-        /* Bottom Fixed Bar */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0; background: #060c1c;
-            border-top: 1px solid var(--border); display: flex; justify-content: space-around;
-            padding: 8px 0; max-width: 480px; margin: 0 auto; z-index: 1000;
-        }
-        .nav-btn {
-            background: transparent; border: none; color: var(--text-dim); display: flex;
-            flex-direction: column; align-items: center; gap: 4px; font-size: 0.68rem; cursor: pointer; padding: 4px 8px;
-        }
-        .nav-btn i { font-size: 1.15rem; }
-        .nav-btn.active { color: var(--neon-blue); font-weight: 700; text-shadow: 0 0 8px rgba(0,242,254,0.4); }
-
-        .toast-popup {
-            position: fixed; bottom: 75px; left: 50%; transform: translateX(-50%);
-            background: #0f1c38; border: 1px solid var(--neon-blue); color: #fff;
-            padding: 10px 18px; border-radius: 30px; font-size: 0.78rem; display: none; z-index: 9999;
-            box-sizing: border-box; max-width: 90vw; width: max-content; word-break: break-word; text-align: center;
-            box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
-        }
-    </style>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-luxury { font-family: 'Cinzel', serif; }
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #fae29c 0%, #d4af37 50%, #9e7b13 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .gold-gradient-btn {
+      background: linear-gradient(135deg, #f0d57d 0%, #d4af37 50%, #99780b 100%);
+    }
+    .gold-gradient-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    /* Hide scrollbars for clean app feel */
+    ::-webkit-scrollbar { width: 0px; background: transparent; }
+  </style>
 </head>
-<body>
+<body class="bg-[#050608] text-slate-100 flex justify-center min-h-screen antialiased selection:bg-amber-500 selection:text-black">
 
-    <!-- ================= AUTH OVERLAY ================= -->
-    <div id="auth-overlay">
-        <div class="auth-card">
-            <div class="auth-brand">
-                ROBERT <span>X</span> <small style="display:block; font-size:0.75rem; color:var(--text-dim); font-weight:500;">AI Telemetry & Cloud QA Hub</small>
-            </div>
-            <div class="auth-tabs">
-                <button class="auth-tab active" id="tabLoginBtn" onclick="switchAuthMode('login')">Log In</button>
-                <button class="auth-tab" id="tabRegisterBtn" onclick="switchAuthMode('register')">Register</button>
-            </div>
-
-            <div class="auth-input-group" id="userFieldGroup" style="display:none;">
-                <label>Contributor Username</label>
-                <input type="text" id="authUsername" placeholder="e.g. ali_khan">
-            </div>
-
-            <div class="auth-input-group">
-                <label>Contributor Email</label>
-                <input type="email" id="authEmail" placeholder="contributor@example.com">
-            </div>
-            <div class="auth-input-group">
-                <label>Access Password (Min. 6 chars)</label>
-                <input type="password" id="authPassword" placeholder="••••••••">
-            </div>
-            <div class="auth-input-group" id="refFieldGroup" style="display:none;">
-                <label>Partner / Invitation Code (Optional)</label>
-                <input type="text" id="authReferralInput" placeholder="e.g. RX-918234">
-            </div>
-            <button class="btn-auth" id="authSubmitBtn" onclick="handleAuthSubmit()">
-                <span>Log In to Workspace</span>
-            </button>
+  <!-- ==================== AUTHENTICATION OVERLAY ==================== -->
+  <div id="auth-modal" class="fixed inset-0 z-50 bg-[#050608] flex items-center justify-center p-4 overflow-y-auto">
+    <div class="w-full max-w-sm bg-[#0e1117] border border-amber-500/30 rounded-3xl p-6 shadow-2xl relative my-auto">
+      
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#997a15] via-[#d4af37] to-[#fde599] p-[1px] mx-auto mb-3 shadow-lg shadow-amber-500/10">
+          <div class="w-full h-full bg-[#0d0f14] rounded-2xl flex items-center justify-center">
+            <span class="font-luxury font-black text-xl gold-gradient-text">A</span>
+          </div>
         </div>
+        <h2 id="auth-title" class="text-xl font-bold font-luxury tracking-wider gold-gradient-text">APEX CAPITAL</h2>
+        <p id="auth-subtitle" class="text-xs text-slate-400 mt-1">Sign in to access your investment portal</p>
+      </div>
+
+      <!-- Error / Notice Box -->
+      <div id="auth-error" class="hidden mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl"></div>
+      <div id="ref-warning" class="hidden mb-4 p-3 bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs rounded-xl"></div>
+
+      <!-- Auth Form -->
+      <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-3">
+
+        <!-- Inviter Field (Visible during Sign Up, Locked) -->
+        <div id="referrer-field" class="hidden space-y-1">
+          <label class="text-[10px] font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1">
+            <span>Invited By</span>
+            <span class="text-[9px] text-slate-400 font-normal">(Verified Referral)</span>
+          </label>
+          <input type="text" id="auth-inviter" readonly class="w-full bg-[#1b202c] border border-amber-500/30 rounded-xl px-3.5 py-2.5 text-xs text-amber-200 font-semibold focus:outline-none cursor-not-allowed">
+        </div>
+
+        <div id="name-field" class="hidden space-y-1">
+          <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Full Name</label>
+          <input type="text" id="auth-name" placeholder="John Doe" class="w-full bg-[#161a23] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Email Address</label>
+          <input type="email" id="auth-email" required placeholder="user@apex.com" class="w-full bg-[#161a23] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Password</label>
+          <input type="password" id="auth-password" required placeholder="••••••••" class="w-full bg-[#161a23] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <button type="submit" id="auth-submit-btn" class="w-full gold-gradient-btn text-black font-extrabold py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 active:scale-95 transition mt-2 flex items-center justify-center gap-2">
+          <span>Sign In</span>
+        </button>
+      </form>
+
+      <div class="text-center mt-5">
+        <button onclick="toggleAuthMode()" id="auth-toggle-btn" class="text-xs text-amber-400/90 hover:text-amber-300 font-medium">
+          Don't have an account? Sign Up
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== FULLSCREEN OVERLAYS ==================== -->
+
+  <!-- 1. FULLSCREEN DEPOSIT CHECKOUT PAGE -->
+  <div id="deposit-page" class="fixed inset-0 z-50 bg-[#0a0c10] hidden flex-col max-w-md mx-auto overflow-y-auto">
+    <!-- Header -->
+    <div class="sticky top-0 bg-[#0a0c10]/95 backdrop-blur-md px-6 py-4 border-b border-white/5 flex items-center justify-between z-20">
+      <button onclick="closeDepositPage()" class="p-2 -ml-2 rounded-xl text-slate-400 hover:text-white transition">
+        <svg class="w-5 h-5 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+      </button>
+      <h3 class="font-luxury font-bold text-sm gold-gradient-text tracking-widest uppercase">Deposit Payment</h3>
+      <div class="w-7"></div>
     </div>
 
-    <!-- ================= FULL SCREEN WORKSPACE DETAILS PAGE ================= -->
-    <div id="workspaceDetailsPage">
-        <button onclick="closeWorkspaceDetails()" style="background:transparent; border:1px solid var(--border-glow); color:var(--neon-blue); padding:10px 16px; border-radius:12px; font-weight:700; font-size:0.82rem; cursor:pointer; width:max-content; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
-            <i class="fa-solid fa-arrow-left"></i> Back to Tasks
+    <div class="p-6 space-y-5 flex-1">
+      <!-- Selected Plan Details -->
+      <div class="bg-gradient-to-br from-[#161922] to-[#0f1118] border border-amber-500/30 rounded-2xl p-4">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-400">Selected Plan</span>
+          <span id="dep-plan-name" class="font-bold text-amber-400">Plan 1</span>
+        </div>
+        <div class="flex justify-between items-center text-xs mt-2 pt-2 border-t border-white/5">
+          <span class="text-slate-400">Amount USD</span>
+          <span id="dep-plan-usd" class="font-bold text-white">$2.00</span>
+        </div>
+        <div class="flex justify-between items-center text-xs mt-1">
+          <span class="text-slate-400">Payable PKR (Rate: 1$ = 280 PKR)</span>
+          <span id="dep-plan-pkr" class="font-extrabold text-emerald-400 text-sm">Rs 560 PKR</span>
+        </div>
+      </div>
+
+      <!-- Payment Instructions & Details -->
+      <div class="bg-[#10131b] border border-white/5 rounded-2xl p-4 space-y-3">
+        <img src="https://i.ibb.co/cXv3yLJd/8031c6abd95fcee33da6ecb67264eaa2.jpg" alt="Easypaisa" class="rounded-xl w-full object-cover max-h-36 border border-white/5">
+        
+        <div class="space-y-1">
+          <label class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Easypaisa Account Number</label>
+          <div class="flex items-center justify-between bg-black/50 p-2.5 rounded-xl border border-white/10">
+            <span class="font-mono text-sm font-bold text-amber-400">03262550724</span>
+            <button onclick="copyText('03262550724', this)" class="text-[11px] font-bold bg-amber-500/20 text-amber-300 px-2.5 py-1 rounded-lg">Copy</button>
+          </div>
+        </div>
+
+        <!-- QR Code -->
+        <div class="text-center pt-2">
+          <p class="text-[11px] text-slate-400 mb-2">Or Scan QR Code directly via Easypaisa App</p>
+          <img src="https://i.ibb.co/DfnT3VRN/1791271465962.jpg" alt="Easypaisa QR" class="w-44 h-44 mx-auto rounded-xl border-2 border-amber-500/40 p-1 bg-white">
+        </div>
+      </div>
+
+      <!-- Payment Submission Form -->
+      <form id="payment-form" onsubmit="submitDeposit(event)" class="space-y-3">
+        <div>
+          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Your Sender Account Number</label>
+          <input type="text" id="dep-sender-account" required placeholder="03xxxxxxxxx" class="w-full bg-[#161a23] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400 mt-1">
+        </div>
+
+        <div>
+          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Transaction ID (Trx ID)</label>
+          <input type="text" id="dep-trx-id" required placeholder="e.g. 2938472918" class="w-full bg-[#161a23] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-amber-400 mt-1">
+        </div>
+
+        <button type="submit" id="dep-submit-btn" class="w-full gold-gradient-btn text-black font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 active:scale-95 transition mt-3 flex items-center justify-center gap-2">
+          <span>Submit Payment</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. FULLSCREEN DEPOSIT HISTORY PAGE -->
+  <div id="history-page" class="fixed inset-0 z-50 bg-[#0a0c10] hidden flex-col max-w-md mx-auto overflow-y-auto">
+    <div class="sticky top-0 bg-[#0a0c10]/95 backdrop-blur-md px-6 py-4 border-b border-white/5 flex items-center justify-between z-20">
+      <button onclick="closeHistoryPage()" class="p-2 -ml-2 rounded-xl text-slate-400 hover:text-white transition">
+        <svg class="w-5 h-5 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+      </button>
+      <h3 class="font-luxury font-bold text-sm gold-gradient-text tracking-widest uppercase">Deposit History</h3>
+      <div class="w-7"></div>
+    </div>
+
+    <div class="p-6 flex-1 space-y-3" id="history-list">
+      <div class="text-center py-12 text-slate-500 text-xs">No deposit requests found.</div>
+    </div>
+  </div>
+
+  <!-- 3. FULLSCREEN WALLET / DAILY ADS CLAIM PAGE -->
+  <div id="ads-page" class="fixed inset-0 z-50 bg-[#0a0c10] hidden flex-col max-w-md mx-auto overflow-y-auto">
+    <div class="sticky top-0 bg-[#0a0c10]/95 backdrop-blur-md px-6 py-4 border-b border-white/5 flex items-center justify-between z-20">
+      <button onclick="closeAdsPage()" class="p-2 -ml-2 rounded-xl text-slate-400 hover:text-white transition">
+        <svg class="w-5 h-5 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+      </button>
+      <h3 class="font-luxury font-bold text-sm gold-gradient-text tracking-widest uppercase">Daily Tasks & Ads</h3>
+      <div class="w-7"></div>
+    </div>
+
+    <div class="p-6 flex-1 space-y-4">
+      <div class="bg-gradient-to-r from-amber-950/30 to-black border border-amber-500/20 rounded-2xl p-4">
+        <p class="text-xs text-slate-400">Current Daily Earning Potential</p>
+        <h4 id="ads-potential" class="text-2xl font-black text-amber-400 mt-1">$0.00 / Day</h4>
+        <p class="text-[11px] text-slate-500 mt-1">Claimable once every 24 hours for active plans.</p>
+      </div>
+
+      <div id="ads-container" class="space-y-3">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== MAIN MOBILE APP CONTAINER ==================== -->
+  <div id="app-container" class="w-full max-w-md bg-[#0a0c10] min-h-screen pb-24 shadow-2xl relative flex flex-col border-x border-amber-500/10 hidden">
+
+    <!-- Top Header -->
+    <header class="flex items-center justify-between px-6 pt-5 pb-4 sticky top-0 bg-[#0a0c10]/95 backdrop-blur-md z-40 border-b border-white/5">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#997a15] via-[#d4af37] to-[#fde599] p-[1px] shadow-lg shadow-amber-500/10">
+          <div class="w-full h-full bg-[#0d0f14] rounded-2xl flex items-center justify-center">
+            <span class="font-luxury font-black text-lg gold-gradient-text">A</span>
+          </div>
+        </div>
+        <div>
+          <h1 class="font-luxury text-[15px] font-bold tracking-[0.2em] gold-gradient-text uppercase">APEX CAPITAL</h1>
+          <p class="text-[9px] font-bold tracking-[0.25em] text-slate-400 uppercase">Daily Profit & Investment</p>
+        </div>
+      </div>
+
+      <button onclick="logoutUser(this)" class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs font-semibold text-slate-300 hover:text-red-400 transition flex items-center gap-1.5">
+        <span>Logout</span>
+      </button>
+    </header>
+
+    <!-- ==================== TAB 1: HOME ==================== -->
+    <div id="home-view" class="px-6 pt-4 space-y-5 flex-1">
+      <div class="flex justify-between items-end">
+        <div>
+          <p class="text-xs uppercase tracking-[0.2em] text-slate-400 font-semibold">Welcome Back</p>
+          <h2 id="user-display-name" class="text-2xl font-black text-white tracking-tight mt-0.5">Loading...</h2>
+        </div>
+        <span class="text-xs text-emerald-400 font-medium bg-emerald-500/10 px-2.5 py-0.5 rounded border border-emerald-500/20" id="user-active-badge">No Plan</span>
+      </div>
+
+      <!-- Main Balance Card -->
+      <div class="rounded-[28px] p-6 text-white bg-gradient-to-br from-[#161922] via-[#0f1118] to-[#08090d] border border-amber-500/30 shadow-2xl relative overflow-hidden">
+        <div class="absolute -right-16 -top-16 w-44 h-44 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="flex justify-between items-center text-xs tracking-widest text-slate-400 font-medium">
+          <span>MAIN BALANCE</span>
+          <span class="text-emerald-400 text-xs font-bold">100% Secured</span>
+        </div>
+
+        <div class="my-5">
+          <p class="text-xs text-slate-400">Total Available Balance</p>
+          <h3 id="user-balance" class="text-4xl font-extrabold tracking-tight mt-1 text-white">$0.00</h3>
+          <div class="flex items-center gap-2 mt-2">
+            <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md">
+              ↑ 24H Automated Returns
+            </span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 pt-2">
+          <button onclick="switchTab('funds')" class="gold-gradient-btn text-black font-extrabold py-3 px-4 rounded-xl text-xs tracking-wider uppercase flex items-center justify-center gap-2 shadow-lg shadow-amber-500/15 active:scale-95 transition">
+            View Plans
+          </button>
+          <button onclick="openAdsPage()" class="bg-white/5 hover:bg-white/10 border border-white/10 text-amber-300 font-bold py-3 px-4 rounded-xl text-xs tracking-wider uppercase flex items-center justify-center gap-2 active:scale-95 transition">
+            Claim Daily Income
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Earnings Box -->
+      <div class="grid grid-cols-2 gap-3.5">
+        <div class="bg-[#10131b] border border-white/5 rounded-2xl p-4 flex flex-col justify-between h-[120px]">
+          <span class="text-xs text-slate-400 font-medium">Total Profit</span>
+          <div>
+            <p id="user-total-profit" class="text-xl font-bold text-white tracking-tight">$0.00</p>
+            <p class="text-[11px] text-emerald-400 font-medium mt-0.5">Automated Daily</p>
+          </div>
+        </div>
+
+        <div onclick="switchTab('network')" class="bg-[#10131b] border border-amber-500/20 rounded-2xl p-4 flex flex-col justify-between h-[120px] cursor-pointer hover:border-amber-500/50 transition">
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-slate-400 font-medium">Team Commission</span>
+            <span class="text-[10px] bg-amber-500/20 text-amber-300 font-bold px-2 py-0.5 rounded">Active</span>
+          </div>
+          <div>
+            <p id="user-commission" class="text-xl font-bold text-amber-300 tracking-tight">$0.00</p>
+            <p id="user-referrals" class="text-[11px] text-slate-400 font-medium mt-0.5">0 Members →</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Invite Banner -->
+      <div onclick="switchTab('network')" class="bg-gradient-to-r from-amber-950/40 via-slate-900 to-black border border-amber-500/30 rounded-2xl p-4 flex items-center justify-between cursor-pointer active:scale-98 transition">
+        <div class="space-y-1">
+          <span class="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Referral Bonus Structure</span>
+          <h4 class="text-sm font-bold text-white">Earn Direct 10%, 4%, 2% Commissions</h4>
+          <p class="text-[11px] text-slate-400">Share your invite link to build your multi-level network.</p>
+        </div>
+        <span class="text-xs font-bold text-amber-300 bg-amber-500/10 border border-amber-500/30 px-3 py-1.5 rounded-lg shrink-0 ml-2">Open</span>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 2: PLANS (PLAN 1 & PLAN 2 ONLY) ==================== -->
+    <div id="funds-view" class="px-6 pt-5 space-y-5 flex-1 hidden">
+      <div>
+        <p class="text-xs uppercase tracking-[0.25em] text-amber-400/90 font-bold">Invest & Earn</p>
+        <h2 class="text-2xl font-black text-white tracking-tight mt-0.5">Investment Plans</h2>
+        <p class="text-xs text-slate-400 mt-1">Select an investment tier to activate unlimited lifetime returns.</p>
+      </div>
+
+      <div class="space-y-4">
+
+        <!-- PLAN 1: $2 Price -->
+        <div class="bg-gradient-to-b from-[#181c27] to-[#10131c] rounded-3xl border-2 border-amber-500/50 p-5 shadow-2xl relative">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-[11px] font-black tracking-widest text-amber-300 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full uppercase">Plan 1</span>
+            <span class="text-xs text-emerald-400 font-bold">Validity: Lifetime</span>
+          </div>
+
+          <div class="my-3 space-y-1">
+            <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Daily Income</p>
+            <h3 class="text-3xl font-extrabold text-white tracking-tight">$0.67 <span class="text-xs font-normal text-slate-400">/ Day</span></h3>
+            <p class="text-[11px] text-amber-400 font-medium">Price: $2.00 (Rs 560 PKR)</p>
+          </div>
+
+          <div class="pt-2 border-t border-white/5 space-y-1">
+            <p class="text-xs text-slate-300 font-medium">Daily Income: <strong>$0.67</strong> daily to user</p>
+            <p class="text-xs text-emerald-400 font-medium">Total Earning: <strong>Unlimited</strong></p>
+            <p class="text-xs text-amber-400 font-medium">Validity: <strong>Lifetime</strong></p>
+          </div>
+
+          <button onclick="openDepositPage('Plan 1', 2, 0.67, this)" class="w-full mt-5 gold-gradient-btn text-black font-black py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 active:scale-95 transition flex items-center justify-center gap-2">
+            <span>Invest 2 dollar</span>
+          </button>
+        </div>
+
+        <!-- PLAN 2: $5 Price -->
+        <div class="bg-gradient-to-b from-[#181c27] to-[#10131c] rounded-3xl border-2 border-amber-500/50 p-5 shadow-2xl relative">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-[11px] font-black tracking-widest text-amber-300 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full uppercase">Plan 2</span>
+            <span class="text-xs text-emerald-400 font-bold">Validity: Lifetime</span>
+          </div>
+
+          <div class="my-3 space-y-1">
+            <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Daily Income</p>
+            <h3 class="text-3xl font-extrabold text-white tracking-tight">$1.67 <span class="text-xs font-normal text-slate-400">/ Day</span></h3>
+            <p class="text-[11px] text-amber-400 font-medium">Price: $5.00 (Rs 1,400 PKR)</p>
+          </div>
+
+          <div class="pt-2 border-t border-white/5 space-y-1">
+            <p class="text-xs text-slate-300 font-medium">Daily Income: <strong>$1.67</strong> daily to user</p>
+            <p class="text-xs text-emerald-400 font-medium">Total Earning: <strong>Unlimited</strong></p>
+            <p class="text-xs text-amber-400 font-medium">Validity: <strong>Lifetime</strong></p>
+          </div>
+
+          <button onclick="openDepositPage('Plan 2', 5, 1.67, this)" class="w-full mt-5 gold-gradient-btn text-black font-black py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 active:scale-95 transition flex items-center justify-center gap-2">
+            <span>Invest 5 dollar</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== TAB 3: NETWORK / TEAM (3 LEVELS) ==================== -->
+    <div id="network-view" class="px-6 pt-5 space-y-5 flex-1 hidden">
+      <div>
+        <p class="text-xs uppercase tracking-[0.25em] text-amber-400/90 font-bold">Referral Network</p>
+        <h2 class="text-2xl font-black text-white tracking-tight mt-0.5">Team & Earnings</h2>
+        <p class="text-xs text-slate-400 mt-1">Share your link. Sign ups require a valid inviter link.</p>
+      </div>
+
+      <!-- Referral Link Box -->
+      <div class="bg-gradient-to-r from-[#181c27] to-[#0e1017] border border-amber-500/30 rounded-3xl p-5 shadow-xl">
+        <span class="text-[11px] font-bold tracking-widest text-amber-400 uppercase">Your Exclusive Referral Link</span>
+        <div class="flex items-center gap-2 mt-2">
+          <input type="text" id="ref-input" readonly value="" class="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-slate-200 font-mono focus:outline-none">
+          <button onclick="copyRefLink(this)" id="copy-btn" class="gold-gradient-btn text-black font-extrabold px-4 py-2.5 rounded-xl text-xs uppercase tracking-wider shrink-0 transition active:scale-95 flex items-center justify-center gap-1.5">
+            <span>Copy</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 3 Level Switcher Tabs -->
+      <div class="space-y-3">
+        <div class="grid grid-cols-3 gap-2 p-1 bg-[#10131b] rounded-2xl border border-white/5">
+          <button onclick="selectLevelTab(1)" id="lvl-tab-1" class="py-2.5 rounded-xl text-xs font-bold transition bg-amber-500/20 text-amber-300 border border-amber-500/30">
+            Level 1 (10%)
+          </button>
+          <button onclick="selectLevelTab(2)" id="lvl-tab-2" class="py-2.5 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white">
+            Level 2 (4%)
+          </button>
+          <button onclick="selectLevelTab(3)" id="lvl-tab-3" class="py-2.5 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white">
+            Level 3 (2%)
+          </button>
+        </div>
+
+        <!-- Level Stats Summary -->
+        <div class="bg-[#121620] p-4 rounded-2xl border border-white/5 flex justify-between items-center text-xs">
+          <div>
+            <span class="text-slate-400">Total Members:</span>
+            <span id="lvl-member-count" class="font-bold text-white ml-1">0</span>
+          </div>
+          <div>
+            <span class="text-slate-400">Total Earned:</span>
+            <span id="lvl-earned-amount" class="font-bold text-emerald-400 ml-1">$0.00</span>
+          </div>
+        </div>
+
+        <!-- Team Members List -->
+        <div id="team-members-list" class="space-y-2">
+          <div class="text-center py-8 text-xs text-slate-500">Loading team data...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 4: WALLET (ACTIONS & FULLSCREEN ENGINE) ==================== -->
+    <div id="vault-view" class="px-6 pt-5 space-y-5 flex-1 hidden">
+      <div>
+        <p class="text-xs uppercase tracking-[0.25em] text-amber-400/90 font-bold">Earnings Center</p>
+        <h2 class="text-2xl font-black text-white tracking-tight mt-0.5">Wallet & Claims</h2>
+      </div>
+
+      <!-- Wallet Summary Card -->
+      <div class="rounded-3xl p-6 bg-gradient-to-br from-[#161a24] to-[#0d0f15] border border-amber-500/30 shadow-2xl space-y-4">
+        <div>
+          <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Claimable Daily Balance</span>
+          <h3 id="wallet-claim-rate" class="text-3xl font-extrabold text-white mt-1">$0.00</h3>
+        </div>
+
+        <button onclick="openAdsPage()" class="w-full gold-gradient-btn text-black font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition flex items-center justify-center gap-2">
+          <span>Watch Ads & Claim Income</span>
+        </button>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="grid grid-cols-2 gap-3">
+        <button onclick="openHistoryPage()" class="p-4 bg-[#10131b] border border-white/5 rounded-2xl text-left hover:border-amber-500/30 transition">
+          <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold mb-2">📜</div>
+          <p class="text-xs font-bold text-white">Deposit History</p>
+          <p class="text-[10px] text-slate-400 mt-0.5">Check request approvals</p>
         </button>
 
-        <div style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
-            <h3 style="font-size:1.05rem; color:#fff;">Active Cloud Licenses</h3>
-            <span class="status-badge status-Approved" id="wsPageTotalActiveBadge">1 Active</span>
-        </div>
-
-        <div id="activePassesListContainer"></div>
-
-        <div style="background:rgba(0, 242, 254, 0.06); border:1px dashed var(--border-glow); border-radius:14px; padding:14px; font-size:0.72rem; color:var(--text-dim); line-height:1.5; text-align:center; margin-top:10px;">
-            <i class="fa-solid fa-shield-halved" style="color:var(--neon-blue); margin-bottom:4px; display:block; font-size:1.2rem;"></i>
-            All active licenses run concurrently. Each pass has its own separate quota and reward rate. Tasks reset every 24 hours at midnight.
-        </div>
+        <button onclick="switchTab('funds')" class="p-4 bg-[#10131b] border border-white/5 rounded-2xl text-left hover:border-amber-500/30 transition">
+          <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold mb-2">💎</div>
+          <p class="text-xs font-bold text-white">Upgrade Plan</p>
+          <p class="text-[10px] text-slate-400 mt-0.5">Boost daily returns</p>
+        </button>
+      </div>
     </div>
 
-    <!-- ================= MAIN APP SHELL ================= -->
-    <div class="app-shell">
-        <header class="top-header">
-            <div class="brand-title">ROBERT <span>X</span></div>
-            <div class="user-pill" id="headerBadge">
-                <i class="fa-solid fa-user-check"></i> <span id="headerUsername">Contributor</span>
-            </div>
-        </header>
+    <!-- ==================== TAB 5: PROFILE ==================== -->
+    <div id="mine-view" class="px-6 pt-5 space-y-5 flex-1 hidden">
+      <div>
+        <p class="text-xs uppercase tracking-[0.25em] text-amber-400/90 font-bold">Personal Account</p>
+        <h2 class="text-2xl font-black text-white tracking-tight mt-0.5">Profile</h2>
+      </div>
 
-        <!-- Live Status Banner -->
-        <div class="pro-banner">
-            <div class="pro-banner-left">
-                <div class="live-dot" id="networkLiveDot"></div>
-                <small style="font-size:0.72rem; font-weight:700; color:#fff;" id="clusterStatusText">Cloud QA Cluster Online</small>
+      <!-- Profile Header Card -->
+      <div class="bg-gradient-to-br from-[#181c27] via-[#10131b] to-[#0a0c10] border border-amber-500/30 rounded-3xl p-5 shadow-2xl">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-200 p-[2px]">
+            <div class="w-full h-full bg-[#0d0f14] rounded-2xl flex items-center justify-center">
+              <span id="profile-initial" class="font-luxury font-black text-xl gold-gradient-text">U</span>
             </div>
-            <small style="font-size:0.68rem; color:var(--neon-blue); font-weight:700;">Zero-Fee Instant Payouts</small>
+          </div>
+          <div>
+            <h3 id="profile-name" class="text-lg font-bold text-white">Investor</h3>
+            <p id="profile-email" class="text-xs text-slate-400 font-mono">user@apex.com</p>
+            <p id="profile-plan-status" class="text-[10px] text-amber-400 font-semibold mt-0.5">No Active Plan</p>
+          </div>
         </div>
 
-        <!-- ================= VIEW 1: TASKS ================= -->
-        <div id="view-tasks" class="tab-view active">
-            <div class="stat-banner">
-                <div>
-                    <small>Today's Total Tasks</small>
-                    <strong id="taskQuotaDisplay">2 Tasks Left</strong>
-                </div>
-                <div>
-                    <small>Active Licenses</small>
-                    <strong id="passStatusName" style="color:var(--neon-blue);">Junior QA (Free)</strong>
-                </div>
-            </div>
+        <div class="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-white/5 text-center">
+          <div class="bg-black/40 rounded-xl p-2.5 border border-white/5">
+            <span class="text-[9px] text-slate-400 uppercase font-bold">Account ID</span>
+            <p id="profile-uid" class="text-[11px] font-mono font-bold text-slate-200 mt-0.5 truncate px-1">-</p>
+          </div>
+          <div class="bg-black/40 rounded-xl p-2.5 border border-white/5">
+            <span class="text-[9px] text-slate-400 uppercase font-bold">System Status</span>
+            <p class="text-[11px] font-bold text-emerald-400 mt-0.5">Verified</p>
+          </div>
+        </div>
+      </div>
 
-            <!-- Button to open Workspace Details -->
-            <button class="btn-workspace-info" onclick="openWorkspaceDetails()">
-                <span><i class="fa-solid fa-sliders" style="margin-right:6px;"></i> View Active Workspace Details</span>
-                <i class="fa-solid fa-chevron-right"></i>
+      <!-- Functional Actions -->
+      <div class="bg-[#10131b] border border-white/5 rounded-2xl divide-y divide-white/5 overflow-hidden">
+        <div onclick="openHistoryPage()" class="p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-xs font-bold">🧾</div>
+            <span class="text-xs font-semibold text-slate-200">Deposit History</span>
+          </div>
+          <span class="text-xs text-slate-500">→</span>
+        </div>
+
+        <div onclick="openAdsPage()" class="p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-xs font-bold">📺</div>
+            <span class="text-xs font-semibold text-slate-200">Daily Tasks / Ads Portal</span>
+          </div>
+          <span class="text-xs text-slate-500">→</span>
+        </div>
+
+        <div onclick="switchTab('network')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xs font-bold">👥</div>
+            <span class="text-xs font-semibold text-slate-200">My Referral Network</span>
+          </div>
+          <span class="text-xs text-slate-500">→</span>
+        </div>
+      </div>
+
+      <button onclick="logoutUser(this)" class="w-full py-3.5 bg-red-500/10 border border-red-500/20 text-red-400 rounded-2xl text-xs font-bold uppercase tracking-wider hover:bg-red-500/20 transition active:scale-95 flex items-center justify-center gap-2">
+        <span>Logout Account</span>
+      </button>
+    </div>
+
+    <!-- ==================== BOTTOM NAVIGATION (5 TABS) ==================== -->
+    <nav class="fixed bottom-0 w-full max-w-md bg-[#0a0c10]/95 backdrop-blur-md border-t border-white/5 py-3 px-3 flex justify-between items-center z-40">
+      
+      <!-- Home -->
+      <button id="nav-home" onclick="switchTab('home')" class="flex flex-col items-center gap-1 text-amber-400 transition flex-1">
+        <svg class="w-5 h-5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6"/></svg>
+        <span class="text-[9px] font-bold tracking-wider uppercase">Home</span>
+      </button>
+
+      <!-- Plans -->
+      <button id="nav-funds" onclick="switchTab('funds')" class="flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition flex-1">
+        <svg class="w-5 h-5 stroke-[1.8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/></svg>
+        <span class="text-[9px] font-medium tracking-wider uppercase">Plans</span>
+      </button>
+
+      <!-- Team -->
+      <button id="nav-network" onclick="switchTab('network')" class="flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition flex-1">
+        <svg class="w-5 h-5 stroke-[1.8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg>
+        <span class="text-[9px] font-medium tracking-wider uppercase">Team</span>
+      </button>
+
+      <!-- Wallet -->
+      <button id="nav-vault" onclick="switchTab('vault')" class="flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition flex-1">
+        <svg class="w-5 h-5 stroke-[1.8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+        <span class="text-[9px] font-medium tracking-wider uppercase">Wallet</span>
+      </button>
+
+      <!-- Profile -->
+      <button id="nav-mine" onclick="switchTab('mine')" class="flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition flex-1">
+        <svg class="w-5 h-5 stroke-[1.8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+        <span class="text-[9px] font-medium tracking-wider uppercase">Profile</span>
+      </button>
+
+    </nav>
+  </div>
+
+  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+  <script>
+    // 1. Firebase Configuration
+    const firebaseConfig = {
+  apiKey: "AIzaSyAyFp_NHogS2ExRXLD2812HNL-pj8dz6BU",
+  authDomain: "nexus-c0dac.firebaseapp.com",
+  databaseURL: "https://nexus-c0dac-default-rtdb.firebaseio.com",
+  projectId: "nexus-c0dac",
+  storageBucket: "nexus-c0dac.firebasestorage.app",
+  messagingSenderId: "85480294601",
+  appId: "1:85480294601:web:fc3fd82ca6d79d0f76a518"
+};
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+
+    // App State
+    let currentUser = null;
+    let currentUserData = null;
+    let isSignUp = false;
+    let urlReferrerUid = null;
+    let inviterData = null;
+    let selectedLevel = 1;
+    let activeDepositPlan = null;
+    let userListenerUnsub = null;
+    let depositsListenerUnsub = null;
+
+    // Helper: Button Loading state
+    function setBtnLoading(btn, isLoading, defaultText = "Submit") {
+      if (!btn) return;
+      if (isLoading) {
+        btn.disabled = true;
+        btn.setAttribute('data-original-text', btn.innerHTML);
+        btn.innerHTML = `
+          <svg class="animate-spin h-4 w-4 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+          </svg>
+          <span>Please wait...</span>
+        `;
+      } else {
+        btn.disabled = false;
+        const orig = btn.getAttribute('data-original-text');
+        btn.innerHTML = orig || defaultText;
+      }
+    }
+
+    // 2. Initialize App and check Referral Link
+    window.addEventListener('DOMContentLoaded', async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      urlReferrerUid = urlParams.get('ref');
+
+      if (urlReferrerUid) {
+        // Referral link detected: Auto-switch to Sign Up
+        try {
+          const snap = await db.ref('users/' + urlReferrerUid).once('value');
+          if (snap.exists()) {
+            inviterData = snap.val();
+            // Automatically switch to signup view
+            isSignUp = true;
+            renderAuthUI();
+          } else {
+            showRefWarning("Invalid referral link. An active referrer link is required.");
+          }
+        } catch (e) {
+          console.error("Ref verify error:", e);
+        }
+      }
+    });
+
+    // 3. Auth State Observer
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        currentUser = user;
+        document.getElementById('auth-modal').classList.add('hidden');
+        document.getElementById('app-container').classList.remove('hidden');
+        attachUserRealtime(user.uid);
+      } else {
+        currentUser = null;
+        currentUserData = null;
+        if (userListenerUnsub) userListenerUnsub.off();
+        if (depositsListenerUnsub) depositsListenerUnsub.off();
+        document.getElementById('auth-modal').classList.remove('hidden');
+        document.getElementById('app-container').classList.add('hidden');
+        renderAuthUI();
+      }
+    });
+
+    // 4. Attach Optimized Realtime Listeners
+    function attachUserRealtime(uid) {
+      userListenerUnsub = db.ref('users/' + uid);
+      userListenerUnsub.on('value', snap => {
+        const val = snap.val();
+        if (val) {
+          currentUserData = val;
+          renderAppUI(val);
+        }
+      });
+
+      // Listen for Deposit Approvals / Changes
+      depositsListenerUnsub = db.ref('deposits').orderByChild('userId').equalTo(uid);
+      depositsListenerUnsub.on('value', snap => {
+        renderDepositHistory(snap.val());
+      });
+    }
+
+    // 5. Render App Views with user data
+    function renderAppUI(data) {
+      document.getElementById('user-display-name').innerText = data.name || 'Investor';
+      document.getElementById('user-balance').innerText = `$${(Number(data.balance) || 0).toFixed(2)}`;
+      document.getElementById('user-total-profit').innerText = `$${(Number(data.totalProfit) || 0).toFixed(2)}`;
+      document.getElementById('user-commission').innerText = `$${(Number(data.commission) || 0).toFixed(2)}`;
+      document.getElementById('wallet-claim-rate').innerText = `$${(Number(data.dailyIncome) || 0).toFixed(2)} / Day`;
+      document.getElementById('ads-potential').innerText = `$${(Number(data.dailyIncome) || 0).toFixed(2)} / Day`;
+
+      const badge = document.getElementById('user-active-badge');
+      if (data.activePlan && data.activePlan !== 'None') {
+        badge.innerText = data.activePlan;
+        badge.className = "text-xs text-amber-400 font-bold bg-amber-500/10 px-2.5 py-0.5 rounded border border-amber-500/20";
+      } else {
+        badge.innerText = "No Active Plan";
+        badge.className = "text-xs text-slate-500 font-medium bg-white/5 px-2.5 py-0.5 rounded border border-white/10";
+      }
+
+      // Profile View
+      document.getElementById('profile-name').innerText = data.name || 'Investor';
+      document.getElementById('profile-initial').innerText = (data.name || 'U').charAt(0).toUpperCase();
+      document.getElementById('profile-email').innerText = data.email || '';
+      document.getElementById('profile-uid').innerText = currentUser.uid;
+      document.getElementById('profile-plan-status').innerText = data.activePlan ? `Active: ${data.activePlan} ($${data.dailyIncome}/day)` : 'No Active Plan';
+
+      // Referral Link
+      const refUrl = `${window.location.origin}${window.location.pathname}?ref=${currentUser.uid}`;
+      document.getElementById('ref-input').value = refUrl;
+
+      // Render Level & Team View
+      loadTeamLevel(selectedLevel);
+      renderAdsView();
+    }
+
+    // 6. Sign In / Sign Up Mode Switching
+    function toggleAuthMode() {
+      isSignUp = !isSignUp;
+      renderAuthUI();
+    }
+
+    function renderAuthUI() {
+      const title = document.getElementById('auth-title');
+      const subtitle = document.getElementById('auth-subtitle');
+      const nameField = document.getElementById('name-field');
+      const refField = document.getElementById('referrer-field');
+      const submitBtn = document.getElementById('auth-submit-btn');
+      const toggleBtn = document.getElementById('auth-toggle-btn');
+      const errBox = document.getElementById('auth-error');
+      errBox.classList.add('hidden');
+
+      if (isSignUp) {
+        title.innerText = "CREATE ACCOUNT";
+        subtitle.innerText = "Mandatory referral required to sign up";
+        nameField.classList.remove('hidden');
+        refField.classList.remove('hidden');
+        submitBtn.querySelector('span').innerText = "Sign Up";
+        toggleBtn.innerText = "Already have an account? Sign In";
+
+        if (inviterData) {
+          document.getElementById('auth-inviter').value = `${inviterData.name} (${inviterData.email})`;
+        } else {
+          document.getElementById('auth-inviter').value = "No Inviter - Referral Link Required";
+          showRefWarning("You cannot sign up without an invite link from an existing member.");
+        }
+      } else {
+        title.innerText = "APEX CAPITAL";
+        subtitle.innerText = "Sign in to access your investment portal";
+        nameField.classList.add('hidden');
+        refField.classList.add('hidden');
+        submitBtn.querySelector('span').innerText = "Sign In";
+        toggleBtn.innerText = "Don't have an account? Sign Up";
+        hideRefWarning();
+      }
+    }
+
+    function showRefWarning(msg) {
+      const box = document.getElementById('ref-warning');
+      box.innerText = msg;
+      box.classList.remove('hidden');
+    }
+    function hideRefWarning() {
+      document.getElementById('ref-warning').classList.add('hidden');
+    }
+
+    // 7. Auth Handling (Strict Referral Check)
+    async function handleAuth(event) {
+      event.preventDefault();
+      const submitBtn = document.getElementById('auth-submit-btn');
+      const errBox = document.getElementById('auth-error');
+      errBox.classList.add('hidden');
+
+      const email = document.getElementById('auth-email').value.trim();
+      const password = document.getElementById('auth-password').value;
+      const name = document.getElementById('auth-name').value.trim();
+
+      if (isSignUp) {
+        // Enforce Referral link requirement
+        if (!urlReferrerUid || !inviterData) {
+          errBox.innerText = "Registration blocked: You must use an invite link from a member to create an account.";
+          errBox.classList.remove('hidden');
+          return;
+        }
+      }
+
+      setBtnLoading(submitBtn, true);
+
+      try {
+        if (isSignUp) {
+          const cred = await auth.createUserWithEmailAndPassword(email, password);
+          const user = cred.user;
+          await user.updateProfile({ displayName: name });
+
+          // Determine L2 and L3 uplines from inviter
+          const uplineL1 = urlReferrerUid;
+          const uplineL2 = inviterData.referrerL1 || null;
+          const uplineL3 = inviterData.referrerL2 || null;
+
+          const newUserData = {
+            name: name,
+            email: email,
+            balance: 0.00,
+            totalProfit: 0.00,
+            commission: 0.00,
+            activePlan: 'None',
+            dailyIncome: 0.00,
+            lastClaimTimestamp: 0,
+            referrerL1: uplineL1,
+            referrerL2: uplineL2,
+            referrerL3: uplineL3,
+            joinedAt: new Date().toISOString()
+          };
+
+          // Save User Node
+          await db.ref('users/' + user.uid).set(newUserData);
+
+          // Map user to inviter's referral lists
+          const memberRecord = {
+            uid: user.uid,
+            name: name,
+            email: email,
+            activePlan: 'None',
+            joinedAt: new Date().toISOString(),
+            earnedFromMember: 0.00
+          };
+
+          const updates = {};
+          if (uplineL1) updates[`team/${uplineL1}/level1/${user.uid}`] = memberRecord;
+          if (uplineL2) updates[`team/${uplineL2}/level2/${user.uid}`] = memberRecord;
+          if (uplineL3) updates[`team/${uplineL3}/level3/${user.uid}`] = memberRecord;
+
+          await db.ref().update(updates);
+
+        } else {
+          await auth.signInWithEmailAndPassword(email, password);
+        }
+      } catch (err) {
+        errBox.innerText = err.message;
+        errBox.classList.remove('hidden');
+      } finally {
+        setBtnLoading(submitBtn, false);
+      }
+    }
+
+    function logoutUser(btn) {
+      setBtnLoading(btn, true);
+      auth.signOut().then(() => {
+        setBtnLoading(btn, false);
+      });
+    }
+
+    // 8. 3-Level Team Switcher & Display
+    function selectLevelTab(lvl) {
+      selectedLevel = lvl;
+      for (let i = 1; i <= 3; i++) {
+        const btn = document.getElementById(`lvl-tab-i`.replace('i', i));
+        if (i === lvl) {
+          btn.className = "py-2.5 rounded-xl text-xs font-bold transition bg-amber-500/20 text-amber-300 border border-amber-500/30";
+        } else {
+          btn.className = "py-2.5 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white";
+        }
+      }
+      loadTeamLevel(lvl);
+    }
+
+    async function loadTeamLevel(lvl) {
+      if (!currentUser) return;
+      const listContainer = document.getElementById('team-members-list');
+      const countEl = document.getElementById('lvl-member-count');
+      const earnedEl = document.getElementById('lvl-earned-amount');
+
+      listContainer.innerHTML = `<div class="text-center py-6 text-xs text-slate-500">Loading Level ${lvl} members...</div>`;
+
+      try {
+        const snap = await db.ref(`team/${currentUser.uid}/level${lvl}`).once('value');
+        const members = snap.val();
+
+        if (!members) {
+          countEl.innerText = "0";
+          earnedEl.innerText = "$0.00";
+          listContainer.innerHTML = `<div class="text-center py-8 text-xs text-slate-500">No members found in Level ${lvl}.</div>`;
+          return;
+        }
+
+        const memberKeys = Object.keys(members);
+        countEl.innerText = memberKeys.length;
+
+        let totalEarned = 0;
+        let html = '';
+
+        for (const k of memberKeys) {
+          const m = members[k];
+          totalEarned += Number(m.earnedFromMember) || 0;
+          html += `
+            <div class="bg-[#10131b] border border-white/5 rounded-2xl p-3.5 flex items-center justify-between">
+              <div class="space-y-0.5">
+                <p class="text-xs font-bold text-white">${m.name}</p>
+                <p class="text-[10px] text-slate-400 font-mono">${m.email}</p>
+                <span class="inline-block text-[9px] px-2 py-0.5 rounded font-semibold ${m.activePlan !== 'None' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-white/5 text-slate-400'}">
+                  Plan: ${m.activePlan || 'None'}
+                </span>
+              </div>
+              <div class="text-right">
+                <span class="text-[10px] text-slate-400 block">Commission</span>
+                <span class="text-xs font-black text-amber-400">+$${(Number(m.earnedFromMember) || 0).toFixed(2)}</span>
+              </div>
+            </div>
+          `;
+        }
+
+        earnedEl.innerText = `$${totalEarned.toFixed(2)}`;
+        listContainer.innerHTML = html;
+        document.getElementById('user-referrals').innerText = `${memberKeys.length} Level 1 Members →`;
+
+      } catch (e) {
+        listContainer.innerHTML = `<div class="text-center py-6 text-xs text-red-400">Error loading team data.</div>`;
+      }
+    }
+
+    // 9. Deposit Flow & Full Screen
+    function openDepositPage(planName, usdPrice, dailyIncome, btn) {
+      setBtnLoading(btn, true);
+      setTimeout(() => {
+        setBtnLoading(btn, false);
+        activeDepositPlan = {
+          name: planName,
+          usd: usdPrice,
+          pkr: usdPrice * 280,
+          daily: dailyIncome
+        };
+
+        document.getElementById('dep-plan-name').innerText = activeDepositPlan.name;
+        document.getElementById('dep-plan-usd').innerText = `$${activeDepositPlan.usd}.00`;
+        document.getElementById('dep-plan-pkr').innerText = `Rs ${activeDepositPlan.pkr.toLocaleString()} PKR`;
+        document.getElementById('deposit-page').classList.remove('hidden');
+        document.getElementById('deposit-page').classList.add('flex');
+      }, 300);
+    }
+
+    function closeDepositPage() {
+      document.getElementById('deposit-page').classList.add('hidden');
+      document.getElementById('deposit-page').classList.remove('flex');
+      document.getElementById('payment-form').reset();
+    }
+
+    async function submitDeposit(e) {
+      e.preventDefault();
+      const submitBtn = document.getElementById('dep-submit-btn');
+      const senderAcc = document.getElementById('dep-sender-account').value.trim();
+      const trxId = document.getElementById('dep-trx-id').value.trim();
+
+      if (!activeDepositPlan || !currentUser) return;
+
+      setBtnLoading(submitBtn, true);
+
+      try {
+        const depositRef = db.ref('deposits').push();
+        const depositData = {
+          id: depositRef.key,
+          userId: currentUser.uid,
+          userName: currentUserData.name,
+          userEmail: currentUser.email,
+          planName: activeDepositPlan.name,
+          usdAmount: activeDepositPlan.usd,
+          pkrAmount: activeDepositPlan.pkr,
+          dailyIncome: activeDepositPlan.daily,
+          senderAccount: senderAcc,
+          trxId: trxId,
+          status: "Pending", // Admin can update this to "Approved" or "Rejected"
+          createdAt: new Date().toISOString()
+        };
+
+        await depositRef.set(depositData);
+        alert("Deposit request submitted successfully! Admin will verify and activate your plan.");
+        closeDepositPage();
+        openHistoryPage();
+      } catch (err) {
+        alert("Failed to submit deposit: " + err.message);
+      } finally {
+        setBtnLoading(submitBtn, false);
+      }
+    }
+
+    // 10. Deposit History View (Full Screen)
+    function openHistoryPage() {
+      document.getElementById('history-page').classList.remove('hidden');
+      document.getElementById('history-page').classList.add('flex');
+    }
+
+    function closeHistoryPage() {
+      document.getElementById('history-page').classList.add('hidden');
+      document.getElementById('history-page').classList.remove('flex');
+    }
+
+    function renderDepositHistory(records) {
+      const container = document.getElementById('history-list');
+      if (!records) {
+        container.innerHTML = `<div class="text-center py-12 text-slate-500 text-xs">No deposit requests found.</div>`;
+        return;
+      }
+
+      const list = Object.values(records).reverse();
+      let html = '';
+
+      list.forEach(item => {
+        let statusBadge = '';
+        if (item.status === 'Approved') {
+          statusBadge = `<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2 py-0.5 rounded">Approved</span>`;
+        } else if (item.status === 'Rejected') {
+          statusBadge = `<span class="bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] font-bold px-2 py-0.5 rounded">Rejected</span>`;
+        } else {
+          statusBadge = `<span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold px-2 py-0.5 rounded">Pending Approval</span>`;
+        }
+
+        html += `
+          <div class="bg-[#121620] border border-white/5 rounded-2xl p-4 space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-white">${item.planName}</span>
+              ${statusBadge}
+            </div>
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-slate-400">Amount</span>
+              <span class="font-bold text-amber-300">$${item.usdAmount} (Rs ${item.pkrAmount})</span>
+            </div>
+            <div class="flex justify-between items-center text-[11px] text-slate-400 border-t border-white/5 pt-2">
+              <span>Trx ID: <strong class="text-slate-200 font-mono">${item.trxId}</strong></span>
+              <span>${new Date(item.createdAt).toLocaleDateString()}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    // 11. Daily Ads & 24H Claim Engine (Full Screen)
+    function openAdsPage() {
+      document.getElementById('ads-page').classList.remove('hidden');
+      document.getElementById('ads-page').classList.add('flex');
+      renderAdsView();
+    }
+
+    function closeAdsPage() {
+      document.getElementById('ads-page').classList.add('hidden');
+      document.getElementById('ads-page').classList.remove('flex');
+    }
+
+    function renderAdsView() {
+      const container = document.getElementById('ads-container');
+      if (!currentUserData || !currentUserData.activePlan || currentUserData.activePlan === 'None') {
+        container.innerHTML = `
+          <div class="bg-[#10131b] border border-white/5 rounded-2xl p-6 text-center space-y-3">
+            <p class="text-xs text-slate-400">You don't have an active investment plan yet.</p>
+            <button onclick="closeAdsPage(); switchTab('funds')" class="gold-gradient-btn text-black font-extrabold px-4 py-2.5 rounded-xl text-xs uppercase">
+              Invest In A Plan
             </button>
+          </div>
+        `;
+        return;
+      }
 
-            <!-- Promo Voucher -->
-            <div style="background:var(--card-grad); border:1px dashed var(--border-glow); border-radius:14px; padding:12px; margin-bottom:14px;">
-                <small style="color:var(--neon-blue); font-weight:700;"><i class="fa-solid fa-ticket"></i> Community Voucher</small>
-                <div style="display:flex; gap:8px; margin-top:6px;">
-                    <input type="text" id="promoCodeInput" placeholder="ENTER CODE" style="flex:1; background:var(--bg-base); border:1px solid var(--border); border-radius:8px; padding:9px 12px; color:#fff; font-size:0.8rem; text-transform:uppercase; outline:none;">
-                    <button onclick="applyPromoCode()" style="background:var(--neon-grad); color:#000; border:none; padding:9px 14px; border-radius:8px; font-weight:800; font-size:0.75rem; cursor:pointer;">Redeem</button>
-                </div>
-            </div>
+      // 24 Hour Check (86400000 ms)
+      const now = Date.now();
+      const lastClaim = currentUserData.lastClaimTimestamp || 0;
+      const hoursRemaining = Math.max(0, (lastClaim + 24 * 60 * 60 * 1000 - now) / (1000 * 60 * 60));
 
-            <div class="section-header">
-                Evaluation Protocols
-                <span id="ratePerTaskNotice" style="font-size:0.72rem; color:var(--neon-blue); font-weight:600;">Daily Cloud Allocations</span>
-            </div>
-
-            <div id="tasksContainer"></div>
-            <div id="loadMoreContainer"></div>
-        </div>
-
-        <!-- ================= VIEW 2: PASSES ================= -->
-        <div id="view-passes" class="tab-view">
-            <div class="section-header">
-                Workspace Passes
-            </div>
-
-            <!-- Free Default Tier Card -->
-            <div class="pass-card">
-                <span class="pass-badge">Active Free</span>
-                <h4 style="font-size:1.05rem;">Junior QA (Standard)</h4>
-                <div class="pass-price">Free Tier</div>
-                <ul class="pass-specs">
-                    <li><i class="fa-solid fa-check"></i> 2 Daily AI Telemetry Evaluations</li>
-                    <li><i class="fa-solid fa-check"></i> Rs 1.00 per task allocation</li>
-                </ul>
-            </div>
-
-            <!-- Pass 1: Associate -->
-            <div class="pass-card">
-                <span class="pass-badge">Tier 1</span>
-                <h4 style="font-size:1.05rem;">Associate QA Pass</h4>
-                <div class="pass-price">Rs 350 <small style="font-size:0.7rem; color:var(--text-dim);">License Key</small></div>
-                <ul class="pass-specs">
-                    <li><i class="fa-solid fa-check"></i> 6 Daily Evaluation Tasks</li>
-                    <li><i class="fa-solid fa-check"></i> Rs 3.00 Reward Per Task</li>
-                    <li><i class="fa-solid fa-check"></i> 10% Level 1 Qualified</li>
-                </ul>
-                <button class="btn-pin-only" onclick="openPinModal('Associate QA Pass')">
-                    <i class="fa-solid fa-key"></i> Activate with PIN
-                </button>
-            </div>
-
-            <!-- Pass 2: Senior (Rs 3.54) -->
-            <div class="pass-card">
-                <span class="pass-badge">Tier 2</span>
-                <h4 style="font-size:1.05rem;">Senior Auditor Pass</h4>
-                <div class="pass-price">Rs 850 <small style="font-size:0.7rem; color:var(--text-dim);">License Key</small></div>
-                <ul class="pass-specs">
-                    <li><i class="fa-solid fa-check"></i> 12 Daily Evaluation Tasks</li>
-                    <li><i class="fa-solid fa-check"></i> Rs 3.54 Reward Per Task</li>
-                    <li><i class="fa-solid fa-check"></i> Priority Settlement Clearance</li>
-                </ul>
-                <button class="btn-pin-only" onclick="openPinModal('Senior Auditor Pass')">
-                    <i class="fa-solid fa-key"></i> Activate with PIN
-                </button>
-            </div>
-
-            <!-- Pass 3: Lead (Rs 5.14) -->
-            <div class="pass-card">
-                <span class="pass-badge">Tier 3</span>
-                <h4 style="font-size:1.05rem;">Lead Specialist Pass</h4>
-                <div class="pass-price">Rs 1,850 <small style="font-size:0.7rem; color:var(--text-dim);">License Key</small></div>
-                <ul class="pass-specs">
-                    <li><i class="fa-solid fa-check"></i> 18 Daily Evaluation Tasks</li>
-                    <li><i class="fa-solid fa-check"></i> Rs 5.14 Reward Per Task</li>
-                    <li><i class="fa-solid fa-check"></i> 3-Tier Network Qualified (10%, 3%, 1%)</li>
-                </ul>
-                <button class="btn-pin-only" onclick="openPinModal('Lead Specialist Pass')">
-                    <i class="fa-solid fa-key"></i> Activate with PIN
-                </button>
-            </div>
-
-            <!-- Pass 4: Enterprise (Rs 7.60) -->
-            <div class="pass-card">
-                <span class="pass-badge">Tier 4</span>
-                <h4 style="font-size:1.05rem;">Enterprise Analyst Pass</h4>
-                <div class="pass-price">Rs 3,800 <small style="font-size:0.7rem; color:var(--text-dim);">License Key</small></div>
-                <ul class="pass-specs">
-                    <li><i class="fa-solid fa-check"></i> 25 Daily Evaluation Tasks</li>
-                    <li><i class="fa-solid fa-check"></i> Rs 7.60 Reward Per Task</li>
-                    <li><i class="fa-solid fa-check"></i> Dedicated Support Routing</li>
-                </ul>
-                <button class="btn-pin-only" onclick="openPinModal('Enterprise Analyst Pass')">
-                    <i class="fa-solid fa-key"></i> Activate with PIN
-                </button>
-            </div>
-
-            <!-- Pass 5: Principal (Rs 10.71) -->
-            <div class="pass-card">
-                <span class="pass-badge">Tier 5</span>
-                <h4 style="font-size:1.05rem;">Principal Architect Pass</h4>
-                <div class="pass-price">Rs 7,500 <small style="font-size:0.7rem; color:var(--text-dim);">License Key</small></div>
-                <ul class="pass-specs">
-                    <li><i class="fa-solid fa-check"></i> 35 Daily Evaluation Tasks</li>
-                    <li><i class="fa-solid fa-check"></i> Rs 10.71 Reward Per Task</li>
-                    <li><i class="fa-solid fa-check"></i> Maximum Evaluation Bandwidth</li>
-                </ul>
-                <button class="btn-pin-only" onclick="openPinModal('Principal Architect Pass')">
-                    <i class="fa-solid fa-key"></i> Activate with PIN
-                </button>
-            </div>
-
-            <!-- Pass 6: Apex Director (Rs 55.56) -->
-            <div class="pass-card" style="border-color:var(--border-glow);">
-                <span class="pass-badge">Apex Executive</span>
-                <h4 style="font-size:1.15rem; color:var(--neon-blue);">Apex Director Pass</h4>
-                <div class="pass-price" style="color:var(--neon-blue);">Rs 50,000 <small style="font-size:0.7rem; color:var(--text-dim);">Enterprise Key</small></div>
-                <ul class="pass-specs">
-                    <li><i class="fa-solid fa-check"></i> 45 Daily Evaluation Tasks</li>
-                    <li><i class="fa-solid fa-check"></i> Rs 55.56 Reward Per Task</li>
-                    <li><i class="fa-solid fa-check"></i> Executive Level Network Clearance</li>
-                </ul>
-                <button class="btn-pin-only" onclick="openPinModal('Apex Director Pass')">
-                    <i class="fa-solid fa-crown"></i> Activate with PIN
-                </button>
-            </div>
-        </div>
-
-        <!-- ================= VIEW 3: NETWORK / 3-LEVEL AFFILIATE ================= -->
-        <div id="view-team" class="tab-view">
-            <div class="network-stat-card">
-                <h4 style="font-size:0.9rem; margin-bottom:4px; color:#fff;">Affiliate Performance</h4>
-                <div class="net-grid">
-                    <div>
-                        <small style="font-size:0.7rem; color:var(--text-dim);">Total Network Earnings</small>
-                        <strong id="totalNetworkEarnings" style="font-size:1.3rem; color:var(--neon-blue);">Rs 0.00</strong>
-                    </div>
-                    <div>
-                        <small style="font-size:0.7rem; color:var(--text-dim);">Total Contributors</small>
-                        <strong id="totalNetworkMembers" style="font-size:1.3rem; color:#fff;">0 Members</strong>
-                    </div>
-                </div>
-                <!-- Dynamic Link Container -->
-                <div style="display:flex; gap:8px; margin-top:14px;">
-                    <input type="text" id="referralLinkField" value="Loading referral link..." readonly style="flex:1; background:var(--bg-base); border:1px solid var(--border); padding:10px 12px; border-radius:8px; color:#fff; font-size:0.8rem; outline:none;">
-                    <button onclick="copyPartnerUrl()" style="background:var(--neon-grad); color:#000; border:none; padding:10px 14px; border-radius:8px; font-weight:800; font-size:0.85rem; cursor:pointer;"><i class="fa-regular fa-copy"></i></button>
-                </div>
-            </div>
-
-            <div class="level-tabs">
-                <button class="level-tab-btn active" onclick="switchAffiliateLevel(1, this)">Level 1 (10%)</button>
-                <button class="level-tab-btn" onclick="switchAffiliateLevel(2, this)">Level 2 (3%)</button>
-                <button class="level-tab-btn" onclick="switchAffiliateLevel(3, this)">Level 3 (1%)</button>
-            </div>
-
-            <div class="section-header">
-                My Team Members
+      if (hoursRemaining > 0) {
+        const hrs = Math.floor(hoursRemaining);
+        const mins = Math.floor((hoursRemaining - hrs) * 60);
+        container.innerHTML = `
+          <div class="bg-[#10131b] border border-amber-500/20 rounded-2xl p-6 text-center space-y-2">
+            <span class="text-2xl">⏳</span>
+            <h4 class="text-sm font-bold text-white">Daily Income Already Claimed</h4>
+            <p class="text-xs text-amber-400 font-mono">Next claim available in: ${hrs}h ${mins}m</p>
+            <p class="text-[11px] text-slate-400">You can claim once every 24 hours.</p>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div class="bg-gradient-to-br from-[#161a24] to-[#0d0f15] border border-amber-500/40 rounded-3xl p-5 space-y-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">🎬</div>
+              <div>
+                <h4 class="text-xs font-bold text-white">Daily Sponsor Ad Task</h4>
+                <p class="text-[10px] text-slate-400">Complete task to credit $${currentUserData.dailyIncome}</p>
+              </div>
             </div>
             
-            <div id="tierContainer1"></div>
-            <div id="tierContainer2" style="display:none;"></div>
-            <div id="tierContainer3" style="display:none;"></div>
-        </div>
-
-        <!-- ================= VIEW 4: WALLET ================= -->
-        <div id="view-wallet" class="tab-view">
-            <div class="wallet-card">
-                <p style="font-size:0.75rem; color:#c7d2fe;">Available Compensation Balance</p>
-                <h2 id="walletBalanceVal">Rs 0.00</h2>
-                <span style="font-size:0.68rem; background:rgba(0, 242, 254, 0.15); color:var(--neon-blue); padding:3px 10px; border-radius:12px; border:1px solid var(--border-glow);">Realtime Cloud Ledger</span>
+            <div class="p-3 bg-black/40 rounded-xl border border-white/5 text-center">
+              <span class="text-xs font-semibold text-emerald-400">Reward: +$${currentUserData.dailyIncome} USD</span>
             </div>
 
-            <div class="section-header">Payout Channels <span id="minLimitNotice" style="font-size:0.72rem; color:var(--neon-blue);">Min: Rs 50</span></div>
-
-            <div class="channel-picker">
-                <div class="channel-opt selected" id="opt-JazzCash" onclick="pickChannel('JazzCash')">
-                    <img src="https://i.ibb.co/LX2pqZBV/Screenshot-20260816-074727-3.jpg" alt="JazzCash">
-                    <span>JazzCash</span>
-                </div>
-                <div class="channel-opt" id="opt-Easypaisa" onclick="pickChannel('Easypaisa')">
-                    <img src="https://i.ibb.co/cXv3yLJd/8031c6abd95fcee33da6ecb67264eaa2.jpg" alt="Easypaisa">
-                    <span>Easypaisa</span>
-                </div>
-                <div class="channel-opt" id="opt-Bank" onclick="pickChannel('Bank Transfer')">
-                    <img src="https://i.ibb.co/4nVJdkQG/Screenshot-20260816-075035-1.jpg" alt="Bank Transfer">
-                    <span>Bank Transfer</span>
-                </div>
-            </div>
-
-            <div style="background:var(--card-grad); border:1px solid var(--border); border-radius:14px; padding:16px;">
-                <div class="auth-input-group" id="bankNameFieldGroup" style="display:none;">
-                    <label>Bank Name (e.g. Meezan Bank, HBL)</label>
-                    <input type="text" id="destBankName" placeholder="Enter full Bank Name">
-                </div>
-                <div class="auth-input-group">
-                    <label id="accountFieldLabel">JazzCash Mobile Account Number / Title</label>
-                    <input type="text" id="destAccountNumber" placeholder="03XXXXXXXXX">
-                </div>
-                <div class="auth-input-group">
-                    <label>Withdrawal Amount (Rs)</label>
-                    <input type="number" id="destAmount" placeholder="Enter amount">
-                </div>
-                <button class="btn-auth" id="btnWithdrawSubmit" onclick="submitWithdrawal()">
-                    Submit Settlement Request
-                </button>
-            </div>
-
-            <div class="section-header">Recent Settlements <span style="font-size:0.7rem; color:var(--text-dim);">(Last 10 Records)</span></div>
-            <div id="userWithdrawalHistory">
-                <div style="text-align:center; padding:16px; font-size:0.75rem; color:var(--text-dim);">No transactions logged yet.</div>
-            </div>
-        </div>
-
-        <!-- ================= VIEW 5: SETTINGS ================= -->
-        <div id="view-settings" class="tab-view">
-            <div class="section-header">Account Profile</div>
-            <div style="background:var(--card-grad); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:14px;">
-                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); font-size:0.82rem;">
-                    <span>Username</span>
-                    <strong id="settingsUsernameDisplay" style="color:var(--neon-blue);">contributor</strong>
-                </div>
-                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); font-size:0.82rem;">
-                    <span>Email</span>
-                    <span id="settingsUserEmail" style="font-weight:600;">Loading...</span>
-                </div>
-                <div style="display:flex; justify-content:space-between; padding:10px 0; font-size:0.82rem;">
-                    <span>Primary License</span>
-                    <span style="color:var(--neon-blue); font-weight:700;" id="settingsLevelIndicator">Junior QA</span>
-                </div>
-            </div>
-
-            <div class="section-header">Official Support Channel</div>
-            <a href="https://whatsapp.com/channel/0029VbDr6OfCnA7paJ5BoJ3U" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:10px; background:#25d366; color:#000; font-weight:800; font-size:0.88rem; padding:14px; border-radius:12px; text-decoration:none; margin:14px 0;">
-                <i class="fa-brands fa-whatsapp" style="font-size:1.3rem;"></i> Join Official WhatsApp Channel
-            </a>
-
-            <button onclick="handleLogout()" style="width:100%; padding:12px; background:rgba(239, 68, 68, 0.12); border:1px solid var(--danger); color:var(--danger); border-radius:10px; font-weight:700; font-size:0.85rem; cursor:pointer;">
-                Sign Out of Workspace
+            <button onclick="claimDailyIncome(this)" class="w-full gold-gradient-btn text-black font-black py-3 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition flex items-center justify-center gap-2">
+              <span>Watch Ad & Claim Now</span>
             </button>
-        </div>
-    </div>
+          </div>
+        `;
+      }
+    }
 
-    <!-- PIN Modal -->
-    <div class="modal-overlay" id="pinModal">
-        <div class="modal-content">
-            <h3 style="font-size:1.1rem; margin-bottom:4px; color:#fff;"><i class="fa-solid fa-key" style="color:var(--neon-blue);"></i> Activate License PIN</h3>
-            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:12px;" id="pinModalPassTitle">Enter your 8-digit key</p>
-            <input type="text" id="licensePinInput" placeholder="RX-XXXX-XXXX" style="width:100%; padding:12px; background:var(--bg-base); border:1px solid var(--border); border-radius:10px; color:#fff; font-size:1.1rem; text-align:center; letter-spacing:2px; text-transform:uppercase; outline:none; margin-bottom:12px;">
-            <button class="btn-auth" id="btnApplyPin" onclick="verifyAndApplyPin()">Activate License</button>
-            <button onclick="closePinModal()" style="margin-top:8px; width:100%; padding:9px; background:transparent; border:1px solid var(--border); color:var(--text-dim); border-radius:10px; cursor:pointer;">Cancel</button>
-        </div>
-    </div>
+    async function claimDailyIncome(btn) {
+      if (!currentUser || !currentUserData) return;
+      setBtnLoading(btn, true);
 
-    <!-- Task Audit Modal -->
-    <div class="modal-overlay" id="taskModal">
-        <div class="modal-content">
-            <div style="font-size:2rem; color:var(--neon-blue); margin-bottom:8px;"><i class="fa-solid fa-circle-check"></i></div>
-            <h3 id="modalTaskTitle" style="font-size:1rem; margin-bottom:4px; color:#fff;">Audit Verification Complete</h3>
-            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:12px;" id="modalTaskSub">Telemetry response has been validated successfully.</p>
-            <div style="background:rgba(0,242,254,0.08); border:1px solid var(--border-glow); border-radius:10px; padding:10px; margin-bottom:14px;">
-                <span style="font-size:0.72rem; color:var(--text-dim);">Allocated Compensation:</span>
-                <strong style="display:block; font-size:1.15rem; color:var(--neon-blue);" id="modalRewardText">+Rs 1.00</strong>
-            </div>
-            <button class="btn-auth" onclick="claimTask()">Done & Collect Allocation</button>
-            <button onclick="closeTaskModal()" style="margin-top:8px; width:100%; padding:9px; background:transparent; border:1px solid var(--border); color:var(--text-dim); border-radius:10px; cursor:pointer;">Dismiss</button>
-        </div>
-    </div>
+      try {
+        const dailyRate = Number(currentUserData.dailyIncome) || 0;
+        const currentBal = Number(currentUserData.balance) || 0;
+        const currentProfit = Number(currentUserData.totalProfit) || 0;
 
-    <!-- Fixed Bottom Bar -->
-    <nav class="bottom-nav">
-        <button class="nav-btn active" onclick="switchNav('tasks', this)"><i class="fa-solid fa-list-check"></i><span>Tasks</span></button>
-        <button class="nav-btn" onclick="switchNav('passes', this)"><i class="fa-solid fa-cubes"></i><span>Passes</span></button>
-        <button class="nav-btn" onclick="switchNav('team', this)"><i class="fa-solid fa-network-wired"></i><span>Network</span></button>
-        <button class="nav-btn" onclick="switchNav('wallet', this)"><i class="fa-solid fa-wallet"></i><span>Wallet</span></button>
-        <button class="nav-btn" onclick="switchNav('settings', this)"><i class="fa-solid fa-gear"></i><span>Settings</span></button>
-    </nav>
-
-    <div class="toast-popup" id="toast">Alert</div>
-
-    <script>
-        // ================= 1. FIREBASE CONFIGURATION =================
-        const firebaseConfig = {
-            apiKey: "AIzaSyAnsEFuQromVRui078KYLbApxkwKte7dnw",
-            authDomain: "robert-728a0.firebaseapp.com",
-            databaseURL: "https://robert-728a0-default-rtdb.firebaseio.com",
-            projectId: "robert-728a0",
-            storageBucket: "robert-728a0.firebasestorage.app",
-            messagingSenderId: "1080403430649",
-            appId: "1:1080403430649:web:01090d5f6610caf3472628"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.database();
-
-        let currentUser = null;
-        let userData = {
-            username: "Contributor",
-            balance: 0.00,
-            tierName: "Junior QA (Free)",
-            referralCode: "",
-            networkEarnings: 0.00,
-            activePasses: {}
-        };
-
-        let activeTaskContext = null; // Holds currently auditing task details
-        let selectedPassForModal = null;
-        let authMode = 'login';
-        let chosenChannel = 'JazzCash';
-        let visibleTaskLimit = 8;
-        let networkDataLoaded = false;
-        let withdrawalsLoaded = false;
-
-        // ================= 2. NETWORK CONNECTION LISTENER =================
-        function updateNetworkDotStatus(isOnline) {
-            const dot = document.getElementById('networkLiveDot');
-            const text = document.getElementById('clusterStatusText');
-            if (dot) {
-                if (isOnline) {
-                    dot.classList.remove('offline');
-                    if (text) text.innerText = 'Cloud QA Cluster Online';
-                } else {
-                    dot.classList.add('offline');
-                    if (text) text.innerText = 'Cluster Offline (Reconnecting...)';
-                }
-            }
-        }
-
-        window.addEventListener('online', () => updateNetworkDotStatus(true));
-        window.addEventListener('offline', () => updateNetworkDotStatus(false));
-        updateNetworkDotStatus(navigator.onLine);
-
-        // ================= 3. CLIENT FINGERPRINT / IP LIMIT =================
-        async function getSanitizedClientIp() {
-            try {
-                const res = await fetch('https://api.ipify.org?format=json');
-                const data = await res.json();
-                return data.ip ? data.ip.replace(/[.:]/g, '_') : null;
-            } catch (e) {
-                let token = localStorage.getItem('rx_dev_token');
-                if (!token) {
-                    token = 'dev_' + Math.random().toString(36).substring(2, 10);
-                    localStorage.setItem('rx_dev_token', token);
-                }
-                return token;
-            }
-        }
-
-        function setBtnLoading(btn, isLoading, defaultText) {
-            if (!btn) return;
-            if (isLoading) {
-                btn.disabled = true;
-                btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Please wait...`;
-            } else {
-                btn.disabled = false;
-                btn.innerHTML = `<span>${defaultText}</span>`;
-            }
-        }
-
-        // ================= 4. AUTH & USER DATA FETCH WITH AUTO 24H RESET =================
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                currentUser = user;
-                document.getElementById('auth-overlay').style.display = 'none';
-                document.getElementById('settingsUserEmail').innerText = user.email;
-                refreshUserData();
-            } else {
-                currentUser = null;
-                networkDataLoaded = false;
-                withdrawalsLoaded = false;
-                document.getElementById('auth-overlay').style.display = 'flex';
-            }
+        await db.ref('users/' + currentUser.uid).update({
+          balance: currentBal + dailyRate,
+          totalProfit: currentProfit + dailyRate,
+          lastClaimTimestamp: Date.now()
         });
 
-        function refreshUserData(callback) {
-            if (!currentUser) return;
-            db.ref('users/' + currentUser.uid).once('value').then(snap => {
-                const val = snap.val();
-                if (val) {
-                    userData = val;
-                    // Auto reset tasks every 24 hours at midnight
-                    checkAndResetDailyQuotas();
-                    syncUI();
-                    if (callback) callback();
-                } else {
-                    initUser(currentUser);
-                }
-            }).catch(err => {
-                console.error("User fetch error:", err);
-            });
+        alert(`Congratulations! $${dailyRate} credited to your balance.`);
+        renderAdsView();
+      } catch (err) {
+        alert("Claim failed: " + err.message);
+      } finally {
+        setBtnLoading(btn, false);
+      }
+    }
+
+    // 12. Helper Utilities
+    function copyText(str, btn) {
+      navigator.clipboard.writeText(str);
+      const original = btn.innerText;
+      btn.innerText = "Copied!";
+      setTimeout(() => btn.innerText = original, 1500);
+    }
+
+    function copyRefLink(btn) {
+      const input = document.getElementById('ref-input');
+      input.select();
+      navigator.clipboard.writeText(input.value);
+      setBtnLoading(btn, true);
+      setTimeout(() => {
+        setBtnLoading(btn, false, "Copied!");
+        btn.querySelector('span').innerText = "Copied!";
+        setTimeout(() => btn.querySelector('span').innerText = "Copy", 2000);
+      }, 300);
+    }
+
+    function switchTab(target) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      ['home', 'funds', 'network', 'vault', 'mine'].forEach(tab => {
+        const view = document.getElementById(`${tab}-view`);
+        const navBtn = document.getElementById(`nav-${tab}`);
+        if (tab === target) {
+          view.classList.remove('hidden');
+          navBtn.className = 'flex flex-col items-center gap-1 text-amber-400 transition flex-1';
+          navBtn.querySelector('span').className = 'text-[9px] font-bold tracking-wider uppercase';
+        } else {
+          view.classList.add('hidden');
+          navBtn.className = 'flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition flex-1';
+          navBtn.querySelector('span').className = 'text-[9px] font-medium tracking-wider uppercase';
         }
+      });
+    }
+  </script>
 
-        // Automatic Midnight / 24-Hour Reset Function
-        function checkAndResetDailyQuotas() {
-            if (!currentUser || !userData.activePasses) return;
-            const todayStr = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
-
-            // If new day detected
-            if (userData.lastResetDate !== todayStr) {
-                const updates = {};
-                updates[`lastResetDate`] = todayStr;
-
-                Object.keys(userData.activePasses).forEach(k => {
-                    const pass = userData.activePasses[k];
-                    const fullQuota = pass.dailyQuota || 2;
-                    updates[`activePasses/${k}/remainingToday`] = fullQuota;
-                });
-
-                db.ref(`users/${currentUser.uid}`).update(updates).then(() => {
-                    userData.lastResetDate = todayStr;
-                    Object.keys(userData.activePasses).forEach(k => {
-                        userData.activePasses[k].remainingToday = userData.activePasses[k].dailyQuota;
-                    });
-                    syncUI();
-                });
-            }
-        }
-
-        async function handleAuthSubmit() {
-            const email = document.getElementById('authEmail').value.trim();
-            const pass = document.getElementById('authPassword').value.trim();
-            const username = document.getElementById('authUsername').value.trim();
-            const submitBtn = document.getElementById('authSubmitBtn');
-
-            if (!email || !pass) { showToast("Enter email and password"); return; }
-            if (authMode === 'register' && !username) { showToast("Please choose a username"); return; }
-            if (pass.length < 6) { showToast("Password must be 6+ chars"); return; }
-
-            setBtnLoading(submitBtn, true, "");
-
-            if (authMode === 'login') {
-                auth.signInWithEmailAndPassword(email, pass).catch(err => {
-                    setBtnLoading(submitBtn, false, "Log In to Workspace");
-                    showToast(err.message);
-                });
-            } else {
-                const sanitizedIp = await getSanitizedClientIp();
-                if (sanitizedIp) {
-                    const ipSnap = await db.ref(`ipRegistrations/${sanitizedIp}`).once('value');
-                    const currentCount = ipSnap.val() || 0;
-                    if (currentCount >= 2) {
-                        setBtnLoading(submitBtn, false, "Register Contributor");
-                        showToast("Account registration limit reached on this network. Please log in.");
-                        return;
-                    }
-                }
-
-                auth.createUserWithEmailAndPassword(email, pass).then(cred => {
-                    if (sanitizedIp) {
-                        db.ref(`ipRegistrations/${sanitizedIp}`).transaction(c => (c || 0) + 1);
-                    }
-                }).catch(err => {
-                    setBtnLoading(submitBtn, false, "Register Contributor");
-                    showToast(err.message);
-                });
-            }
-        }
-
-        function initUser(user) {
-            const inputRefCode = document.getElementById('authReferralInput').value.trim().toUpperCase();
-            const inputUsername = document.getElementById('authUsername').value.trim() || user.email.split('@')[0];
-            const code = 'RX-' + Math.floor(100000 + Math.random() * 900000);
-            const todayStr = new Date().toISOString().split('T')[0];
-
-            const initialPasses = {
-                "free_default": {
-                    passName: "Junior QA (Free)",
-                    dailyQuota: 2,
-                    remainingToday: 2,
-                    rewardPerTask: 1.00,
-                    activatedAt: firebase.database.ServerValue.TIMESTAMP
-                }
-            };
-
-            const initialData = {
-                username: inputUsername,
-                email: user.email,
-                balance: 0.00,
-                tierName: "Junior QA (Free)",
-                lastResetDate: todayStr,
-                referralCode: code,
-                referredBy: inputRefCode || null,
-                networkEarnings: 0.00,
-                activePasses: initialPasses,
-                createdAt: firebase.database.ServerValue.TIMESTAMP
-            };
-
-            db.ref('users/' + user.uid).set(initialData).then(() => {
-                userData = initialData;
-                if (inputRefCode) linkReferral(user.uid, inputRefCode);
-                syncUI();
-            });
-        }
-
-        function linkReferral(newUid, refCode) {
-            db.ref('users').orderByChild('referralCode').equalTo(refCode).once('value', snap => {
-                const p1 = snap.val();
-                if (!p1) return;
-                const uid1 = Object.keys(p1)[0];
-                db.ref(`referrals/${uid1}/tier1/${newUid}`).set({
-                    uid: newUid,
-                    username: userData.username || currentUser.email.split('@')[0],
-                    timestamp: firebase.database.ServerValue.TIMESTAMP
-                });
-
-                if (p1[uid1].referredBy) {
-                    db.ref('users').orderByChild('referralCode').equalTo(p1[uid1].referredBy).once('value', snap2 => {
-                        const p2 = snap2.val();
-                        if (!p2) return;
-                        const uid2 = Object.keys(p2)[0];
-                        db.ref(`referrals/${uid2}/tier2/${newUid}`).set({
-                            uid: newUid,
-                            username: userData.username || currentUser.email.split('@')[0],
-                            timestamp: firebase.database.ServerValue.TIMESTAMP
-                        });
-
-                        if (p2[uid2].referredBy) {
-                            db.ref('users').orderByChild('referralCode').equalTo(p2[uid2].referredBy).once('value', snap3 => {
-                                const p3 = snap3.val();
-                                if (!p3) return;
-                                const uid3 = Object.keys(p3)[0];
-                                db.ref(`referrals/${uid3}/tier3/${newUid}`).set({
-                                    uid: newUid,
-                                    username: userData.username || currentUser.email.split('@')[0],
-                                    timestamp: firebase.database.ServerValue.TIMESTAMP
-                                });
-                            });
-                        }
-                    });
-                }
-            });
-        }
-
-        function switchAuthMode(mode) {
-            authMode = mode;
-            document.getElementById('tabLoginBtn').classList.toggle('active', mode === 'login');
-            document.getElementById('tabRegisterBtn').classList.toggle('active', mode === 'register');
-            document.getElementById('userFieldGroup').style.display = mode === 'register' ? 'block' : 'none';
-            document.getElementById('refFieldGroup').style.display = mode === 'register' ? 'block' : 'none';
-            document.getElementById('authSubmitBtn').innerHTML = mode === 'login' ? '<span>Log In to Workspace</span>' : '<span>Register Contributor</span>';
-        }
-
-        function handleLogout() { auth.signOut(); }
-
-        // ================= VOUCHER SYSTEM =================
-        function applyPromoCode() {
-            if (!currentUser) return;
-            const input = document.getElementById('promoCodeInput');
-            const code = input.value.trim().toUpperCase();
-            if (!code) { showToast("Please enter a voucher code"); return; }
-
-            db.ref(`users/${currentUser.uid}/redeemedCodes/${code}`).once('value').then(snap => {
-                if (snap.exists()) { 
-                    showToast("You have already redeemed this voucher!"); 
-                    return; 
-                }
-
-                db.ref(`promoCodes/${code}`).once('value').then(codeSnap => {
-                    const val = codeSnap.val();
-                    
-                    if (!val) {
-                        showToast("Invalid voucher code. Check WhatsApp channel!");
-                        return;
-                    }
-
-                    const reward = typeof val === 'object' ? parseFloat(val.reward || 0) : parseFloat(val || 0);
-                    const maxUsers = (typeof val === 'object' && val.maxUsers) ? parseInt(val.maxUsers) : 1;
-                    const currentUsed = (typeof val === 'object' && val.usedCount) ? parseInt(val.usedCount) : 0;
-
-                    if (currentUsed >= maxUsers) {
-                        showToast("This voucher has reached its maximum user limit!");
-                        return;
-                    }
-
-                    db.ref(`promoCodes/${code}/usedCount`).transaction(count => {
-                        const current = count || 0;
-                        if (current >= maxUsers) {
-                            return;
-                        }
-                        return current + 1;
-                    }, (error, committed) => {
-                        if (error || !committed) {
-                            showToast("This voucher has reached its maximum user limit!");
-                            return;
-                        }
-
-                        db.ref(`users/${currentUser.uid}/balance`).transaction(b => (b || 0) + reward, (balErr, balCommitted) => {
-                            if (balCommitted) {
-                                db.ref(`users/${currentUser.uid}/redeemedCodes/${code}`).set(true);
-                                userData.balance = (userData.balance || 0) + reward;
-                                syncUI();
-                                input.value = "";
-                                showToast(`🎉 Voucher Applied: +Rs ${reward.toFixed(2)}`);
-                            }
-                        });
-                    });
-                });
-            }).catch(err => {
-                showToast("Connection error. Please try again.");
-            });
-        }
-
-        // ================= 5. MULTI-PASS TASK ENGINE (SEPARATE TASKS & REWARDS PER PASS) =================
-        function getAllActiveTasks() {
-            const taskList = [];
-            const passes = userData.activePasses || {};
-
-            Object.keys(passes).forEach(passKey => {
-                const p = passes[passKey];
-                const remaining = p.remainingToday !== undefined ? p.remainingToday : (p.dailyQuota || 0);
-                const reward = parseFloat(p.rewardPerTask) || 1.00;
-                const name = p.passName || "License";
-
-                for (let i = 1; i <= remaining; i++) {
-                    taskList.push({
-                        passKey: passKey,
-                        passName: name,
-                        protocolNum: i,
-                        reward: reward
-                    });
-                }
-            });
-
-            return taskList;
-        }
-
-        function renderTasks() {
-            const container = document.getElementById('tasksContainer');
-            const loadMoreContainer = document.getElementById('loadMoreContainer');
-            container.innerHTML = '';
-            loadMoreContainer.innerHTML = '';
-
-            const allTasks = getAllActiveTasks();
-            const totalRemaining = allTasks.length;
-
-            if (totalRemaining === 0) {
-                container.innerHTML = `<div style="text-align:center; padding:22px; background:var(--card-grad); border-radius:14px; font-size:0.8rem; color:var(--text-dim); line-height:1.6;">
-                    Allocations completed for today. All licenses will automatically reset at midnight (24h). Return tomorrow or activate a new license!
-                </div>`;
-                return;
-            }
-
-            const renderCount = Math.min(totalRemaining, visibleTaskLimit);
-
-            for (let i = 0; i < renderCount; i++) {
-                const t = allTasks[i];
-                const card = document.createElement('div');
-                card.className = 'task-card';
-                card.innerHTML = `
-                    <div>
-                        <span style="font-size:0.65rem; color:var(--text-dim); text-transform:uppercase; font-weight:700;">${t.passName}</span>
-                        <h4 style="margin-top:2px;">AI Telemetry Protocol #${t.protocolNum}</h4>
-                        <div style="font-size:0.75rem; color:var(--neon-blue); font-weight:700;">+Rs ${t.reward.toFixed(2)} | QA Unit</div>
-                    </div>
-                    <button class="btn-audit-task" onclick="openTaskModal('${t.passKey}', '${t.passName}', ${t.protocolNum}, ${t.reward})">
-                        <i class="fa-solid fa-shield-check"></i> Audit
-                    </button>
-                `;
-                container.appendChild(card);
-            }
-
-            if (totalRemaining > visibleTaskLimit) {
-                const loadBtn = document.createElement('button');
-                loadBtn.className = 'btn-load-more';
-                loadBtn.innerHTML = `<i class="fa-solid fa-angles-down"></i> Load More Tasks (${totalRemaining - visibleTaskLimit} Remaining)`;
-                loadBtn.onclick = () => {
-                    visibleTaskLimit += 8;
-                    renderTasks();
-                };
-                loadMoreContainer.appendChild(loadBtn);
-            }
-        }
-
-        function openTaskModal(passKey, passName, protocolNum, reward) {
-            activeTaskContext = { passKey, passName, protocolNum, reward };
-            document.getElementById('modalTaskTitle').innerText = `${passName} Protocol #${protocolNum} Verified ✓`;
-            document.getElementById('modalTaskSub').innerText = `Dataset telemetry has been verified.`;
-            document.getElementById('modalRewardText').innerText = `+Rs ${reward.toFixed(2)}`;
-            document.getElementById('taskModal').classList.add('active');
-        }
-
-        function claimTask() {
-            if (!currentUser || !activeTaskContext) return;
-            const { passKey, reward } = activeTaskContext;
-
-            // Only decrement the specific pass that owns this task
-            db.ref(`users/${currentUser.uid}`).transaction(user => {
-                if (user && user.activePasses && user.activePasses[passKey]) {
-                    const targetPass = user.activePasses[passKey];
-                    const currentRem = targetPass.remainingToday !== undefined ? targetPass.remainingToday : targetPass.dailyQuota;
-
-                    if (currentRem > 0) {
-                        targetPass.remainingToday = currentRem - 1;
-                        user.balance = (user.balance || 0) + reward;
-                    }
-                }
-                return user;
-            }, (error, committed, snapshot) => {
-                if (committed && snapshot.exists()) {
-                    userData = snapshot.val();
-                    syncUI();
-                    closeTaskModal();
-                    showToast(`Allocation Claimed: +Rs ${reward.toFixed(2)}`);
-                }
-            });
-        }
-
-        function closeTaskModal() {
-            document.getElementById('taskModal').classList.remove('active');
-            activeTaskContext = null;
-        }
-
-        // ================= 6. ALL ACTIVE PASSES FULL-SCREEN DETAIL PAGE =================
-        function openWorkspaceDetails() {
-            const container = document.getElementById('activePassesListContainer');
-            container.innerHTML = '';
-
-            const passesObj = userData.activePasses || {};
-            const passKeys = Object.keys(passesObj);
-
-            document.getElementById('wsPageTotalActiveBadge').innerText = `${passKeys.length} Active`;
-
-            passKeys.forEach(k => {
-                const p = passesObj[k];
-                const dailyTotal = p.dailyQuota || 2;
-                const remToday = p.remainingToday !== undefined ? p.remainingToday : dailyTotal;
-                const r = parseFloat(p.rewardPerTask) || 1.00;
-                const dailyEarn = (dailyTotal * r).toFixed(2);
-
-                const card = document.createElement('div');
-                card.className = 'ws-detail-card';
-                card.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <h4 style="font-size:1.05rem; color:#fff;">${p.passName}</h4>
-                        <span class="status-badge status-Approved">Active</span>
-                    </div>
-                    <div class="ws-stat-row">
-                        <span>Tasks Left Today</span>
-                        <strong style="color:var(--neon-blue);">${remToday} / ${dailyTotal} Tasks</strong>
-                    </div>
-                    <div class="ws-stat-row">
-                        <span>Reward per Verified Unit</span>
-                        <strong style="color:var(--success);">Rs ${r.toFixed(2)}</strong>
-                    </div>
-                    <div class="ws-stat-row">
-                        <span>Daily Earning Potential</span>
-                        <strong style="color:var(--neon-blue);">Rs ${dailyEarn} / Day</strong>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-
-            document.getElementById('workspaceDetailsPage').classList.add('active');
-        }
-
-        function closeWorkspaceDetails() {
-            document.getElementById('workspaceDetailsPage').classList.remove('active');
-        }
-
-        // ================= 7. PIN ACTIVATION (SEPARATE ACCUMULATION) =================
-        function openPinModal(passName) {
-            selectedPassForModal = passName;
-            document.getElementById('pinModalPassTitle').innerText = `Enter PIN for ${passName}`;
-            document.getElementById('licensePinInput').value = '';
-            document.getElementById('pinModal').classList.add('active');
-        }
-
-        function closePinModal() {
-            document.getElementById('pinModal').classList.remove('active');
-            selectedPassForModal = null;
-        }
-
-        function verifyAndApplyPin() {
-            if (!currentUser) return;
-            const pin = document.getElementById('licensePinInput').value.trim().toUpperCase();
-            const btn = document.getElementById('btnApplyPin');
-
-            if (!pin) { showToast("Enter your 8-digit PIN"); return; }
-            setBtnLoading(btn, true, "");
-
-            db.ref(`licensePins/${pin}`).once('value').then(snap => {
-                setBtnLoading(btn, false, "Activate License");
-                const pinData = snap.val();
-
-                if (!pinData || typeof pinData !== 'object') {
-                    showToast("Invalid License PIN");
-                    return;
-                }
-                if (pinData.used === true) {
-                    showToast("This PIN has already been used");
-                    return;
-                }
-
-                const targetPass = pinData.passName || selectedPassForModal;
-                if (selectedPassForModal && pinData.passName && pinData.passName !== selectedPassForModal) {
-                    showToast(`This PIN is for ${pinData.passName}, not ${selectedPassForModal}`);
-                    return;
-                }
-
-                // Mark PIN used
-                db.ref(`licensePins/${pin}`).update({
-                    used: true,
-                    usedBy: currentUser.uid,
-                    usedByUsername: userData.username || currentUser.email.split('@')[0],
-                    usedAt: firebase.database.ServerValue.TIMESTAMP
-                });
-
-                const passKey = targetPass.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
-                const newQuota = parseInt(pinData.quota) || 10;
-                const newReward = parseFloat(pinData.reward) || 3.00;
-
-                const newPassRecord = {
-                    passName: targetPass,
-                    dailyQuota: newQuota,
-                    remainingToday: newQuota, // Fresh tasks for today
-                    rewardPerTask: newReward,
-                    activatedAt: firebase.database.ServerValue.TIMESTAMP
-                };
-
-                // Add to active passes without modifying other passes' rates
-                db.ref(`users/${currentUser.uid}/activePasses/${passKey}`).set(newPassRecord);
-                db.ref(`users/${currentUser.uid}`).update({
-                    tierName: targetPass
-                }).then(() => {
-                    userData.tierName = targetPass;
-                    if (!userData.activePasses) userData.activePasses = {};
-                    userData.activePasses[passKey] = newPassRecord;
-                    syncUI();
-
-                    closePinModal();
-                    showToast(`🎉 Activated: ${targetPass}! Added to your active licenses.`);
-                    distributeCommissions(pinData.price || 0);
-                });
-            }).catch(err => {
-                setBtnLoading(btn, false, "Activate License");
-                showToast("Connection error. Try again.");
-            });
-        }
-
-        function distributeCommissions(packPrice) {
-            if (!userData.referredBy || packPrice <= 0) return;
-
-            db.ref('users').orderByChild('referralCode').equalTo(userData.referredBy).once('value').then(snap1 => {
-                const p1 = snap1.val();
-                if (!p1) return;
-                const uid1 = Object.keys(p1)[0];
-                const comm1 = packPrice * 0.10;
-                db.ref(`users/${uid1}/balance`).transaction(b => (b || 0) + comm1);
-                db.ref(`users/${uid1}/networkEarnings`).transaction(b => (b || 0) + comm1);
-                db.ref(`commissions/${uid1}/tier1/${currentUser.uid}`).transaction(c => (c || 0) + comm1);
-
-                if (p1[uid1].referredBy) {
-                    db.ref('users').orderByChild('referralCode').equalTo(p1[uid1].referredBy).once('value').then(snap2 => {
-                        const p2 = snap2.val();
-                        if (!p2) return;
-                        const uid2 = Object.keys(p2)[0];
-                        const comm2 = packPrice * 0.03;
-                        db.ref(`users/${uid2}/balance`).transaction(b => (b || 0) + comm2);
-                        db.ref(`users/${uid2}/networkEarnings`).transaction(b => (b || 0) + comm2);
-                        db.ref(`commissions/${uid2}/tier2/${currentUser.uid}`).transaction(c => (c || 0) + comm2);
-
-                        if (p2[uid2].referredBy) {
-                            db.ref('users').orderByChild('referralCode').equalTo(p2[uid2].referredBy).once('value').then(snap3 => {
-                                const p3 = snap3.val();
-                                if (!p3) return;
-                                const uid3 = Object.keys(p3)[0];
-                                const comm3 = packPrice * 0.01;
-                                db.ref(`users/${uid3}/balance`).transaction(b => (b || 0) + comm3);
-                                db.ref(`users/${uid3}/networkEarnings`).transaction(b => (b || 0) + comm3);
-                                db.ref(`commissions/${uid3}/tier3/${currentUser.uid}`).transaction(c => (c || 0) + comm3);
-                            });
-                        }
-                    });
-                }
-            });
-        }
-
-        // ================= 8. WALLET =================
-        function maskNumber(acc) {
-            if (!acc || acc.length < 6) return acc || "---";
-            const start = acc.substring(0, 4);
-            const end = acc.substring(acc.length - 3);
-            return `${start}****${end}`;
-        }
-
-        function pickChannel(ch) {
-            chosenChannel = ch;
-            document.querySelectorAll('.channel-opt').forEach(c => c.classList.remove('selected'));
-            document.getElementById(`opt-${ch.split(' ')[0]}`).classList.add('selected');
-            document.getElementById('bankNameFieldGroup').style.display = ch === 'Bank Transfer' ? 'block' : 'none';
-            document.getElementById('minLimitNotice').innerText = ch === 'Bank Transfer' ? 'Min: Rs 500' : 'Min: Rs 50';
-            document.getElementById('accountFieldLabel').innerText = ch === 'Bank Transfer' ? 'Bank Account / IBAN' : `${ch} Mobile Number / Title`;
-        }
-
-        function submitWithdrawal() {
-            if (!currentUser) return;
-            const amt = parseFloat(document.getElementById('destAmount').value);
-            const acc = document.getElementById('destAccountNumber').value.trim();
-            const bank = document.getElementById('destBankName').value.trim();
-            const min = chosenChannel === 'Bank Transfer' ? 500 : 50;
-
-            if (!acc || isNaN(amt) || amt < min || amt > (userData.balance || 0)) {
-                showToast(`Invalid request. Min: Rs ${min}, check available balance.`);
-                return;
-            }
-
-            const ref = db.ref('withdrawals').push();
-            const withdrawData = {
-                id: ref.key,
-                uid: currentUser.uid,
-                email: currentUser.email,
-                username: userData.username || "Contributor",
-                channel: chosenChannel,
-                bankName: bank || null,
-                accountNumber: acc,
-                amount: amt,
-                status: "Pending",
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            };
-
-            ref.set(withdrawData).then(() => {
-                db.ref('users/' + currentUser.uid + '/balance').transaction(b => (b || 0) - amt, (err, commited) => {
-                    if (commited) {
-                        userData.balance = (userData.balance || 0) - amt;
-                        syncUI();
-                        document.getElementById('destAmount').value = '';
-                        document.getElementById('destAccountNumber').value = '';
-                        showToast("Withdrawal request submitted!");
-                        fetchWithdrawals(true);
-                    }
-                });
-            });
-        }
-
-        function fetchWithdrawals(forceReload = false) {
-            if (!currentUser) return;
-            if (withdrawalsLoaded && !forceReload) return;
-
-            db.ref('withdrawals')
-                .orderByChild('uid')
-                .equalTo(currentUser.uid)
-                .limitToLast(10)
-                .once('value').then(snap => {
-                    withdrawalsLoaded = true;
-                    const container = document.getElementById('userWithdrawalHistory');
-                    container.innerHTML = '';
-                    const val = snap.val();
-
-                    if (!val) { 
-                        container.innerHTML = '<div style="text-align:center; padding:12px; font-size:0.75rem; color:var(--text-dim);">No transactions yet.</div>'; 
-                        return; 
-                    }
-
-                    const keys = Object.keys(val).reverse();
-                    keys.forEach(k => {
-                        const itm = val[k];
-                        const div = document.createElement('div');
-                        div.className = 'history-item';
-                        div.innerHTML = `
-                            <div>
-                                <strong>${itm.channel}</strong>
-                                <div style="font-size:0.7rem; color:var(--text-dim);">${maskNumber(itm.accountNumber)}</div>
-                            </div>
-                            <div style="text-align:right;">
-                                <div style="font-weight:800; color:var(--neon-blue);">Rs ${parseFloat(itm.amount).toFixed(2)}</div>
-                                <span class="status-badge status-${itm.status}">${itm.status}</span>
-                            </div>
-                        `;
-                        container.appendChild(div);
-                    });
-                });
-        }
-
-        // ================= 9. NAVIGATION & AFFILIATE =================
-        function switchNav(tab, btn) {
-            document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`view-${tab}`).classList.add('active');
-            btn.classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            if (tab === 'team' && !networkDataLoaded) {
-                fetchNetworkData();
-            } else if (tab === 'wallet' && !withdrawalsLoaded) {
-                fetchWithdrawals();
-            }
-        }
-
-        function copyPartnerUrl() {
-            const input = document.getElementById('referralLinkField');
-            const textToCopy = input.value;
-
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(textToCopy).then(() => {
-                    showToast("Referral link copied!");
-                }).catch(() => fallbackCopy(input, textToCopy));
-            } else {
-                fallbackCopy(input, textToCopy);
-            }
-        }
-
-        function fallbackCopy(inputElem, text) {
-            try {
-                inputElem.focus();
-                inputElem.select();
-                inputElem.setSelectionRange(0, 99999);
-                const successful = document.execCommand('copy');
-                if (successful) showToast("Referral link copied!");
-                else promptManualCopy(text);
-            } catch (err) {
-                promptManualCopy(text);
-            }
-        }
-
-        function promptManualCopy(text) {
-            const ta = document.createElement("textarea");
-            ta.value = text;
-            ta.style.position = "fixed";
-            ta.style.top = "-9999px";
-            document.body.appendChild(ta);
-            ta.focus();
-            ta.select();
-            try {
-                document.execCommand('copy');
-                showToast("Referral link copied!");
-            } catch (e) {
-                prompt("Copy your referral link manually:", text);
-            }
-            document.body.removeChild(ta);
-        }
-
-        function switchAffiliateLevel(lvl, btn) {
-            document.querySelectorAll('.level-tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById('tierContainer1').style.display = lvl === 1 ? 'block' : 'none';
-            document.getElementById('tierContainer2').style.display = lvl === 2 ? 'block' : 'none';
-            document.getElementById('tierContainer3').style.display = lvl === 3 ? 'block' : 'none';
-        }
-
-        function fetchNetworkData() {
-            if (!currentUser) return;
-            networkDataLoaded = true;
-            let totalCount = 0;
-
-            db.ref(`commissions/${currentUser.uid}`).once('value').then(allCommSnap => {
-                const commissionsData = allCommSnap.val() || {};
-
-                ['tier1', 'tier2', 'tier3'].forEach((tierKey, idx) => {
-                    db.ref(`referrals/${currentUser.uid}/${tierKey}`).once('value').then(snap => {
-                        const container = document.getElementById(`tierContainer${idx + 1}`);
-                        container.innerHTML = '';
-                        const val = snap.val();
-
-                        if (!val) {
-                            container.innerHTML = `<div style="text-align:center; padding:14px; font-size:0.75rem; color:var(--text-dim);">No Level ${idx + 1} members yet.</div>`;
-                            return;
-                        }
-
-                        const memberKeys = Object.keys(val);
-                        totalCount += memberKeys.length;
-                        document.getElementById('totalNetworkMembers').innerText = `${totalCount} Members`;
-
-                        const tierComm = commissionsData[tierKey] || {};
-
-                        memberKeys.forEach(memberUid => {
-                            const mData = val[memberUid];
-                            const mUsername = mData.username ? `@${mData.username}` : `@user_${memberUid.substring(0, 5)}`;
-                            const earned = parseFloat(tierComm[memberUid] || 0);
-
-                            const row = document.createElement('div');
-                            row.className = 'member-row';
-                            row.innerHTML = `
-                                <div style="font-weight:700; color:#fff; font-size:0.85rem;">${mUsername}</div>
-                                <div style="font-weight:800; color:var(--neon-blue); font-size:0.88rem;">+Rs ${earned.toFixed(2)}</div>
-                            `;
-                            container.appendChild(row);
-                        });
-                    });
-                });
-            });
-        }
-
-        function syncUI() {
-            document.getElementById('walletBalanceVal').innerText = `Rs ${(userData.balance || 0).toFixed(2)}`;
-
-            // Calculate total remaining tasks across ALL separate active passes
-            const allTasks = getAllActiveTasks();
-            document.getElementById('taskQuotaDisplay').innerText = `${allTasks.length} Tasks Left`;
-
-            const passKeys = Object.keys(userData.activePasses || {});
-            document.getElementById('passStatusName').innerText = passKeys.length > 1 ? `${passKeys.length} Passes Active` : (userData.tierName || "Junior QA (Free)");
-            document.getElementById('headerUsername').innerText = userData.username || "Contributor";
-            document.getElementById('settingsUsernameDisplay').innerText = `@${userData.username || "contributor"}`;
-            document.getElementById('settingsLevelIndicator').innerText = userData.tierName || "Junior QA";
-            document.getElementById('totalNetworkEarnings').innerText = `Rs ${(userData.networkEarnings || 0).toFixed(2)}`;
-
-            // Dynamically set referral link with current domain
-            if (userData.referralCode) {
-                const currentBaseUrl = window.location.origin + window.location.pathname;
-                document.getElementById('referralLinkField').value = `${currentBaseUrl}?ref=${userData.referralCode}`;
-            }
-            renderTasks();
-        }
-
-        // Auto-detect referral code from URL parameter
-        function checkUrlReferralCode() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const refCode = urlParams.get('ref') || urlParams.get('code');
-
-            if (refCode) {
-                switchAuthMode('register');
-                const refInput = document.getElementById('authReferralInput');
-                if (refInput) {
-                    refInput.value = refCode.trim().toUpperCase();
-                    refInput.readOnly = true;
-                    refInput.style.borderColor = "var(--neon-blue)";
-                }
-                showToast(`Partner Invitation Applied: ${refCode.toUpperCase()}`);
-            }
-        }
-        window.addEventListener('DOMContentLoaded', checkUrlReferralCode);
-
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.innerText = msg;
-            t.style.display = 'block';
-            setTimeout(() => { t.style.display = 'none'; }, 3000);
-        }
-    </script>
 </body>
 </html>
