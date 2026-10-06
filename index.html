@@ -27,7 +27,6 @@
       opacity: 0.6;
       cursor: not-allowed;
     }
-    /* Hide scrollbars for clean app feel */
     ::-webkit-scrollbar { width: 0px; background: transparent; }
   </style>
 </head>
@@ -47,18 +46,16 @@
         <p id="auth-subtitle" class="text-xs text-slate-400 mt-1">Sign in to access your investment portal</p>
       </div>
 
-      <!-- Error / Notice Box -->
+      <!-- Error Box -->
       <div id="auth-error" class="hidden mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl"></div>
-      <div id="ref-warning" class="hidden mb-4 p-3 bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs rounded-xl"></div>
 
       <!-- Auth Form -->
       <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-3">
 
-        <!-- Inviter Field (Visible during Sign Up, Locked) -->
+        <!-- Inviter Field (Visible during Sign Up) -->
         <div id="referrer-field" class="hidden space-y-1">
           <label class="text-[10px] font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1">
             <span>Invited By</span>
-            <span class="text-[9px] text-slate-400 font-normal">(Verified Referral)</span>
           </label>
           <input type="text" id="auth-inviter" readonly class="w-full bg-[#1b202c] border border-amber-500/30 rounded-xl px-3.5 py-2.5 text-xs text-amber-200 font-semibold focus:outline-none cursor-not-allowed">
         </div>
@@ -95,7 +92,6 @@
 
   <!-- 1. FULLSCREEN DEPOSIT CHECKOUT PAGE -->
   <div id="deposit-page" class="fixed inset-0 z-50 bg-[#0a0c10] hidden flex-col max-w-md mx-auto overflow-y-auto">
-    <!-- Header -->
     <div class="sticky top-0 bg-[#0a0c10]/95 backdrop-blur-md px-6 py-4 border-b border-white/5 flex items-center justify-between z-20">
       <button onclick="closeDepositPage()" class="p-2 -ml-2 rounded-xl text-slate-400 hover:text-white transition">
         <svg class="w-5 h-5 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
@@ -105,7 +101,6 @@
     </div>
 
     <div class="p-6 space-y-5 flex-1">
-      <!-- Selected Plan Details -->
       <div class="bg-gradient-to-br from-[#161922] to-[#0f1118] border border-amber-500/30 rounded-2xl p-4">
         <div class="flex justify-between items-center text-xs">
           <span class="text-slate-400">Selected Plan</span>
@@ -121,7 +116,6 @@
         </div>
       </div>
 
-      <!-- Payment Instructions & Details -->
       <div class="bg-[#10131b] border border-white/5 rounded-2xl p-4 space-y-3">
         <img src="https://i.ibb.co/cXv3yLJd/8031c6abd95fcee33da6ecb67264eaa2.jpg" alt="Easypaisa" class="rounded-xl w-full object-cover max-h-36 border border-white/5">
         
@@ -133,14 +127,12 @@
           </div>
         </div>
 
-        <!-- QR Code -->
         <div class="text-center pt-2">
           <p class="text-[11px] text-slate-400 mb-2">Or Scan QR Code directly via Easypaisa App</p>
           <img src="https://i.ibb.co/DfnT3VRN/1791271465962.jpg" alt="Easypaisa QR" class="w-44 h-44 mx-auto rounded-xl border-2 border-amber-500/40 p-1 bg-white">
         </div>
       </div>
 
-      <!-- Payment Submission Form -->
       <form id="payment-form" onsubmit="submitDeposit(event)" class="space-y-3">
         <div>
           <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Your Sender Account Number</label>
@@ -191,12 +183,9 @@
         <p class="text-[11px] text-slate-500 mt-1">Claimable once every 24 hours for active plans.</p>
       </div>
 
-      <div id="ads-container" class="space-y-3">
-        <!-- Rendered dynamically -->
-      </div>
+      <div id="ads-container" class="space-y-3"></div>
     </div>
   </div>
-
 
   <!-- ==================== MAIN MOBILE APP CONTAINER ==================== -->
   <div id="app-container" class="w-full max-w-md bg-[#0a0c10] min-h-screen pb-24 shadow-2xl relative flex flex-col border-x border-amber-500/10 hidden">
@@ -292,7 +281,7 @@
       </div>
     </div>
 
-    <!-- ==================== TAB 2: PLANS (PLAN 1 & PLAN 2 ONLY) ==================== -->
+    <!-- ==================== TAB 2: PLANS (PLAN 1 & PLAN 2) ==================== -->
     <div id="funds-view" class="px-6 pt-5 space-y-5 flex-1 hidden">
       <div>
         <p class="text-xs uppercase tracking-[0.25em] text-amber-400/90 font-bold">Invest & Earn</p>
@@ -301,7 +290,6 @@
       </div>
 
       <div class="space-y-4">
-
         <!-- PLAN 1: $2 Price -->
         <div class="bg-gradient-to-b from-[#181c27] to-[#10131c] rounded-3xl border-2 border-amber-500/50 p-5 shadow-2xl relative">
           <div class="flex justify-between items-center mb-2">
@@ -349,23 +337,22 @@
             <span>Invest 5 dollar</span>
           </button>
         </div>
-
       </div>
     </div>
 
-    <!-- ==================== TAB 3: NETWORK / TEAM (3 LEVELS) ==================== -->
+    <!-- ==================== TAB 3: NETWORK / TEAM ==================== -->
     <div id="network-view" class="px-6 pt-5 space-y-5 flex-1 hidden">
       <div>
         <p class="text-xs uppercase tracking-[0.25em] text-amber-400/90 font-bold">Referral Network</p>
         <h2 class="text-2xl font-black text-white tracking-tight mt-0.5">Team & Earnings</h2>
-        <p class="text-xs text-slate-400 mt-1">Share your link. Sign ups require a valid inviter link.</p>
+        <p class="text-xs text-slate-400 mt-1">Share your link to invite members and earn 3-level commissions.</p>
       </div>
 
       <!-- Referral Link Box -->
       <div class="bg-gradient-to-r from-[#181c27] to-[#0e1017] border border-amber-500/30 rounded-3xl p-5 shadow-xl">
         <span class="text-[11px] font-bold tracking-widest text-amber-400 uppercase">Your Exclusive Referral Link</span>
         <div class="flex items-center gap-2 mt-2">
-          <input type="text" id="ref-input" readonly value="" class="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-slate-200 font-mono focus:outline-none">
+          <input type="text" id="ref-input" readonly value="" class="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 font-mono focus:outline-none">
           <button onclick="copyRefLink(this)" id="copy-btn" class="gold-gradient-btn text-black font-extrabold px-4 py-2.5 rounded-xl text-xs uppercase tracking-wider shrink-0 transition active:scale-95 flex items-center justify-center gap-1.5">
             <span>Copy</span>
           </button>
@@ -386,7 +373,6 @@
           </button>
         </div>
 
-        <!-- Level Stats Summary -->
         <div class="bg-[#121620] p-4 rounded-2xl border border-white/5 flex justify-between items-center text-xs">
           <div>
             <span class="text-slate-400">Total Members:</span>
@@ -398,21 +384,19 @@
           </div>
         </div>
 
-        <!-- Team Members List -->
         <div id="team-members-list" class="space-y-2">
           <div class="text-center py-8 text-xs text-slate-500">Loading team data...</div>
         </div>
       </div>
     </div>
 
-    <!-- ==================== TAB 4: WALLET (ACTIONS & FULLSCREEN ENGINE) ==================== -->
+    <!-- ==================== TAB 4: WALLET ==================== -->
     <div id="vault-view" class="px-6 pt-5 space-y-5 flex-1 hidden">
       <div>
         <p class="text-xs uppercase tracking-[0.25em] text-amber-400/90 font-bold">Earnings Center</p>
         <h2 class="text-2xl font-black text-white tracking-tight mt-0.5">Wallet & Claims</h2>
       </div>
 
-      <!-- Wallet Summary Card -->
       <div class="rounded-3xl p-6 bg-gradient-to-br from-[#161a24] to-[#0d0f15] border border-amber-500/30 shadow-2xl space-y-4">
         <div>
           <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Claimable Daily Balance</span>
@@ -424,7 +408,6 @@
         </button>
       </div>
 
-      <!-- Quick Action Buttons -->
       <div class="grid grid-cols-2 gap-3">
         <button onclick="openHistoryPage()" class="p-4 bg-[#10131b] border border-white/5 rounded-2xl text-left hover:border-amber-500/30 transition">
           <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold mb-2">📜</div>
@@ -447,7 +430,6 @@
         <h2 class="text-2xl font-black text-white tracking-tight mt-0.5">Profile</h2>
       </div>
 
-      <!-- Profile Header Card -->
       <div class="bg-gradient-to-br from-[#181c27] via-[#10131b] to-[#0a0c10] border border-amber-500/30 rounded-3xl p-5 shadow-2xl">
         <div class="flex items-center gap-4">
           <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-200 p-[2px]">
@@ -474,7 +456,6 @@
         </div>
       </div>
 
-      <!-- Functional Actions -->
       <div class="bg-[#10131b] border border-white/5 rounded-2xl divide-y divide-white/5 overflow-hidden">
         <div onclick="openHistoryPage()" class="p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition">
           <div class="flex items-center gap-3">
@@ -546,14 +527,14 @@
   <script>
     // 1. Firebase Configuration
     const firebaseConfig = {
-  apiKey: "AIzaSyAyFp_NHogS2ExRXLD2812HNL-pj8dz6BU",
-  authDomain: "nexus-c0dac.firebaseapp.com",
-  databaseURL: "https://nexus-c0dac-default-rtdb.firebaseio.com",
-  projectId: "nexus-c0dac",
-  storageBucket: "nexus-c0dac.firebasestorage.app",
-  messagingSenderId: "85480294601",
-  appId: "1:85480294601:web:fc3fd82ca6d79d0f76a518"
-};
+      apiKey: "AIzaSyAnsEFuQromVRui078KYLbApxkwKte7dnw",
+      authDomain: "robert-728a0.firebaseapp.com",
+      databaseURL: "https://robert-728a0-default-rtdb.firebaseio.com",
+      projectId: "robert-728a0",
+      storageBucket: "robert-728a0.firebasestorage.app",
+      messagingSenderId: "1080403430649",
+      appId: "1:1080403430649:web:01090d5f6610caf3472628"
+    };
 
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
@@ -596,16 +577,12 @@
       urlReferrerUid = urlParams.get('ref');
 
       if (urlReferrerUid) {
-        // Referral link detected: Auto-switch to Sign Up
         try {
           const snap = await db.ref('users/' + urlReferrerUid).once('value');
           if (snap.exists()) {
             inviterData = snap.val();
-            // Automatically switch to signup view
             isSignUp = true;
             renderAuthUI();
-          } else {
-            showRefWarning("Invalid referral link. An active referrer link is required.");
           }
         } catch (e) {
           console.error("Ref verify error:", e);
@@ -701,7 +678,7 @@
 
       if (isSignUp) {
         title.innerText = "CREATE ACCOUNT";
-        subtitle.innerText = "Mandatory referral required to sign up";
+        subtitle.innerText = "Register to start earning daily returns";
         nameField.classList.remove('hidden');
         refField.classList.remove('hidden');
         submitBtn.querySelector('span').innerText = "Sign Up";
@@ -710,8 +687,8 @@
         if (inviterData) {
           document.getElementById('auth-inviter').value = `${inviterData.name} (${inviterData.email})`;
         } else {
-          document.getElementById('auth-inviter').value = "No Inviter - Referral Link Required";
-          showRefWarning("You cannot sign up without an invite link from an existing member.");
+          // Direct Signup (No inviter needed)
+          document.getElementById('auth-inviter').value = "Direct Registration (Official)";
         }
       } else {
         title.innerText = "APEX CAPITAL";
@@ -720,20 +697,10 @@
         refField.classList.add('hidden');
         submitBtn.querySelector('span').innerText = "Sign In";
         toggleBtn.innerText = "Don't have an account? Sign Up";
-        hideRefWarning();
       }
     }
 
-    function showRefWarning(msg) {
-      const box = document.getElementById('ref-warning');
-      box.innerText = msg;
-      box.classList.remove('hidden');
-    }
-    function hideRefWarning() {
-      document.getElementById('ref-warning').classList.add('hidden');
-    }
-
-    // 7. Auth Handling (Strict Referral Check)
+    // 7. Auth Handling (Allows Direct & Invited Signups)
     async function handleAuth(event) {
       event.preventDefault();
       const submitBtn = document.getElementById('auth-submit-btn');
@@ -744,15 +711,6 @@
       const password = document.getElementById('auth-password').value;
       const name = document.getElementById('auth-name').value.trim();
 
-      if (isSignUp) {
-        // Enforce Referral link requirement
-        if (!urlReferrerUid || !inviterData) {
-          errBox.innerText = "Registration blocked: You must use an invite link from a member to create an account.";
-          errBox.classList.remove('hidden');
-          return;
-        }
-      }
-
       setBtnLoading(submitBtn, true);
 
       try {
@@ -761,13 +719,13 @@
           const user = cred.user;
           await user.updateProfile({ displayName: name });
 
-          // Determine L2 and L3 uplines from inviter
-          const uplineL1 = urlReferrerUid;
-          const uplineL2 = inviterData.referrerL1 || null;
-          const uplineL3 = inviterData.referrerL2 || null;
+          // Determine L1, L2, L3 uplines if inviter exists
+          const uplineL1 = inviterData ? urlReferrerUid : null;
+          const uplineL2 = inviterData ? (inviterData.referrerL1 || null) : null;
+          const uplineL3 = inviterData ? (inviterData.referrerL2 || null) : null;
 
           const newUserData = {
-            name: name,
+            name: name || 'Investor',
             email: email,
             balance: 0.00,
             totalProfit: 0.00,
@@ -784,22 +742,24 @@
           // Save User Node
           await db.ref('users/' + user.uid).set(newUserData);
 
-          // Map user to inviter's referral lists
-          const memberRecord = {
-            uid: user.uid,
-            name: name,
-            email: email,
-            activePlan: 'None',
-            joinedAt: new Date().toISOString(),
-            earnedFromMember: 0.00
-          };
+          // If invited, link to inviter's team levels
+          if (uplineL1) {
+            const memberRecord = {
+              uid: user.uid,
+              name: name || 'Investor',
+              email: email,
+              activePlan: 'None',
+              joinedAt: new Date().toISOString(),
+              earnedFromMember: 0.00
+            };
 
-          const updates = {};
-          if (uplineL1) updates[`team/${uplineL1}/level1/${user.uid}`] = memberRecord;
-          if (uplineL2) updates[`team/${uplineL2}/level2/${user.uid}`] = memberRecord;
-          if (uplineL3) updates[`team/${uplineL3}/level3/${user.uid}`] = memberRecord;
+            const updates = {};
+            if (uplineL1) updates[`team/${uplineL1}/level1/${user.uid}`] = memberRecord;
+            if (uplineL2) updates[`team/${uplineL2}/level2/${user.uid}`] = memberRecord;
+            if (uplineL3) updates[`team/${uplineL3}/level3/${user.uid}`] = memberRecord;
 
-          await db.ref().update(updates);
+            await db.ref().update(updates);
+          }
 
         } else {
           await auth.signInWithEmailAndPassword(email, password);
@@ -823,7 +783,7 @@
     function selectLevelTab(lvl) {
       selectedLevel = lvl;
       for (let i = 1; i <= 3; i++) {
-        const btn = document.getElementById(`lvl-tab-i`.replace('i', i));
+        const btn = document.getElementById(`lvl-tab-${i}`);
         if (i === lvl) {
           btn.className = "py-2.5 rounded-xl text-xs font-bold transition bg-amber-500/20 text-amber-300 border border-amber-500/30";
         } else {
@@ -936,7 +896,7 @@
           dailyIncome: activeDepositPlan.daily,
           senderAccount: senderAcc,
           trxId: trxId,
-          status: "Pending", // Admin can update this to "Approved" or "Rejected"
+          status: "Pending",
           createdAt: new Date().toISOString()
         };
 
@@ -1029,7 +989,6 @@
         return;
       }
 
-      // 24 Hour Check (86400000 ms)
       const now = Date.now();
       const lastClaim = currentUserData.lastClaimTimestamp || 0;
       const hoursRemaining = Math.max(0, (lastClaim + 24 * 60 * 60 * 1000 - now) / (1000 * 60 * 60));
