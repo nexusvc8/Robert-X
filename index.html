@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Apex Capital | Investment & Automated Earnings</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>DailyEarn | Earn & Investment</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -13,605 +13,932 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
   <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .font-luxury { font-family: 'Cinzel', serif; }
-    .gold-gradient-text {
-      background: linear-gradient(135deg, #fae29c 0%, #d4af37 50%, #9e7b13 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .gold-gradient-btn {
-      background: linear-gradient(135deg, #f0d57d 0%, #d4af37 50%, #99780b 100%);
-    }
-    .gold-gradient-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
     ::-webkit-scrollbar { width: 0px; background: transparent; }
+    .primary-btn {
+      background-color: #00875a;
+      transition: all 0.2s ease;
+    }
+    .primary-btn:hover { background-color: #00754e; }
+    .primary-btn:active { transform: scale(0.98); }
+    
+    /* Smooth Slide Down Alert from Below Header */
+    @keyframes slideDownBelowHeader {
+      0% { opacity: 0; transform: translateY(-16px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .animate-toast {
+      animation: slideDownBelowHeader 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
   </style>
 </head>
-<body class="bg-[#050608] text-slate-100 flex justify-center min-h-screen antialiased selection:bg-amber-500 selection:text-black">
+<body class="bg-[#f8fafc] text-slate-800 flex justify-center min-h-screen antialiased select-none">
 
-  <!-- ==================== AUTHENTICATION OVERLAY ==================== -->
-  <div id="auth-modal" class="fixed inset-0 z-50 bg-[#050608] flex items-center justify-center p-4 overflow-y-auto">
-    <div class="w-full max-w-sm bg-[#0e1117] border border-amber-500/30 rounded-3xl p-6 shadow-2xl relative my-auto">
-      
+  <!-- ==================== HEADER NOTIFICATION TOAST CONTAINER ==================== -->
+  <div id="toast-wrapper" class="fixed top-[68px] inset-x-0 mx-auto max-w-sm px-4 z-50 pointer-events-none space-y-2"></div>
+
+  <!-- ==================== AUTH MODAL (SIGN IN / SIGN UP) ==================== -->
+  <div id="auth-modal" class="fixed inset-0 z-50 bg-[#f1f5f9] flex items-center justify-center p-4 overflow-y-auto">
+    <div class="w-full max-w-sm bg-white border border-slate-200 rounded-3xl p-6 shadow-xl relative my-auto">
       <div class="text-center mb-6">
-        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#997a15] via-[#d4af37] to-[#fde599] p-[1px] mx-auto mb-3 shadow-lg shadow-amber-500/10">
-          <div class="w-full h-full bg-[#0d0f14] rounded-2xl flex items-center justify-center">
-            <span class="font-luxury font-black text-xl gold-gradient-text">A</span>
-          </div>
+        <div class="w-14 h-14 rounded-2xl bg-[#00875a] text-white mx-auto mb-3 flex items-center justify-center font-black text-2xl shadow-sm">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
-        <h2 id="auth-title" class="text-xl font-bold font-luxury tracking-wider gold-gradient-text">APEX CAPITAL</h2>
-        <p id="auth-subtitle" class="text-xs text-slate-400 mt-1">Sign in to access your investment portal</p>
+        <h2 id="auth-title" class="text-xl font-extrabold text-slate-900 tracking-tight">DailyEarn</h2>
+        <p id="auth-subtitle" class="text-xs text-slate-500 mt-1">Sign in to your account</p>
       </div>
 
-      <!-- Error Box -->
-      <div id="auth-error" class="hidden mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl"></div>
+      <div id="auth-error" class="hidden mb-4 p-3 bg-rose-50 border border-rose-200 text-rose-600 text-xs rounded-xl font-medium"></div>
 
-      <!-- Auth Form -->
-      <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-3">
-
-        <!-- Inviter Field (Visible during Sign Up) -->
+      <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-3.5" autocomplete="off">
         <div id="referrer-field" class="hidden space-y-1">
-          <label class="text-[10px] font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1">
-            <span>Invited By</span>
-          </label>
-          <input type="text" id="auth-inviter" readonly class="w-full bg-[#1b202c] border border-amber-500/30 rounded-xl px-3.5 py-2.5 text-xs text-amber-200 font-semibold focus:outline-none cursor-not-allowed">
+          <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Referral Code (Inviter)</label>
+          <input type="text" id="auth-inviter" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-700 font-semibold focus:outline-none cursor-not-allowed">
         </div>
 
         <div id="name-field" class="hidden space-y-1">
-          <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Full Name</label>
-          <input type="text" id="auth-name" placeholder="John Doe" class="w-full bg-[#161a23] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+          <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Username</label>
+          <input type="text" id="auth-name" placeholder="e.g. user123" class="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#00875a]">
         </div>
 
         <div class="space-y-1">
-          <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Email Address</label>
-          <input type="email" id="auth-email" required placeholder="user@apex.com" class="w-full bg-[#161a23] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+          <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Email Address</label>
+          <input type="email" id="auth-email" required placeholder="user@gmail.com" class="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#00875a]">
         </div>
 
         <div class="space-y-1">
-          <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Password</label>
-          <input type="password" id="auth-password" required placeholder="••••••••" class="w-full bg-[#161a23] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+          <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Password</label>
+          <input type="password" id="auth-password" required placeholder="••••••••" class="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#00875a]">
         </div>
 
-        <button type="submit" id="auth-submit-btn" class="w-full gold-gradient-btn text-black font-extrabold py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 active:scale-95 transition mt-2 flex items-center justify-center gap-2">
-          <span>Sign In</span>
+        <button type="submit" id="auth-submit-btn" class="w-full primary-btn text-white font-bold py-3 rounded-xl text-sm shadow-md active:scale-95 transition mt-2">
+          Sign In
         </button>
       </form>
 
       <div class="text-center mt-5">
-        <button onclick="toggleAuthMode()" id="auth-toggle-btn" class="text-xs text-amber-400/90 hover:text-amber-300 font-medium">
+        <button onclick="toggleAuthMode()" id="auth-toggle-btn" class="text-xs text-[#00875a] hover:underline font-semibold">
           Don't have an account? Sign Up
         </button>
       </div>
     </div>
   </div>
 
-  <!-- ==================== FULLSCREEN OVERLAYS ==================== -->
-
-  <!-- 1. FULLSCREEN DEPOSIT CHECKOUT PAGE -->
-  <div id="deposit-page" class="fixed inset-0 z-50 bg-[#0a0c10] hidden flex-col max-w-md mx-auto overflow-y-auto">
-    <div class="sticky top-0 bg-[#0a0c10]/95 backdrop-blur-md px-6 py-4 border-b border-white/5 flex items-center justify-between z-20">
-      <button onclick="closeDepositPage()" class="p-2 -ml-2 rounded-xl text-slate-400 hover:text-white transition">
-        <svg class="w-5 h-5 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+  <!-- ==================== SUB-PAGE: PROMO CODE PAGE (SCREENSHOT 2) ==================== -->
+  <div id="promo-page" class="fixed inset-0 z-50 bg-[#f8fafc] hidden flex-col max-w-md mx-auto overflow-y-auto">
+    <div class="sticky top-0 bg-white/95 backdrop-blur-md px-5 py-4 border-b border-slate-100 flex items-center justify-between z-20">
+      <button onclick="closeSubPage('promo-page')" class="p-1 -ml-1 text-slate-600 hover:text-slate-900 flex items-center gap-1 text-sm font-semibold">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+        Back
       </button>
-      <h3 class="font-luxury font-bold text-sm gold-gradient-text tracking-widest uppercase">Deposit Payment</h3>
-      <div class="w-7"></div>
     </div>
 
-    <div class="p-6 space-y-5 flex-1">
-      <div class="bg-gradient-to-br from-[#161922] to-[#0f1118] border border-amber-500/30 rounded-2xl p-4">
-        <div class="flex justify-between items-center text-xs">
-          <span class="text-slate-400">Selected Plan</span>
-          <span id="dep-plan-name" class="font-bold text-amber-400">Plan 1</span>
+    <div class="p-5 space-y-4 flex-1">
+      <h2 class="text-2xl font-black text-slate-900">Promo Code</h2>
+
+      <!-- Claim Promo Code Card (Screenshot 2) -->
+      <div class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-sm space-y-4">
+        <div class="flex items-center gap-2.5 text-[#00875a]">
+          <svg class="w-6 h-6 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
+          <h3 class="text-base font-bold text-slate-900">Claim Promo Code</h3>
         </div>
-        <div class="flex justify-between items-center text-xs mt-2 pt-2 border-t border-white/5">
-          <span class="text-slate-400">Amount USD</span>
-          <span id="dep-plan-usd" class="font-bold text-white">$2.00</span>
-        </div>
-        <div class="flex justify-between items-center text-xs mt-1">
-          <span class="text-slate-400">Payable PKR (Rate: 1$ = 280 PKR)</span>
-          <span id="dep-plan-pkr" class="font-extrabold text-emerald-400 text-sm">Rs 560 PKR</span>
-        </div>
+
+        <form onsubmit="handleClaimPromo(event)" class="space-y-4">
+          <div>
+            <label class="text-xs font-bold text-slate-700 block mb-1">Enter Promo Code</label>
+            <input type="text" id="promo-input-code" required placeholder="Enter promo code" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#00875a] uppercase font-mono">
+          </div>
+
+          <button type="submit" id="promo-submit-btn" class="w-full primary-btn text-white font-bold py-3 rounded-xl text-sm shadow-sm active:scale-95 transition">
+            Claim
+          </button>
+        </form>
       </div>
 
-      <div class="bg-[#10131b] border border-white/5 rounded-2xl p-4 space-y-3">
-        <img src="https://i.ibb.co/cXv3yLJd/8031c6abd95fcee33da6ecb67264eaa2.jpg" alt="Easypaisa" class="rounded-xl w-full object-cover max-h-36 border border-white/5">
-        
-        <div class="space-y-1">
-          <label class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Easypaisa Account Number</label>
-          <div class="flex items-center justify-between bg-black/50 p-2.5 rounded-xl border border-white/10">
-            <span class="font-mono text-sm font-bold text-amber-400">03262550724</span>
-            <button onclick="copyText('03262550724', this)" class="text-[11px] font-bold bg-amber-500/20 text-amber-300 px-2.5 py-1 rounded-lg">Copy</button>
+      <!-- Last 5 Promo Code Transactions Card -->
+      <div class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-sm space-y-3">
+        <h4 class="text-sm font-bold text-slate-900">Last 5 Promo Code Transactions</h4>
+        <div id="promo-history-list" class="space-y-2 pt-1 text-xs">
+          <p class="text-slate-400 py-3 text-center font-medium">No promo claims yet.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SUB-PAGE: DEPOSIT METHOD SELECTION ==================== -->
+  <div id="deposit-method-page" class="fixed inset-0 z-50 bg-[#f8fafc] hidden flex-col max-w-md mx-auto overflow-y-auto">
+    <div class="sticky top-0 bg-white/95 backdrop-blur-md px-5 py-4 border-b border-slate-100 flex items-center justify-between z-20">
+      <button onclick="closeSubPage('deposit-method-page')" class="p-1 -ml-1 text-slate-600 hover:text-slate-900 flex items-center gap-1 text-sm font-semibold">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+        Back to Plans
+      </button>
+    </div>
+
+    <div class="p-5 space-y-4 flex-1">
+      <div class="bg-gradient-to-r from-[#00b074] to-[#00875a] text-white rounded-3xl p-5 shadow-sm space-y-3">
+        <div>
+          <span class="text-[10px] uppercase tracking-wider font-semibold opacity-90">YOU'RE BUYING</span>
+          <h2 id="dep-method-plan-name" class="text-2xl font-black mt-0.5">VIP 1</h2>
+        </div>
+        <div class="grid grid-cols-3 gap-2 pt-2 border-t border-white/20 text-center">
+          <div>
+            <p class="text-[10px] uppercase opacity-80 font-bold">INVEST</p>
+            <p id="dep-method-invest" class="text-sm font-bold mt-0.5">Rs. 270</p>
+          </div>
+          <div class="border-x border-white/20">
+            <p class="text-[10px] uppercase opacity-80 font-bold">DAILY</p>
+            <p id="dep-method-daily" class="text-sm font-bold mt-0.5 text-emerald-100">Rs. 80</p>
+          </div>
+          <div>
+            <p class="text-[10px] uppercase opacity-80 font-bold">DAYS</p>
+            <p class="text-sm font-bold mt-0.5">36500</p>
           </div>
         </div>
+      </div>
 
-        <div class="text-center pt-2">
-          <p class="text-[11px] text-slate-400 mb-2">Or Scan QR Code directly via Easypaisa App</p>
-          <img src="https://i.ibb.co/DfnT3VRN/1791271465962.jpg" alt="Easypaisa QR" class="w-44 h-44 mx-auto rounded-xl border-2 border-amber-500/40 p-1 bg-white">
+      <div>
+        <h3 class="text-base font-extrabold text-slate-900">Select Payment Method</h3>
+        <p class="text-xs text-slate-500 mt-0.5">Tap a number to copy, or pick a method to continue.</p>
+      </div>
+
+      <div class="space-y-3" id="deposit-methods-list-container"></div>
+    </div>
+  </div>
+
+  <!-- ==================== SUB-PAGE: DEPOSIT CHECKOUT ==================== -->
+  <div id="deposit-checkout-page" class="fixed inset-0 z-50 bg-[#f8fafc] hidden flex-col max-w-md mx-auto overflow-y-auto">
+    <div class="sticky top-0 bg-white/95 backdrop-blur-md px-5 py-4 border-b border-slate-100 flex items-center justify-between z-20">
+      <button onclick="closeDepositPages()" class="p-1 -ml-1 text-slate-600 hover:text-slate-900 flex items-center gap-1 text-sm font-semibold">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+        Back to Plans
+      </button>
+    </div>
+
+    <div class="p-5 space-y-4 flex-1">
+      <div class="bg-gradient-to-r from-[#00b074] to-[#00875a] text-white rounded-3xl p-5 shadow-sm space-y-3">
+        <div>
+          <span class="text-[10px] uppercase tracking-wider font-semibold opacity-90">YOU'RE BUYING</span>
+          <h2 id="dep-chk-plan-name" class="text-2xl font-black mt-0.5">VIP 1</h2>
+        </div>
+        <div class="grid grid-cols-3 gap-2 pt-2 border-t border-white/20 text-center">
+          <div>
+            <p class="text-[10px] uppercase opacity-80 font-bold">INVEST</p>
+            <p id="dep-chk-invest" class="text-sm font-bold mt-0.5">Rs. 270</p>
+          </div>
+          <div class="border-x border-white/20">
+            <p class="text-[10px] uppercase opacity-80 font-bold">DAILY</p>
+            <p id="dep-chk-daily" class="text-sm font-bold mt-0.5 text-emerald-100">Rs. 80</p>
+          </div>
+          <div>
+            <p class="text-[10px] uppercase opacity-80 font-bold">DAYS</p>
+            <p class="text-sm font-bold mt-0.5">36500</p>
+          </div>
         </div>
       </div>
 
-      <form id="payment-form" onsubmit="submitDeposit(event)" class="space-y-3">
+      <button onclick="backToMethodSelection()" class="text-xs font-semibold text-slate-500 hover:text-slate-800 flex items-center gap-1">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        Change method
+      </button>
+
+      <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm space-y-2.5">
+        <h4 class="text-sm font-bold text-slate-900">Send payment to:</h4>
+        <p id="dep-chk-method-name" class="text-xs text-slate-500 font-medium">EasyPaisa</p>
+        
+        <div class="bg-[#f0f9f5] border border-emerald-100 p-3.5 rounded-2xl flex items-center justify-between">
+          <div>
+            <p id="dep-chk-account-no" class="font-mono text-lg font-black text-slate-900">03468660923</p>
+            <p id="dep-chk-title" class="text-xs text-slate-500 font-medium mt-0.5">Task Hub Earn</p>
+          </div>
+          <button onclick="copyAccountFromBox(this)" class="p-2.5 rounded-xl bg-white border border-emerald-200 text-slate-700 hover:bg-emerald-50 transition shadow-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+          </button>
+        </div>
+
+        <p class="text-xs text-slate-500 leading-relaxed">
+          Send <strong id="dep-chk-amount-text" class="text-slate-800 font-bold">Rs. 270</strong> to the account above, then submit the transaction ID and screenshot below.
+        </p>
+      </div>
+
+      <form id="deposit-submit-form" onsubmit="submitDepositRecord(event)" class="space-y-4">
         <div>
-          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Your Sender Account Number</label>
-          <input type="text" id="dep-sender-account" required placeholder="03xxxxxxxxx" class="w-full bg-[#161a23] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400 mt-1">
+          <label class="text-xs font-bold text-slate-700 block mb-1">Transaction ID</label>
+          <input type="text" id="dep-input-txnid" required placeholder="e.g. TXN12345678" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#00875a]">
         </div>
 
         <div>
-          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Transaction ID (Trx ID)</label>
-          <input type="text" id="dep-trx-id" required placeholder="e.g. 2938472918" class="w-full bg-[#161a23] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-amber-400 mt-1">
+          <label class="text-xs font-bold text-slate-700 block mb-1">Payment Screenshot</label>
+          <label class="border-2 border-dashed border-slate-200 rounded-2xl p-5 flex flex-col items-center justify-center cursor-pointer hover:border-[#00875a] transition bg-white text-center">
+            <svg class="w-6 h-6 text-slate-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+            <span id="screenshot-filename" class="text-xs font-semibold text-slate-500">Tap to upload screenshot</span>
+            <input type="file" id="dep-input-screenshot" accept="image/*" class="hidden" onchange="handleScreenshotUpload(event)">
+          </label>
         </div>
 
-        <button type="submit" id="dep-submit-btn" class="w-full gold-gradient-btn text-black font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 active:scale-95 transition mt-3 flex items-center justify-center gap-2">
-          <span>Submit Payment</span>
+        <button type="submit" id="dep-submit-btn" class="w-full primary-btn text-white font-bold py-3.5 rounded-xl text-sm shadow-md active:scale-95 transition">
+          Submit Payment
         </button>
       </form>
     </div>
   </div>
 
-  <!-- 2. FULLSCREEN DEPOSIT HISTORY PAGE -->
-  <div id="history-page" class="fixed inset-0 z-50 bg-[#0a0c10] hidden flex-col max-w-md mx-auto overflow-y-auto">
-    <div class="sticky top-0 bg-[#0a0c10]/95 backdrop-blur-md px-6 py-4 border-b border-white/5 flex items-center justify-between z-20">
-      <button onclick="closeHistoryPage()" class="p-2 -ml-2 rounded-xl text-slate-400 hover:text-white transition">
-        <svg class="w-5 h-5 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+  <!-- ==================== SUB-PAGE: WITHDRAW ==================== -->
+  <div id="withdraw-page" class="fixed inset-0 z-50 bg-[#f8fafc] hidden flex-col max-w-md mx-auto overflow-y-auto">
+    <div class="sticky top-0 bg-white/95 backdrop-blur-md px-5 py-4 border-b border-slate-100 flex items-center justify-between z-20">
+      <button onclick="closeSubPage('withdraw-page')" class="p-1 -ml-1 text-slate-600 hover:text-slate-900 flex items-center gap-1 text-sm font-semibold">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+        Back
       </button>
-      <h3 class="font-luxury font-bold text-sm gold-gradient-text tracking-widest uppercase">Deposit History</h3>
-      <div class="w-7"></div>
     </div>
 
-    <div class="p-6 flex-1 space-y-3" id="history-list">
-      <div class="text-center py-12 text-slate-500 text-xs">No deposit requests found.</div>
+    <div class="p-5 space-y-4 flex-1">
+      <h2 class="text-2xl font-black text-slate-900">Withdraw</h2>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-[#00875a] text-white p-4 rounded-2xl shadow-sm">
+          <p class="text-[11px] font-semibold opacity-90">Dashboard Balance</p>
+          <p id="wd-dash-bal" class="text-lg font-black mt-1">PKR 0.00</p>
+        </div>
+        <div class="bg-white border-2 border-emerald-100 text-slate-900 p-4 rounded-2xl shadow-sm">
+          <p class="text-[11px] font-semibold text-slate-500">Withdrawable</p>
+          <p id="wd-withdrawable-bal" class="text-lg font-black text-emerald-600 mt-1">PKR 0.00</p>
+        </div>
+      </div>
+
+      <form id="withdraw-form" onsubmit="handleWithdrawalSubmit(event)" class="space-y-4 pt-1 relative">
+        <div>
+          <label class="text-xs font-bold text-slate-700 block mb-1">Amount (PKR)</label>
+          <input type="number" id="wd-amount" min="20" required placeholder="Minimum 20 PKR" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#00875a]">
+          <p class="text-[11px] text-slate-400 mt-1">Minimum withdrawal: 20 PKR</p>
+        </div>
+
+        <div class="relative">
+          <label class="text-xs font-bold text-slate-700 block mb-1">Withdrawal Method</label>
+          <button type="button" onclick="toggleWithdrawDropdown()" id="wd-selected-method-btn" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 flex items-center justify-between font-medium">
+            <span id="wd-selected-method-label">EasyPaisa</span>
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+
+          <div id="wd-custom-dropdown" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-2xl shadow-xl z-30 py-1 divide-y divide-slate-100 max-h-60 overflow-y-auto"></div>
+        </div>
+
+        <div>
+          <label class="text-xs font-bold text-slate-700 block mb-1">Account / Mobile Number</label>
+          <input type="text" id="wd-account-number" required placeholder="03xxxxxxxxx" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#00875a]">
+        </div>
+
+        <div>
+          <label class="text-xs font-bold text-slate-700 block mb-1">Account Holder Name</label>
+          <input type="text" id="wd-holder-name" required placeholder="Account title" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#00875a]">
+        </div>
+
+        <button type="submit" id="wd-submit-btn" class="w-full primary-btn text-white font-bold py-3.5 rounded-xl text-sm shadow-md active:scale-95 transition">
+          Request Withdrawal
+        </button>
+
+        <p class="text-center text-xs text-slate-400 mt-2 font-medium">Withdrawals are processed within 24-48 hours.</p>
+      </form>
     </div>
   </div>
 
-  <!-- 3. FULLSCREEN WALLET / DAILY ADS CLAIM PAGE -->
-  <div id="ads-page" class="fixed inset-0 z-50 bg-[#0a0c10] hidden flex-col max-w-md mx-auto overflow-y-auto">
-    <div class="sticky top-0 bg-[#0a0c10]/95 backdrop-blur-md px-6 py-4 border-b border-white/5 flex items-center justify-between z-20">
-      <button onclick="closeAdsPage()" class="p-2 -ml-2 rounded-xl text-slate-400 hover:text-white transition">
-        <svg class="w-5 h-5 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+  <!-- ==================== SUB-PAGES: HISTORIES & ACCOUNT ==================== -->
+  <div id="wd-history-page" class="fixed inset-0 z-50 bg-[#f8fafc] hidden flex-col max-w-md mx-auto overflow-y-auto">
+    <div class="sticky top-0 bg-white/95 backdrop-blur-md px-5 py-4 border-b border-slate-100 flex items-center justify-between z-20">
+      <button onclick="closeSubPage('wd-history-page')" class="p-1 -ml-1 text-slate-600 hover:text-slate-900 flex items-center gap-1 text-sm font-semibold">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+        Back
       </button>
-      <h3 class="font-luxury font-bold text-sm gold-gradient-text tracking-widest uppercase">Daily Tasks & Ads</h3>
-      <div class="w-7"></div>
     </div>
+    <div class="p-5 space-y-4 flex-1">
+      <h2 class="text-2xl font-black text-slate-900">Withdrawal History</h2>
+      <div id="wd-history-container" class="space-y-3 pt-2"></div>
+    </div>
+  </div>
 
-    <div class="p-6 flex-1 space-y-4">
-      <div class="bg-gradient-to-r from-amber-950/30 to-black border border-amber-500/20 rounded-2xl p-4">
-        <p class="text-xs text-slate-400">Current Daily Earning Potential</p>
-        <h4 id="ads-potential" class="text-2xl font-black text-amber-400 mt-1">$0.00 / Day</h4>
-        <p class="text-[11px] text-slate-500 mt-1">Claimable once every 24 hours for active plans.</p>
-      </div>
+  <div id="dep-history-page" class="fixed inset-0 z-50 bg-[#f8fafc] hidden flex-col max-w-md mx-auto overflow-y-auto">
+    <div class="sticky top-0 bg-white/95 backdrop-blur-md px-5 py-4 border-b border-slate-100 flex items-center justify-between z-20">
+      <button onclick="closeSubPage('dep-history-page')" class="p-1 -ml-1 text-slate-600 hover:text-slate-900 flex items-center gap-1 text-sm font-semibold">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+        Back
+      </button>
+    </div>
+    <div class="p-5 space-y-4 flex-1">
+      <h2 class="text-2xl font-black text-slate-900">Deposit History</h2>
+      <div id="dep-history-container" class="space-y-3 pt-2"></div>
+    </div>
+  </div>
 
-      <div id="ads-container" class="space-y-3"></div>
+  <div id="bal-history-page" class="fixed inset-0 z-50 bg-[#f8fafc] hidden flex-col max-w-md mx-auto overflow-y-auto">
+    <div class="sticky top-0 bg-white/95 backdrop-blur-md px-5 py-4 border-b border-slate-100 flex items-center justify-between z-20">
+      <button onclick="closeSubPage('bal-history-page')" class="p-1 -ml-1 text-slate-600 hover:text-slate-900 flex items-center gap-1 text-sm font-semibold">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+        Back
+      </button>
+    </div>
+    <div class="p-5 space-y-4 flex-1">
+      <h2 class="text-2xl font-black text-slate-900">Balance History</h2>
+      <div id="bal-history-container" class="space-y-3 pt-2"></div>
+    </div>
+  </div>
+
+  <div id="change-password-page" class="fixed inset-0 z-50 bg-[#f8fafc] hidden flex-col max-w-md mx-auto overflow-y-auto">
+    <div class="sticky top-0 bg-white/95 backdrop-blur-md px-5 py-4 border-b border-slate-100 flex items-center justify-between z-20">
+      <button onclick="closeSubPage('change-password-page')" class="p-1 -ml-1 text-slate-600 hover:text-slate-900 flex items-center gap-1 text-sm font-semibold">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+        Back
+      </button>
+    </div>
+    <div class="p-5 space-y-5 flex-1">
+      <h2 class="text-2xl font-black text-slate-900">Change Password</h2>
+      <form onsubmit="handlePasswordUpdate(event)" class="space-y-4">
+        <div>
+          <label class="text-xs font-bold text-slate-700 block mb-1">New Password</label>
+          <input type="password" id="cp-new-password" required class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#00875a]">
+        </div>
+        <div>
+          <label class="text-xs font-bold text-slate-700 block mb-1">Confirm Password</label>
+          <input type="password" id="cp-confirm-password" required class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#00875a]">
+        </div>
+        <button type="submit" id="cp-submit-btn" class="w-full primary-btn text-white font-bold py-3.5 rounded-xl text-sm shadow-md active:scale-95 transition mt-2">
+          Update Password
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div id="recovery-email-page" class="fixed inset-0 z-50 bg-[#f8fafc] hidden flex-col max-w-md mx-auto overflow-y-auto">
+    <div class="sticky top-0 bg-white/95 backdrop-blur-md px-5 py-4 border-b border-slate-100 flex items-center justify-between z-20">
+      <button onclick="closeSubPage('recovery-email-page')" class="p-1 -ml-1 text-slate-600 hover:text-slate-900 flex items-center gap-1 text-sm font-semibold">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+        Back
+      </button>
+    </div>
+    <div class="p-5 space-y-4 flex-1">
+      <h2 class="text-2xl font-black text-slate-900">Add Recovery Email</h2>
+      <p class="text-xs text-slate-500">This Gmail will be used to recover your password if you forget it.</p>
+      <form onsubmit="handleRecoveryEmailUpdate(event)" class="space-y-4 pt-2">
+        <div>
+          <label class="text-xs font-bold text-slate-700 block mb-1">Recovery Gmail</label>
+          <input type="email" id="rec-email-input" required placeholder="yourname@gmail.com" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#00875a]">
+        </div>
+        <button type="submit" id="rec-submit-btn" class="w-full primary-btn text-white font-bold py-3.5 rounded-xl text-sm shadow-md active:scale-95 transition mt-2">
+          Save Recovery Email
+        </button>
+      </form>
     </div>
   </div>
 
   <!-- ==================== MAIN MOBILE APP CONTAINER ==================== -->
-  <div id="app-container" class="w-full max-w-md bg-[#0a0c10] min-h-screen pb-24 shadow-2xl relative flex flex-col border-x border-amber-500/10 hidden">
+  <div id="app-container" class="w-full max-w-md bg-white min-h-screen pb-24 shadow-sm relative flex flex-col hidden">
 
-    <!-- Top Header -->
-    <header class="flex items-center justify-between px-6 pt-5 pb-4 sticky top-0 bg-[#0a0c10]/95 backdrop-blur-md z-40 border-b border-white/5">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#997a15] via-[#d4af37] to-[#fde599] p-[1px] shadow-lg shadow-amber-500/10">
-          <div class="w-full h-full bg-[#0d0f14] rounded-2xl flex items-center justify-center">
-            <span class="font-luxury font-black text-lg gold-gradient-text">A</span>
-          </div>
+    <!-- Top Sticky Header -->
+    <header class="sticky top-0 bg-white/95 backdrop-blur-md px-5 py-3.5 border-b border-slate-100 flex items-center justify-between z-40">
+      <div class="flex items-center gap-2.5">
+        <div class="w-10 h-10 rounded-2xl bg-[#00875a] flex items-center justify-center text-white shadow-sm">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
         <div>
-          <h1 class="font-luxury text-[15px] font-bold tracking-[0.2em] gold-gradient-text uppercase">APEX CAPITAL</h1>
-          <p class="text-[9px] font-bold tracking-[0.25em] text-slate-400 uppercase">Daily Profit & Investment</p>
+          <h1 class="text-base font-extrabold text-slate-900 leading-tight">DailyEarn</h1>
+          <p class="text-[9px] font-bold text-[#00875a] tracking-wider uppercase">EARN DAILY</p>
         </div>
       </div>
-
-      <button onclick="logoutUser(this)" class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs font-semibold text-slate-300 hover:text-red-400 transition flex items-center gap-1.5">
-        <span>Logout</span>
+      <button onclick="handleLogout()" class="p-2 text-slate-400 hover:text-slate-800 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
       </button>
     </header>
 
     <!-- ==================== TAB 1: HOME ==================== -->
-    <div id="home-view" class="px-6 pt-4 space-y-5 flex-1">
-      <div class="flex justify-between items-end">
-        <div>
-          <p class="text-xs uppercase tracking-[0.2em] text-slate-400 font-semibold">Welcome Back</p>
-          <h2 id="user-display-name" class="text-2xl font-black text-white tracking-tight mt-0.5">Loading...</h2>
-        </div>
-        <span class="text-xs text-emerald-400 font-medium bg-emerald-500/10 px-2.5 py-0.5 rounded border border-emerald-500/20" id="user-active-badge">No Plan</span>
+    <div id="home-view" class="p-5 space-y-4 flex-1">
+      <!-- Welcome Text -->
+      <div>
+        <p class="text-xs text-slate-500 font-medium">Welcome back,</p>
+        <h2 id="home-username-display" class="text-2xl font-black text-slate-900 tracking-tight">Investor</h2>
       </div>
 
-      <!-- Main Balance Card -->
-      <div class="rounded-[28px] p-6 text-white bg-gradient-to-br from-[#161922] via-[#0f1118] to-[#08090d] border border-amber-500/30 shadow-2xl relative overflow-hidden">
-        <div class="absolute -right-16 -top-16 w-44 h-44 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
-        <div class="flex justify-between items-center text-xs tracking-widest text-slate-400 font-medium">
-          <span>MAIN BALANCE</span>
-          <span class="text-emerald-400 text-xs font-bold">100% Secured</span>
+      <!-- Big Wallet Balance Card -->
+      <div class="bg-gradient-to-br from-[#00b074] via-[#009b63] to-[#00875a] rounded-[28px] p-6 text-white shadow-md relative space-y-4">
+        <div class="flex items-center gap-2 opacity-90">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+          <span class="text-xs font-bold uppercase tracking-wider">WALLET BALANCE</span>
         </div>
-
-        <div class="my-5">
-          <p class="text-xs text-slate-400">Total Available Balance</p>
-          <h3 id="user-balance" class="text-4xl font-extrabold tracking-tight mt-1 text-white">$0.00</h3>
-          <div class="flex items-center gap-2 mt-2">
-            <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md">
-              ↑ 24H Automated Returns
-            </span>
-          </div>
-        </div>
+        <h3 id="home-wallet-balance" class="text-4xl font-black tracking-tight">Rs 0</h3>
 
         <div class="grid grid-cols-2 gap-3 pt-2">
-          <button onclick="switchTab('funds')" class="gold-gradient-btn text-black font-extrabold py-3 px-4 rounded-xl text-xs tracking-wider uppercase flex items-center justify-center gap-2 shadow-lg shadow-amber-500/15 active:scale-95 transition">
-            View Plans
+          <button onclick="switchTab('ads')" class="bg-white text-slate-900 font-extrabold py-3 px-4 rounded-2xl text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition">
+            <svg class="w-3.5 h-3.5 fill-slate-900" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <span>Earn now</span>
           </button>
-          <button onclick="openAdsPage()" class="bg-white/5 hover:bg-white/10 border border-white/10 text-amber-300 font-bold py-3 px-4 rounded-xl text-xs tracking-wider uppercase flex items-center justify-center gap-2 active:scale-95 transition">
-            Claim Daily Income
+          <button onclick="openSubPage('withdraw-page')" class="bg-white/20 hover:bg-white/30 text-white font-extrabold py-3 px-4 rounded-2xl text-xs flex items-center justify-center gap-1.5 active:scale-95 transition">
+            <span>Withdraw</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
           </button>
         </div>
       </div>
 
-      <!-- Quick Earnings Box -->
-      <div class="grid grid-cols-2 gap-3.5">
-        <div class="bg-[#10131b] border border-white/5 rounded-2xl p-4 flex flex-col justify-between h-[120px]">
-          <span class="text-xs text-slate-400 font-medium">Total Profit</span>
-          <div>
-            <p id="user-total-profit" class="text-xl font-bold text-white tracking-tight">$0.00</p>
-            <p class="text-[11px] text-emerald-400 font-medium mt-0.5">Automated Daily</p>
-          </div>
-        </div>
-
-        <div onclick="switchTab('network')" class="bg-[#10131b] border border-amber-500/20 rounded-2xl p-4 flex flex-col justify-between h-[120px] cursor-pointer hover:border-amber-500/50 transition">
-          <div class="flex justify-between items-center">
-            <span class="text-xs text-slate-400 font-medium">Team Commission</span>
-            <span class="text-[10px] bg-amber-500/20 text-amber-300 font-bold px-2 py-0.5 rounded">Active</span>
+      <!-- Free Rs. 100 Promo Banner (Screenshot 5) -->
+      <div onclick="openWhatsAppChannel()" class="bg-gradient-to-r from-[#00b074] to-[#00875a] rounded-3xl p-5 text-white flex items-center justify-between cursor-pointer active:scale-98 transition shadow-sm">
+        <div class="flex items-center gap-3.5">
+          <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm border border-white/25 flex items-center justify-center shrink-0">
+            <svg class="w-6 h-6 text-white stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>
           </div>
           <div>
-            <p id="user-commission" class="text-xl font-bold text-amber-300 tracking-tight">$0.00</p>
-            <p id="user-referrals" class="text-[11px] text-slate-400 font-medium mt-0.5">0 Members →</p>
+            <span class="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider bg-white/20 px-2.5 py-0.5 rounded-full mb-1">
+              <span>✨</span> LIMITED TO ONE CLAIM
+            </span>
+            <h4 class="text-sm font-black leading-tight">Rs. 100 FREE for All Members</h4>
+            <p class="text-[11px] opacity-85 mt-0.5">Join both channels and claim instantly</p>
           </div>
         </div>
+        <svg class="w-5 h-5 text-white shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
       </div>
 
-      <!-- Invite Banner -->
-      <div onclick="switchTab('network')" class="bg-gradient-to-r from-amber-950/40 via-slate-900 to-black border border-amber-500/30 rounded-2xl p-4 flex items-center justify-between cursor-pointer active:scale-98 transition">
-        <div class="space-y-1">
-          <span class="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Referral Bonus Structure</span>
-          <h4 class="text-sm font-bold text-white">Earn Direct 10%, 4%, 2% Commissions</h4>
-          <p class="text-[11px] text-slate-400">Share your invite link to build your multi-level network.</p>
-        </div>
-        <span class="text-xs font-bold text-amber-300 bg-amber-500/10 border border-amber-500/30 px-3 py-1.5 rounded-lg shrink-0 ml-2">Open</span>
-      </div>
-    </div>
-
-    <!-- ==================== TAB 2: PLANS (PLAN 1 & PLAN 2) ==================== -->
-    <div id="funds-view" class="px-6 pt-5 space-y-5 flex-1 hidden">
-      <div>
-        <p class="text-xs uppercase tracking-[0.25em] text-amber-400/90 font-bold">Invest & Earn</p>
-        <h2 class="text-2xl font-black text-white tracking-tight mt-0.5">Investment Plans</h2>
-        <p class="text-xs text-slate-400 mt-1">Select an investment tier to activate unlimited lifetime returns.</p>
-      </div>
-
-      <div class="space-y-4">
-        <!-- PLAN 1: $2 Price -->
-        <div class="bg-gradient-to-b from-[#181c27] to-[#10131c] rounded-3xl border-2 border-amber-500/50 p-5 shadow-2xl relative">
-          <div class="flex justify-between items-center mb-2">
-            <span class="text-[11px] font-black tracking-widest text-amber-300 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full uppercase">Plan 1</span>
-            <span class="text-xs text-emerald-400 font-bold">Validity: Lifetime</span>
+      <!-- 4 Metrics & Action Cards Grid -->
+      <div class="grid grid-cols-2 gap-3">
+        <!-- Earned Today -->
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm space-y-3">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-[#00875a] flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
           </div>
-
-          <div class="my-3 space-y-1">
-            <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Daily Income</p>
-            <h3 class="text-3xl font-extrabold text-white tracking-tight">$0.67 <span class="text-xs font-normal text-slate-400">/ Day</span></h3>
-            <p class="text-[11px] text-amber-400 font-medium">Price: $2.00 (Rs 560 PKR)</p>
+          <div>
+            <p class="text-xs text-slate-500 font-medium">Earned today</p>
+            <p id="home-earned-today" class="text-lg font-black text-slate-900 mt-0.5">Rs 0</p>
           </div>
-
-          <div class="pt-2 border-t border-white/5 space-y-1">
-            <p class="text-xs text-slate-300 font-medium">Daily Income: <strong>$0.67</strong> daily to user</p>
-            <p class="text-xs text-emerald-400 font-medium">Total Earning: <strong>Unlimited</strong></p>
-            <p class="text-xs text-amber-400 font-medium">Validity: <strong>Lifetime</strong></p>
-          </div>
-
-          <button onclick="openDepositPage('Plan 1', 2, 0.67, this)" class="w-full mt-5 gold-gradient-btn text-black font-black py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 active:scale-95 transition flex items-center justify-center gap-2">
-            <span>Invest 2 dollar</span>
-          </button>
         </div>
 
-        <!-- PLAN 2: $5 Price -->
-        <div class="bg-gradient-to-b from-[#181c27] to-[#10131c] rounded-3xl border-2 border-amber-500/50 p-5 shadow-2xl relative">
-          <div class="flex justify-between items-center mb-2">
-            <span class="text-[11px] font-black tracking-widest text-amber-300 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full uppercase">Plan 2</span>
-            <span class="text-xs text-emerald-400 font-bold">Validity: Lifetime</span>
+        <!-- Total Earned -->
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm space-y-3">
+          <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
           </div>
-
-          <div class="my-3 space-y-1">
-            <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Daily Income</p>
-            <h3 class="text-3xl font-extrabold text-white tracking-tight">$1.67 <span class="text-xs font-normal text-slate-400">/ Day</span></h3>
-            <p class="text-[11px] text-amber-400 font-medium">Price: $5.00 (Rs 1,400 PKR)</p>
+          <div>
+            <p class="text-xs text-slate-500 font-medium">Total earned</p>
+            <p id="home-total-earned" class="text-lg font-black text-slate-900 mt-0.5">Rs 0</p>
           </div>
+        </div>
 
-          <div class="pt-2 border-t border-white/5 space-y-1">
-            <p class="text-xs text-slate-300 font-medium">Daily Income: <strong>$1.67</strong> daily to user</p>
-            <p class="text-xs text-emerald-400 font-medium">Total Earning: <strong>Unlimited</strong></p>
-            <p class="text-xs text-amber-400 font-medium">Validity: <strong>Lifetime</strong></p>
+        <!-- Active Plans -->
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm space-y-3">
+          <div class="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
           </div>
+          <div>
+            <p class="text-xs text-slate-500 font-medium">Active plans</p>
+            <p id="home-active-plans-count" class="text-lg font-black text-slate-900 mt-0.5">0</p>
+          </div>
+        </div>
 
-          <button onclick="openDepositPage('Plan 2', 5, 1.67, this)" class="w-full mt-5 gold-gradient-btn text-black font-black py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 active:scale-95 transition flex items-center justify-center gap-2">
-            <span>Invest 5 dollar</span>
+        <!-- Claim Promo Code Card (Screenshot 4) -->
+        <div onclick="openSubPage('promo-page')" class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm space-y-2 cursor-pointer hover:border-[#00875a]/50 transition">
+          <div class="flex items-center gap-2 text-slate-800">
+            <svg class="w-5 h-5 text-slate-700 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
+            <span class="text-xs font-bold text-slate-800">Promo Code</span>
+          </div>
+          <button class="w-full primary-btn text-white text-[11px] font-bold py-2 rounded-xl mt-1 shadow-xs">
+            Claim Promo Code
           </button>
         </div>
       </div>
     </div>
 
-    <!-- ==================== TAB 3: NETWORK / TEAM ==================== -->
-    <div id="network-view" class="px-6 pt-5 space-y-5 flex-1 hidden">
+    <!-- ==================== TAB 2: DAILY ADS / TASKS (SCREENSHOT 3) ==================== -->
+    <div id="ads-view" class="p-5 space-y-4 flex-1 hidden">
       <div>
-        <p class="text-xs uppercase tracking-[0.25em] text-amber-400/90 font-bold">Referral Network</p>
-        <h2 class="text-2xl font-black text-white tracking-tight mt-0.5">Team & Earnings</h2>
-        <p class="text-xs text-slate-400 mt-1">Share your link to invite members and earn 3-level commissions.</p>
+        <h2 class="text-2xl font-black text-slate-900">Daily Tasks</h2>
+        <p class="text-xs text-slate-500 mt-0.5">You have 1 task today — one per active package.</p>
+      </div>
+
+      <div id="tasks-container" class="space-y-3 pt-1"></div>
+    </div>
+
+    <!-- ==================== TAB 3: PACKAGES ==================== -->
+    <div id="packages-view" class="p-5 space-y-5 flex-1 hidden">
+      <div>
+        <h2 class="text-2xl font-black text-slate-900">Investment Plans</h2>
+        <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+          Choose a plan and start earning daily. All plans include daily withdrawal — no referral required.
+        </p>
+      </div>
+
+      <div class="space-y-5" id="packages-list-container"></div>
+    </div>
+
+    <!-- ==================== TAB 4: INVITE FRIENDS (SCREENSHOT 1) ==================== -->
+    <div id="invite-view" class="p-5 space-y-4 flex-1 hidden">
+      <h2 class="text-2xl font-black text-slate-900">Invite Friends</h2>
+
+      <!-- Top Referral Code Banner -->
+      <div class="bg-gradient-to-r from-[#00b074] to-[#00875a] text-white rounded-3xl p-6 text-center space-y-2 shadow-sm">
+        <span class="text-[11px] font-bold uppercase tracking-wider opacity-90">YOUR REFERRAL CODE</span>
+        <h3 id="inv-code-display" class="text-3xl font-black tracking-widest font-mono">74AD9D07</h3>
+        <p class="text-xs opacity-90 pt-1">Earn 10% commission on every referral's package purchase</p>
       </div>
 
       <!-- Referral Link Box -->
-      <div class="bg-gradient-to-r from-[#181c27] to-[#0e1017] border border-amber-500/30 rounded-3xl p-5 shadow-xl">
-        <span class="text-[11px] font-bold tracking-widest text-amber-400 uppercase">Your Exclusive Referral Link</span>
-        <div class="flex items-center gap-2 mt-2">
-          <input type="text" id="ref-input" readonly value="" class="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 font-mono focus:outline-none">
-          <button onclick="copyRefLink(this)" id="copy-btn" class="gold-gradient-btn text-black font-extrabold px-4 py-2.5 rounded-xl text-xs uppercase tracking-wider shrink-0 transition active:scale-95 flex items-center justify-center gap-1.5">
-            <span>Copy</span>
+      <div class="bg-white border border-slate-200/90 rounded-2xl p-4 space-y-3 shadow-sm">
+        <span class="text-xs font-bold text-slate-700 block">Referral Link</span>
+        <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
+          <input type="text" id="inv-link-input" readonly class="w-full bg-transparent text-xs text-slate-600 font-mono focus:outline-none">
+          <button onclick="copyRefLink()" class="p-1 rounded text-slate-500 hover:text-slate-800">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
           </button>
         </div>
+        <button onclick="shareReferralLink()" class="w-full primary-btn text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm active:scale-95 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+          <span>Share Link</span>
+        </button>
       </div>
 
-      <!-- 3 Level Switcher Tabs -->
+      <!-- 3 Metrics Cards (Screenshot 1) -->
       <div class="space-y-3">
-        <div class="grid grid-cols-3 gap-2 p-1 bg-[#10131b] rounded-2xl border border-white/5">
-          <button onclick="selectLevelTab(1)" id="lvl-tab-1" class="py-2.5 rounded-xl text-xs font-bold transition bg-amber-500/20 text-amber-300 border border-amber-500/30">
-            Level 1 (10%)
-          </button>
-          <button onclick="selectLevelTab(2)" id="lvl-tab-2" class="py-2.5 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white">
-            Level 2 (4%)
-          </button>
-          <button onclick="selectLevelTab(3)" id="lvl-tab-3" class="py-2.5 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white">
-            Level 3 (2%)
-          </button>
+        <div class="bg-white border border-slate-200/80 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-[#00875a] flex items-center justify-center">
+              <svg class="w-5 h-5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            </div>
+            <span class="text-xs font-bold text-slate-800">Total Team Members</span>
+          </div>
+          <span id="inv-total-members" class="text-sm font-black text-slate-900">0</span>
         </div>
 
-        <div class="bg-[#121620] p-4 rounded-2xl border border-white/5 flex justify-between items-center text-xs">
-          <div>
-            <span class="text-slate-400">Total Members:</span>
-            <span id="lvl-member-count" class="font-bold text-white ml-1">0</span>
+        <div class="bg-white border border-slate-200/80 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-[#00875a] flex items-center justify-center">
+              <svg class="w-5 h-5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+            </div>
+            <span class="text-xs font-bold text-slate-800">Total Team Deposits</span>
+          </div>
+          <span id="inv-team-deposits" class="text-sm font-black text-slate-900">0.00 PKR</span>
+        </div>
+
+        <div class="bg-white border border-slate-200/80 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-[#00875a] flex items-center justify-center">
+              <svg class="w-5 h-5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+            </div>
+            <span class="text-xs font-bold text-slate-800">Total Referral Commission</span>
+          </div>
+          <span id="inv-total-commission" class="text-sm font-black text-[#00875a]">0.00 PKR</span>
+        </div>
+      </div>
+
+      <!-- Purple Cash Rewards Levels Card -->
+      <div class="bg-gradient-to-b from-[#49348d] via-[#543b9d] to-[#713998] rounded-3xl p-5 text-white space-y-4 shadow-md">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-amber-300">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>
           </div>
           <div>
-            <span class="text-slate-400">Total Earned:</span>
-            <span id="lvl-earned-amount" class="font-bold text-emerald-400 ml-1">$0.00</span>
+            <p class="text-[9px] uppercase tracking-wider font-extrabold text-amber-300">EXCLUSIVE OFFER</p>
+            <h3 class="text-base font-black leading-tight">Cash Rewards Levels</h3>
           </div>
         </div>
 
-        <div id="team-members-list" class="space-y-2">
-          <div class="text-center py-8 text-xs text-slate-500">Loading team data...</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ==================== TAB 4: WALLET ==================== -->
-    <div id="vault-view" class="px-6 pt-5 space-y-5 flex-1 hidden">
-      <div>
-        <p class="text-xs uppercase tracking-[0.25em] text-amber-400/90 font-bold">Earnings Center</p>
-        <h2 class="text-2xl font-black text-white tracking-tight mt-0.5">Wallet & Claims</h2>
-      </div>
-
-      <div class="rounded-3xl p-6 bg-gradient-to-br from-[#161a24] to-[#0d0f15] border border-amber-500/30 shadow-2xl space-y-4">
-        <div>
-          <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Claimable Daily Balance</span>
-          <h3 id="wallet-claim-rate" class="text-3xl font-extrabold text-white mt-1">$0.00</h3>
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/15">
+          <div class="flex justify-between items-center text-xs opacity-90 font-medium">
+            <span>Your Team Investment</span>
+            <span>✨</span>
+          </div>
+          <h4 id="team-investment-stat" class="text-2xl font-black mt-1">PKR 0</h4>
         </div>
 
-        <button onclick="openAdsPage()" class="w-full gold-gradient-btn text-black font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition flex items-center justify-center gap-2">
-          <span>Watch Ads & Claim Income</span>
-        </button>
+        <div class="space-y-3" id="cash-levels-container"></div>
       </div>
 
-      <div class="grid grid-cols-2 gap-3">
-        <button onclick="openHistoryPage()" class="p-4 bg-[#10131b] border border-white/5 rounded-2xl text-left hover:border-amber-500/30 transition">
-          <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold mb-2">📜</div>
-          <p class="text-xs font-bold text-white">Deposit History</p>
-          <p class="text-[10px] text-slate-400 mt-0.5">Check request approvals</p>
-        </button>
-
-        <button onclick="switchTab('funds')" class="p-4 bg-[#10131b] border border-white/5 rounded-2xl text-left hover:border-amber-500/30 transition">
-          <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold mb-2">💎</div>
-          <p class="text-xs font-bold text-white">Upgrade Plan</p>
-          <p class="text-[10px] text-slate-400 mt-0.5">Boost daily returns</p>
-        </button>
+      <!-- How it works Card -->
+      <div class="bg-white border border-slate-200/90 rounded-3xl p-5 space-y-3 shadow-sm text-xs leading-relaxed">
+        <h4 class="text-sm font-black text-slate-900">How it works</h4>
+        <ol class="space-y-2 text-slate-600 font-medium">
+          <li>1. Share your referral link with friends</li>
+          <li>2. They sign up and buy a package</li>
+          <li>3. You earn <strong class="text-[#00875a] font-bold">10% commission</strong> on their package purchase</li>
+          <li>4. Unlock <strong class="text-[#00875a] font-bold">Cash Rewards</strong> as your team grows!</li>
+        </ol>
       </div>
     </div>
 
     <!-- ==================== TAB 5: PROFILE ==================== -->
-    <div id="mine-view" class="px-6 pt-5 space-y-5 flex-1 hidden">
-      <div>
-        <p class="text-xs uppercase tracking-[0.25em] text-amber-400/90 font-bold">Personal Account</p>
-        <h2 class="text-2xl font-black text-white tracking-tight mt-0.5">Profile</h2>
-      </div>
+    <div id="profile-view" class="p-5 space-y-4 flex-1 hidden">
+      <h2 class="text-2xl font-black text-slate-900">Profile</h2>
 
-      <div class="bg-gradient-to-br from-[#181c27] via-[#10131b] to-[#0a0c10] border border-amber-500/30 rounded-3xl p-5 shadow-2xl">
+      <div class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-sm">
         <div class="flex items-center gap-4">
-          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-200 p-[2px]">
-            <div class="w-full h-full bg-[#0d0f14] rounded-2xl flex items-center justify-center">
-              <span id="profile-initial" class="font-luxury font-black text-xl gold-gradient-text">U</span>
-            </div>
+          <div class="w-14 h-14 rounded-full bg-[#00875a] flex items-center justify-center text-white text-xl">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
           </div>
           <div>
-            <h3 id="profile-name" class="text-lg font-bold text-white">Investor</h3>
-            <p id="profile-email" class="text-xs text-slate-400 font-mono">user@apex.com</p>
-            <p id="profile-plan-status" class="text-[10px] text-amber-400 font-semibold mt-0.5">No Active Plan</p>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-white/5 text-center">
-          <div class="bg-black/40 rounded-xl p-2.5 border border-white/5">
-            <span class="text-[9px] text-slate-400 uppercase font-bold">Account ID</span>
-            <p id="profile-uid" class="text-[11px] font-mono font-bold text-slate-200 mt-0.5 truncate px-1">-</p>
-          </div>
-          <div class="bg-black/40 rounded-xl p-2.5 border border-white/5">
-            <span class="text-[9px] text-slate-400 uppercase font-bold">System Status</span>
-            <p class="text-[11px] font-bold text-emerald-400 mt-0.5">Verified</p>
+            <h3 id="prof-user-name" class="text-base font-bold text-slate-900 leading-tight">alamkhan1</h3>
+            <p id="prof-user-email" class="text-xs text-slate-500 font-mono mt-0.5">alamkhan1@gmail.com</p>
+            <p class="text-xs text-[#00875a] font-bold mt-1">Code: <span id="prof-user-code">74AD9D07</span></p>
           </div>
         </div>
       </div>
 
-      <div class="bg-[#10131b] border border-white/5 rounded-2xl divide-y divide-white/5 overflow-hidden">
-        <div onclick="openHistoryPage()" class="p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition">
+      <div class="space-y-2">
+        <div onclick="switchTab('packages')" class="bg-white border border-slate-200/90 rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition shadow-sm">
           <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-xs font-bold">🧾</div>
-            <span class="text-xs font-semibold text-slate-200">Deposit History</span>
+            <svg class="w-5 h-5 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+            <span class="text-sm font-bold text-slate-800">Deposit</span>
           </div>
-          <span class="text-xs text-slate-500">→</span>
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
         </div>
 
-        <div onclick="openAdsPage()" class="p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition">
+        <div onclick="openSubPage('withdraw-page')" class="bg-white border border-slate-200/90 rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition shadow-sm">
           <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-xs font-bold">📺</div>
-            <span class="text-xs font-semibold text-slate-200">Daily Tasks / Ads Portal</span>
+            <svg class="w-5 h-5 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+            <span class="text-sm font-bold text-slate-800">Withdraw</span>
           </div>
-          <span class="text-xs text-slate-500">→</span>
-        </div>
-
-        <div onclick="switchTab('network')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition">
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xs font-bold">👥</div>
-            <span class="text-xs font-semibold text-slate-200">My Referral Network</span>
-          </div>
-          <span class="text-xs text-slate-500">→</span>
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
         </div>
       </div>
 
-      <button onclick="logoutUser(this)" class="w-full py-3.5 bg-red-500/10 border border-red-500/20 text-red-400 rounded-2xl text-xs font-bold uppercase tracking-wider hover:bg-red-500/20 transition active:scale-95 flex items-center justify-center gap-2">
-        <span>Logout Account</span>
-      </button>
+      <div class="space-y-2 pt-1">
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">HISTORY</span>
+        
+        <div class="bg-white border border-slate-200/90 rounded-2xl divide-y divide-slate-100 shadow-sm overflow-hidden text-xs">
+          <div onclick="openSubPage('wd-history-page')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
+            <div class="flex items-center gap-3">
+              <svg class="w-4 h-4 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+              <span class="font-bold text-slate-800">Withdrawal History</span>
+            </div>
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+          </div>
+
+          <div onclick="openSubPage('dep-history-page')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
+            <div class="flex items-center gap-3">
+              <svg class="w-4 h-4 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+              <span class="font-bold text-slate-800">Deposit History</span>
+            </div>
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+          </div>
+
+          <div onclick="openSubPage('bal-history-page')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
+            <div class="flex items-center gap-3">
+              <svg class="w-4 h-4 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+              <span class="font-bold text-slate-800">Balance History</span>
+            </div>
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-2 pt-1">
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">ACCOUNT</span>
+        
+        <div class="bg-white border border-slate-200/90 rounded-2xl divide-y divide-slate-100 shadow-sm overflow-hidden text-xs">
+          <div onclick="openSubPage('change-password-page')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
+            <div class="flex items-center gap-3">
+              <svg class="w-4 h-4 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+              <span class="font-bold text-slate-800">Change Password</span>
+            </div>
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+          </div>
+
+          <div onclick="openSubPage('recovery-email-page')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
+            <div class="flex items-center gap-3">
+              <svg class="w-4 h-4 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/></svg>
+              <span class="font-bold text-slate-800">Add Recovery Email</span>
+            </div>
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- ==================== BOTTOM NAVIGATION (5 TABS) ==================== -->
-    <nav class="fixed bottom-0 w-full max-w-md bg-[#0a0c10]/95 backdrop-blur-md border-t border-white/5 py-3 px-3 flex justify-between items-center z-40">
-      
-      <!-- Home -->
-      <button id="nav-home" onclick="switchTab('home')" class="flex flex-col items-center gap-1 text-amber-400 transition flex-1">
-        <svg class="w-5 h-5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6"/></svg>
-        <span class="text-[9px] font-bold tracking-wider uppercase">Home</span>
+    <!-- ==================== BOTTOM NAVIGATION ==================== -->
+    <nav class="fixed bottom-0 w-full max-w-md bg-white border-t border-slate-100 py-2.5 px-4 flex justify-between items-center z-40">
+      <button id="nav-home" onclick="switchTab('home')" class="flex flex-col items-center gap-1 text-[#00875a] transition flex-1">
+        <svg class="w-5 h-5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        <span class="text-[10px] font-bold">Home</span>
       </button>
 
-      <!-- Plans -->
-      <button id="nav-funds" onclick="switchTab('funds')" class="flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition flex-1">
-        <svg class="w-5 h-5 stroke-[1.8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/></svg>
-        <span class="text-[9px] font-medium tracking-wider uppercase">Plans</span>
+      <button id="nav-ads" onclick="switchTab('ads')" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition flex-1">
+        <svg class="w-5 h-5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+        <span class="text-[10px] font-medium">Ads</span>
       </button>
 
-      <!-- Team -->
-      <button id="nav-network" onclick="switchTab('network')" class="flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition flex-1">
-        <svg class="w-5 h-5 stroke-[1.8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg>
-        <span class="text-[9px] font-medium tracking-wider uppercase">Team</span>
+      <button id="nav-packages" onclick="switchTab('packages')" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition flex-1">
+        <svg class="w-5 h-5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+        <span class="text-[10px] font-medium">Packages</span>
       </button>
 
-      <!-- Wallet -->
-      <button id="nav-vault" onclick="switchTab('vault')" class="flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition flex-1">
-        <svg class="w-5 h-5 stroke-[1.8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
-        <span class="text-[9px] font-medium tracking-wider uppercase">Wallet</span>
+      <button id="nav-invite" onclick="switchTab('invite')" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition flex-1">
+        <svg class="w-5 h-5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        <span class="text-[10px] font-medium">Invite</span>
       </button>
 
-      <!-- Profile -->
-      <button id="nav-mine" onclick="switchTab('mine')" class="flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition flex-1">
-        <svg class="w-5 h-5 stroke-[1.8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
-        <span class="text-[9px] font-medium tracking-wider uppercase">Profile</span>
+      <button id="nav-profile" onclick="switchTab('profile')" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition flex-1">
+        <svg class="w-5 h-5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        <span class="text-[10px] font-medium">Profile</span>
       </button>
-
     </nav>
   </div>
 
-  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+  <!-- ==================== JAVASCRIPT CONTROLLER ==================== -->
   <script>
-    // 1. Firebase Configuration
+    // 1. Firebase Initialization
     const firebaseConfig = {
-      apiKey: "AIzaSyAnsEFuQromVRui078KYLbApxkwKte7dnw",
-      authDomain: "robert-728a0.firebaseapp.com",
-      databaseURL: "https://robert-728a0-default-rtdb.firebaseio.com",
-      projectId: "robert-728a0",
-      storageBucket: "robert-728a0.firebasestorage.app",
-      messagingSenderId: "1080403430649",
-      appId: "1:1080403430649:web:01090d5f6610caf3472628"
-    };
+  apiKey: "AIzaSyCQf40YXusJSGPdKd7GwGeCZ8Al3v3qo7g",
+  authDomain: "auto-ef807.firebaseapp.com",
+  projectId: "auto-ef807",
+  storageBucket: "auto-ef807.firebasestorage.app",
+  messagingSenderId: "294091824972",
+  appId: "1:294091824972:web:a29a9f07df510b13d039e9"
+};
 
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
 
-    // App State
+    // Defaults
+    const DEFAULT_PACKAGES = [
+      { id: "vip1", name: "VIP 1", price: 270, daily: 80, duration: "Lifetime", gradient: "from-[#00b074] to-[#009b63]" },
+      { id: "vip2", name: "VIP 2", price: 430, daily: 150, duration: "Lifetime", gradient: "from-[#1d8cf8] to-[#3a5afc]" },
+      { id: "vip3", name: "VIP 3", price: 1080, daily: 350, duration: "Lifetime", gradient: "from-[#f59e0b] to-[#ea580c]" },
+      { id: "vip4", name: "VIP 4", price: 2700, daily: 900, duration: "Lifetime", gradient: "from-[#8b5cf6] to-[#6d28d9]" },
+      { id: "vip5", name: "VIP 5", price: 5400, daily: 2000, duration: "Lifetime", gradient: "from-[#00b074] to-[#009b63]" },
+      { id: "vip6", name: "VIP 6", price: 10800, daily: 4500, duration: "Lifetime", gradient: "from-[#1d8cf8] to-[#3a5afc]" }
+    ];
+
+    const DEFAULT_WITHDRAW_METHODS = [
+      "EasyPaisa", "JazzCash", "UPaisa", "SadaPay", "NayaPay", "UBL Bank", "Bank Al Habib"
+    ];
+
+    const DEFAULT_REWARD_LEVELS = [
+      { level: 1, target: 5000, reward: 1500 },
+      { level: 2, target: 10000, reward: 3000 },
+      { level: 3, target: 20000, reward: 6000 },
+      { level: 4, target: 30000, reward: 9000 },
+      { level: 5, target: 50000, reward: 15000 }
+    ];
+
+    const DEFAULT_PAYMENT_ACCOUNTS = [
+      { method: "EasyPaisa", account: "03468660923", title: "Task Hub Earn" },
+      { method: "JazzCash", account: "03064964031", title: "Task Hub Earn" },
+      { method: "UPaisa", account: "03326861211", title: "Task Hub Earn" }
+    ];
+
+    const DEFAULT_PROMOS = {
+      "BONUS100": { amount: 100, active: true },
+      "FREE50": { amount: 50, active: true },
+      "TASK2026": { amount: 200, active: true }
+    };
+
+    // State Variables
     let currentUser = null;
     let currentUserData = null;
     let isSignUp = false;
-    let urlReferrerUid = null;
+    let inviterUid = null;
     let inviterData = null;
-    let selectedLevel = 1;
-    let activeDepositPlan = null;
-    let userListenerUnsub = null;
-    let depositsListenerUnsub = null;
+    let selectedPackage = null;
+    let selectedPayment = null;
+    let base64Screenshot = "";
+    let appPackages = DEFAULT_PACKAGES;
+    let appWithdrawMethods = DEFAULT_WITHDRAW_METHODS;
+    let appRewardLevels = DEFAULT_REWARD_LEVELS;
+    let appPaymentAccounts = DEFAULT_PAYMENT_ACCOUNTS;
+    let whatsappChannelUrl = "https://whatsapp.com/channel";
 
-    // Helper: Button Loading state
-    function setBtnLoading(btn, isLoading, defaultText = "Submit") {
-      if (!btn) return;
-      if (isLoading) {
-        btn.disabled = true;
-        btn.setAttribute('data-original-text', btn.innerHTML);
-        btn.innerHTML = `
-          <svg class="animate-spin h-4 w-4 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-          </svg>
-          <span>Please wait...</span>
-        `;
-      } else {
-        btn.disabled = false;
-        const orig = btn.getAttribute('data-original-text');
-        btn.innerHTML = orig || defaultText;
-      }
+    // 2. Animated Toast Message (Shows Below Header)
+    function showToast(message, type = "success") {
+      const container = document.getElementById('toast-wrapper');
+      const toast = document.createElement('div');
+      
+      const isGreen = type === "success";
+      const icon = isGreen 
+        ? `<svg class="w-5 h-5 text-[#00875a] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>`
+        : `<svg class="w-5 h-5 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>`;
+
+      const borderBg = isGreen 
+        ? "bg-white border border-emerald-200 text-slate-800 shadow-xl" 
+        : "bg-white border border-rose-200 text-slate-800 shadow-xl";
+
+      toast.className = `animate-toast flex items-center gap-3 p-3.5 rounded-2xl pointer-events-auto transition-all duration-300 ${borderBg}`;
+      toast.innerHTML = `
+        <div class="w-8 h-8 rounded-xl ${isGreen ? 'bg-emerald-50' : 'bg-rose-50'} flex items-center justify-center shrink-0">
+          ${icon}
+        </div>
+        <p class="text-xs font-bold leading-snug flex-1">${message}</p>
+      `;
+
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-10px)';
+        setTimeout(() => toast.remove(), 350);
+      }, 3500);
     }
 
-    // 2. Initialize App and check Referral Link
+    // 3. App Initialization & Direct Signup link
     window.addEventListener('DOMContentLoaded', async () => {
+      // Clear inputs to prevent dirty cache
+      document.getElementById('auth-form').reset();
+      
       const urlParams = new URLSearchParams(window.location.search);
-      urlReferrerUid = urlParams.get('ref');
+      inviterUid = urlParams.get('ref');
 
-      if (urlReferrerUid) {
+      if (inviterUid) {
         try {
-          const snap = await db.ref('users/' + urlReferrerUid).once('value');
+          const snap = await db.ref('users/' + inviterUid).once('value');
           if (snap.exists()) {
             inviterData = snap.val();
+            // Direct to Sign up page as requested
             isSignUp = true;
             renderAuthUI();
           }
-        } catch (e) {
-          console.error("Ref verify error:", e);
-        }
+        } catch (e) { console.error(e); }
       }
+
+      bindDynamicSettings();
     });
 
-    // 3. Auth State Observer
-    auth.onAuthStateChanged(async (user) => {
+    // 4. Dynamic Firebase Settings
+    function bindDynamicSettings() {
+      // 1. Packages
+      db.ref('packages').on('value', snap => {
+        if (snap.exists() && snap.val()) {
+          const val = snap.val();
+          appPackages = Array.isArray(val) ? val : Object.values(val);
+        } else {
+          appPackages = DEFAULT_PACKAGES;
+        }
+        renderPackagesUI();
+      });
+
+      // 2. Withdraw Methods
+      db.ref('settings/withdrawMethods').on('value', snap => {
+        if (snap.exists() && snap.val()) {
+          const val = snap.val();
+          appWithdrawMethods = Array.isArray(val) ? val : Object.values(val);
+        } else {
+          appWithdrawMethods = DEFAULT_WITHDRAW_METHODS;
+        }
+        renderWithdrawDropdown();
+      });
+
+      // 3. Payment Accounts
+      db.ref('settings/paymentAccounts').on('value', snap => {
+        if (snap.exists() && snap.val()) {
+          const val = snap.val();
+          if (Array.isArray(val)) {
+            appPaymentAccounts = val;
+          } else if (typeof val === 'object') {
+            appPaymentAccounts = [
+              { method: "EasyPaisa", account: val.easyPaisa || "03468660923", title: val.title || "Task Hub Earn" },
+              { method: "JazzCash", account: val.jazzCash || "03064964031", title: val.title || "Task Hub Earn" },
+              { method: "UPaisa", account: val.uPaisa || "03326861211", title: val.title || "Task Hub Earn" }
+            ];
+          }
+        }
+        renderPaymentMethodsList();
+      });
+
+      // 4. Reward Levels
+      db.ref('settings/rewardLevels').on('value', snap => {
+        if (snap.exists() && snap.val()) {
+          const val = snap.val();
+          appRewardLevels = Array.isArray(val) ? val : Object.values(val);
+        } else {
+          appRewardLevels = DEFAULT_REWARD_LEVELS;
+        }
+        renderCashRewardLevels();
+      });
+
+      // 5. WhatsApp Channel URL
+      db.ref('settings/whatsappChannel').on('value', snap => {
+        if (snap.exists() && snap.val()) {
+          whatsappChannelUrl = snap.val();
+        }
+      });
+    }
+
+    function openWhatsAppChannel() {
+      window.open(whatsappChannelUrl, '_blank');
+      showToast("Redirecting to WhatsApp Channel...", "success");
+    }
+
+    // 5. Auth State Observer
+    auth.onAuthStateChanged(user => {
       if (user) {
         currentUser = user;
         document.getElementById('auth-modal').classList.add('hidden');
         document.getElementById('app-container').classList.remove('hidden');
-        attachUserRealtime(user.uid);
+        bindUserRealtime(user.uid);
       } else {
         currentUser = null;
         currentUserData = null;
-        if (userListenerUnsub) userListenerUnsub.off();
-        if (depositsListenerUnsub) depositsListenerUnsub.off();
         document.getElementById('auth-modal').classList.remove('hidden');
         document.getElementById('app-container').classList.add('hidden');
         renderAuthUI();
       }
     });
 
-    // 4. Attach Optimized Realtime Listeners
-    function attachUserRealtime(uid) {
-      userListenerUnsub = db.ref('users/' + uid);
-      userListenerUnsub.on('value', snap => {
+    // 6. Realtime User Listeners
+    function bindUserRealtime(uid) {
+      db.ref('users/' + uid).on('value', snap => {
         const val = snap.val();
         if (val) {
           currentUserData = val;
@@ -619,50 +946,738 @@
         }
       });
 
-      // Listen for Deposit Approvals / Changes
-      depositsListenerUnsub = db.ref('deposits').orderByChild('userId').equalTo(uid);
-      depositsListenerUnsub.on('value', snap => {
-        renderDepositHistory(snap.val());
+      db.ref('deposits').orderByChild('userId').equalTo(uid).on('value', snap => {
+        renderDepositHistoryUI(snap.val());
+      });
+
+      db.ref('withdrawals').orderByChild('userId').equalTo(uid).on('value', snap => {
+        renderWithdrawalHistoryUI(snap.val());
+      });
+
+      db.ref('balanceLogs/' + uid).on('value', snap => {
+        renderBalanceHistoryUI(snap.val());
+      });
+
+      // Load promo claims history
+      db.ref(`users/${uid}/promoClaims`).on('value', snap => {
+        renderPromoHistory(snap.val());
+      });
+
+      // Team Network Data (Count, Total Deposits, Commission)
+      db.ref('referrals/' + uid).on('value', snap => {
+        const refs = snap.val() || {};
+        const memberCount = Object.keys(refs).length;
+        let totalInvest = 0;
+        let totalComm = 0;
+
+        Object.values(refs).forEach(r => {
+          totalInvest += Number(r.depositTotal) || 0;
+          totalComm += Number(r.commissionEarned) || 0;
+        });
+
+        document.getElementById('inv-total-members').innerText = memberCount;
+        document.getElementById('inv-team-deposits').innerText = `${totalInvest.toFixed(2)} PKR`;
+        document.getElementById('inv-total-commission').innerText = `${totalComm.toFixed(2)} PKR`;
+        document.getElementById('team-investment-stat').innerText = `PKR ${totalInvest.toLocaleString()}`;
+        renderCashRewardLevels(totalInvest);
       });
     }
 
-    // 5. Render App Views with user data
+    // 7. Render App UI
     function renderAppUI(data) {
-      document.getElementById('user-display-name').innerText = data.name || 'Investor';
-      document.getElementById('user-balance').innerText = `$${(Number(data.balance) || 0).toFixed(2)}`;
-      document.getElementById('user-total-profit').innerText = `$${(Number(data.totalProfit) || 0).toFixed(2)}`;
-      document.getElementById('user-commission').innerText = `$${(Number(data.commission) || 0).toFixed(2)}`;
-      document.getElementById('wallet-claim-rate').innerText = `$${(Number(data.dailyIncome) || 0).toFixed(2)} / Day`;
-      document.getElementById('ads-potential').innerText = `$${(Number(data.dailyIncome) || 0).toFixed(2)} / Day`;
+      const balance = Number(data.balance) || 0;
+      const earnedToday = Number(data.earnedToday) || 0;
+      const totalEarned = Number(data.totalEarned) || 0;
+      const planName = data.activePlan || 'None';
+      const hasPlan = planName !== 'None';
 
-      const badge = document.getElementById('user-active-badge');
-      if (data.activePlan && data.activePlan !== 'None') {
-        badge.innerText = data.activePlan;
-        badge.className = "text-xs text-amber-400 font-bold bg-amber-500/10 px-2.5 py-0.5 rounded border border-amber-500/20";
-      } else {
-        badge.innerText = "No Active Plan";
-        badge.className = "text-xs text-slate-500 font-medium bg-white/5 px-2.5 py-0.5 rounded border border-white/10";
-      }
+      // Home Screen
+      document.getElementById('home-username-display').innerText = data.name || 'Investor';
+      document.getElementById('home-wallet-balance').innerText = `Rs ${balance.toLocaleString()}`;
+      document.getElementById('home-earned-today').innerText = `Rs ${earnedToday.toLocaleString()}`;
+      document.getElementById('home-total-earned').innerText = `Rs ${totalEarned.toLocaleString()}`;
+      document.getElementById('home-active-plans-count').innerText = hasPlan ? "1" : "0";
 
-      // Profile View
-      document.getElementById('profile-name').innerText = data.name || 'Investor';
-      document.getElementById('profile-initial').innerText = (data.name || 'U').charAt(0).toUpperCase();
-      document.getElementById('profile-email').innerText = data.email || '';
-      document.getElementById('profile-uid').innerText = currentUser.uid;
-      document.getElementById('profile-plan-status').innerText = data.activePlan ? `Active: ${data.activePlan} ($${data.dailyIncome}/day)` : 'No Active Plan';
+      // Withdraw Screen
+      document.getElementById('wd-dash-bal').innerText = `PKR ${balance.toFixed(2)}`;
+      document.getElementById('wd-withdrawable-bal').innerText = `PKR ${balance.toFixed(2)}`;
+
+      // Profile Screen
+      document.getElementById('prof-user-name').innerText = data.name || 'Investor';
+      document.getElementById('prof-user-email').innerText = data.email || 'user@gmail.com';
+      const refCode = currentUser.uid.substring(0, 8).toUpperCase();
+      document.getElementById('prof-user-code').innerText = refCode;
+      document.getElementById('inv-code-display').innerText = refCode;
 
       // Referral Link
-      const refUrl = `${window.location.origin}${window.location.pathname}?ref=${currentUser.uid}`;
-      document.getElementById('ref-input').value = refUrl;
+      const fullRefLink = `${window.location.origin}${window.location.pathname}?ref=${currentUser.uid}`;
+      document.getElementById('inv-link-input').value = fullRefLink;
 
-      // Render Level & Team View
-      loadTeamLevel(selectedLevel);
-      renderAdsView();
+      renderDailyTasks(data);
+      renderPackagesUI();
     }
 
-    // 6. Sign In / Sign Up Mode Switching
+    // 8. Render Dynamic Packages
+    function renderPackagesUI() {
+      const container = document.getElementById('packages-list-container');
+      const activePlan = currentUserData?.activePlan || 'None';
+
+      let html = '';
+      appPackages.forEach(pkg => {
+        const isCurrent = activePlan === pkg.name;
+        const activeBadge = isCurrent 
+          ? `<span class="absolute top-3 right-3 text-[10px] font-black uppercase tracking-wider text-emerald-950 bg-white/90 px-2 py-0.5 rounded-full">ACTIVE</span>` 
+          : '';
+
+        const actionBtn = isCurrent
+          ? `<button disabled class="w-full bg-[#00875a]/20 text-[#00875a] font-bold py-3 rounded-2xl text-xs flex items-center justify-center gap-1.5 cursor-default">
+               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+               <span>Activated</span>
+             </button>`
+          : `<button onclick="startPackagePurchase('${pkg.name}', ${pkg.price}, ${pkg.daily})" class="w-full primary-btn text-white font-bold py-3 rounded-2xl text-xs active:scale-95 transition">
+               Invest Rs. ${pkg.price.toLocaleString()}
+             </button>`;
+
+        html += `
+          <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="bg-gradient-to-b ${pkg.gradient || 'from-[#00b074] to-[#009b63]'} p-5 text-center relative flex flex-col items-center">
+              ${activeBadge}
+              <div class="w-24 h-24 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex flex-col items-center justify-center text-white mb-2 shadow-inner">
+                <span class="text-xl font-black leading-none">${pkg.price.toLocaleString()}</span>
+                <span class="text-[9px] font-bold uppercase opacity-90 mt-1">PKR PRICE</span>
+              </div>
+              <h3 class="text-xl font-black text-white">${pkg.name}</h3>
+            </div>
+            <div class="p-5 space-y-3 text-xs">
+              <div class="flex justify-between items-center py-1 border-b border-slate-100">
+                <span class="text-slate-500 font-medium">Daily Earning</span>
+                <span class="font-bold text-[#00875a] text-sm">Rs. ${pkg.daily.toLocaleString()}</span>
+              </div>
+              <div class="flex justify-between items-center py-1 border-b border-slate-100">
+                <span class="text-slate-500 font-medium">Total Earning</span>
+                <span class="font-bold text-slate-800">Unlimited</span>
+              </div>
+              <div class="flex justify-between items-center py-1 border-b border-slate-100">
+                <span class="text-slate-500 font-medium">Package Duration</span>
+                <span class="font-bold text-slate-800">${pkg.duration || 'Lifetime'}</span>
+              </div>
+              <div class="space-y-1.5 pt-1 text-slate-600 font-medium text-[11px]">
+                <div class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg> Daily Withdrawal</div>
+                <div class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg> No Referral Required</div>
+                <div class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg> Lifetime Earning Period</div>
+              </div>
+              <div class="pt-2">${actionBtn}</div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    // 9. Deposit Flow
+    function startPackagePurchase(name, price, daily) {
+      selectedPackage = { name, price, daily };
+      document.getElementById('dep-method-plan-name').innerText = name;
+      document.getElementById('dep-method-invest').innerText = `Rs. ${price.toLocaleString()}`;
+      document.getElementById('dep-method-daily').innerText = `Rs. ${daily.toLocaleString()}`;
+      renderPaymentMethodsList();
+      openSubPage('deposit-method-page');
+    }
+
+    function renderPaymentMethodsList() {
+      const container = document.getElementById('deposit-methods-list-container');
+      let html = '';
+      appPaymentAccounts.forEach(acc => {
+        html += `
+          <div class="bg-white border border-slate-200/80 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+            <div>
+              <p class="text-sm font-bold text-slate-900">${acc.method}</p>
+              <p class="text-base font-bold text-slate-800 tracking-wide mt-0.5 font-mono">${acc.account}</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="copyText('${acc.account}', this)" class="p-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              </button>
+              <button onclick="proceedToCheckout('${acc.method}', '${acc.account}', '${acc.title}')" class="primary-btn text-white text-xs font-bold px-4 py-2 rounded-xl">
+                Pay
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function proceedToCheckout(methodName, accountNo, title) {
+      selectedPayment = { method: methodName, account: accountNo, title };
+      document.getElementById('dep-chk-plan-name').innerText = selectedPackage.name;
+      document.getElementById('dep-chk-invest').innerText = `Rs. ${selectedPackage.price.toLocaleString()}`;
+      document.getElementById('dep-chk-daily').innerText = `Rs. ${selectedPackage.daily.toLocaleString()}`;
+      document.getElementById('dep-chk-method-name').innerText = methodName;
+      document.getElementById('dep-chk-account-no').innerText = accountNo;
+      document.getElementById('dep-chk-title').innerText = title;
+      document.getElementById('dep-chk-amount-text').innerText = `Rs. ${selectedPackage.price.toLocaleString()}`;
+      closeSubPage('deposit-method-page');
+      openSubPage('deposit-checkout-page');
+    }
+
+    function backToMethodSelection() {
+      closeSubPage('deposit-checkout-page');
+      openSubPage('deposit-method-page');
+    }
+
+    function closeDepositPages() {
+      closeSubPage('deposit-method-page');
+      closeSubPage('deposit-checkout-page');
+      document.getElementById('deposit-submit-form').reset();
+      document.getElementById('screenshot-filename').innerText = "Tap to upload screenshot";
+      base64Screenshot = "";
+    }
+
+    function handleScreenshotUpload(e) {
+      const file = e.target.files[0];
+      if (file) {
+        document.getElementById('screenshot-filename').innerText = file.name;
+        const reader = new FileReader();
+        reader.onload = evt => { base64Screenshot = evt.target.result; };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function copyAccountFromBox(btn) {
+      if (selectedPayment) copyText(selectedPayment.account, btn);
+    }
+
+    // Submit Deposit (Pending Status)
+    async function submitDepositRecord(e) {
+      e.preventDefault();
+      const txId = document.getElementById('dep-input-txnid').value.trim();
+      const btn = document.getElementById('dep-submit-btn');
+
+      if (!selectedPackage || !selectedPayment) return;
+
+      btn.disabled = true;
+      btn.innerText = "Submitting...";
+
+      try {
+        const depRef = db.ref('deposits').push();
+        await depRef.set({
+          id: depRef.key,
+          userId: currentUser.uid,
+          userName: currentUserData.name,
+          userEmail: currentUser.email,
+          planName: selectedPackage.name,
+          amountPkr: selectedPackage.price,
+          dailyIncome: selectedPackage.daily,
+          method: selectedPayment.method,
+          txId: txId,
+          screenshot: base64Screenshot || "none",
+          status: "PENDING",
+          timestamp: new Date().toLocaleString(),
+          createdAt: Date.now()
+        });
+
+        await logBalanceActivity(currentUser.uid, `Deposit Request (${selectedPackage.name})`, selectedPackage.price, 'pending');
+        showToast("Payment request submitted! Admin will verify and activate your package.", "success");
+        closeDepositPages();
+        openSubPage('dep-history-page');
+      } catch (err) {
+        showToast("Failed to submit deposit: " + err.message, "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Submit Payment";
+      }
+    }
+
+    // 10. Daily Tasks (Reset at 12:00 AM Midnight)
+    function renderDailyTasks(userData) {
+      const container = document.getElementById('tasks-container');
+      const planName = userData.activePlan || 'None';
+      const dailyIncome = Number(userData.dailyIncome) || 0;
+
+      if (planName === 'None' || dailyIncome <= 0) {
+        container.innerHTML = `
+          <div class="bg-white border border-slate-200 rounded-3xl p-8 text-center space-y-3 shadow-sm">
+            <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 mx-auto flex items-center justify-center">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </div>
+            <h4 class="text-sm font-bold text-slate-900">No Active Package</h4>
+            <p class="text-xs text-slate-500">Deposit and get your package approved to start claiming daily tasks.</p>
+            <button onclick="switchTab('packages')" class="primary-btn text-white text-xs font-bold px-4 py-2 rounded-xl mt-2">
+              Browse Packages
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      // Check Midnight Reset (Pakistan Time / Today's Date)
+      const now = new Date();
+      const todayStr = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+      const lastClaimDate = userData.lastClaimDate || "";
+      const isClaimedToday = (lastClaimDate === todayStr);
+
+      if (isClaimedToday) {
+        // Calculate remaining time until Midnight 12:00 AM
+        const midnight = new Date();
+        midnight.setHours(24, 0, 0, 0);
+        const msLeft = midnight.getTime() - now.getTime();
+        const hrs = Math.floor(msLeft / (1000 * 60 * 60));
+        const mins = Math.floor((msLeft % (1000 * 60 * 60)) / (1000 * 60));
+
+        container.innerHTML = `
+          <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
+            <div class="bg-gradient-to-r from-[#00b074] to-[#00875a] p-4 text-white flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>
+                </div>
+                <div>
+                  <h4 class="text-sm font-black leading-tight">${planName}</h4>
+                  <p class="text-[10px] opacity-85 font-medium">Investment Plan</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-[9px] uppercase font-bold tracking-wider opacity-80 block">REWARD</span>
+                <span class="text-sm font-black">Rs. ${dailyIncome}</span>
+              </div>
+            </div>
+            
+            <div class="p-5 text-center space-y-2">
+              <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-[#00875a] mx-auto flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+              </div>
+              <h4 class="text-sm font-bold text-slate-900">Task Claimed for Today!</h4>
+              <p class="text-xs text-[#00875a] font-bold">Resets at 12:00 AM (in ${hrs}h ${mins}m)</p>
+              <p class="text-[11px] text-slate-400">Come back at midnight 12:00 AM to claim your next reward.</p>
+            </div>
+          </div>
+        `;
+      } else {
+        // Screenshot 3 Exact Card
+        container.innerHTML = `
+          <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
+            <div class="bg-gradient-to-r from-[#00b074] to-[#00875a] p-4 text-white flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>
+                </div>
+                <div>
+                  <h4 class="text-sm font-black leading-tight">${planName}</h4>
+                  <p class="text-[10px] opacity-85 font-medium">Investment Plan</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-[9px] uppercase font-bold tracking-wider opacity-80 block">REWARD</span>
+                <span class="text-sm font-black">Rs. ${dailyIncome}</span>
+              </div>
+            </div>
+            
+            <div class="p-4">
+              <button onclick="startDailyTask(this)" class="w-full primary-btn text-white font-bold py-3 rounded-2xl text-xs flex items-center justify-center gap-2 active:scale-95 transition shadow-sm">
+                <svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <span>Start Task</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    async function startDailyTask(btn) {
+      if (!currentUser || !currentUserData) return;
+      btn.disabled = true;
+      btn.innerText = "Processing task ad... (5s)";
+
+      setTimeout(async () => {
+        try {
+          const reward = Number(currentUserData.dailyIncome) || 0;
+          const currentBal = Number(currentUserData.balance) || 0;
+          const earnedToday = Number(currentUserData.earnedToday) || 0;
+          const totalEarned = Number(currentUserData.totalEarned) || 0;
+
+          const now = new Date();
+          const todayStr = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+
+          await db.ref('users/' + currentUser.uid).update({
+            balance: currentBal + reward,
+            earnedToday: earnedToday + reward,
+            totalEarned: totalEarned + reward,
+            lastClaimDate: todayStr,
+            lastClaimTimestamp: Date.now()
+          });
+
+          await logBalanceActivity(currentUser.uid, `Daily Task Reward (${currentUserData.activePlan})`, reward, 'credit');
+          showToast(`Task completed! Rs. ${reward} credited to your wallet.`, "success");
+        } catch (e) {
+          showToast(e.message, "error");
+          btn.disabled = false;
+          btn.innerText = "Start Task";
+        }
+      }, 5000);
+    }
+
+    // 11. Promo Code System (Screenshot 2)
+    async function handleClaimPromo(e) {
+      e.preventDefault();
+      const codeInput = document.getElementById('promo-input-code');
+      const code = codeInput.value.trim().toUpperCase();
+      const btn = document.getElementById('promo-submit-btn');
+
+      if (!code) return;
+      btn.disabled = true;
+      btn.innerText = "Verifying...";
+
+      try {
+        // Check user claimed history
+        const userClaimSnap = await db.ref(`users/${currentUser.uid}/promoClaims/${code}`).once('value');
+        if (userClaimSnap.exists()) {
+          showToast("You have already claimed this promo code!", "error");
+          btn.disabled = false;
+          btn.innerText = "Claim";
+          return;
+        }
+
+        // Check Firebase promo code
+        let promoSnap = await db.ref(`promoCodes/${code}`).once('value');
+        let promoData = promoSnap.val();
+
+        // Fallback to DEFAULT_PROMOS if not in DB yet
+        if (!promoData && DEFAULT_PROMOS[code]) {
+          promoData = DEFAULT_PROMOS[code];
+          // seed to DB
+          await db.ref(`promoCodes/${code}`).set(promoData);
+        }
+
+        if (!promoData || !promoData.active) {
+          showToast("Invalid or expired promo code!", "error");
+          btn.disabled = false;
+          btn.innerText = "Claim";
+          return;
+        }
+
+        const rewardAmount = Number(promoData.amount) || 50;
+        const curBal = Number(currentUserData.balance) || 0;
+
+        // Credit balance
+        await db.ref('users/' + currentUser.uid).update({
+          balance: curBal + rewardAmount
+        });
+
+        // Record Claim
+        const claimRecord = {
+          code: code,
+          amount: rewardAmount,
+          timestamp: new Date().toLocaleString(),
+          createdAt: Date.now()
+        };
+
+        await db.ref(`users/${currentUser.uid}/promoClaims/${code}`).set(claimRecord);
+        await logBalanceActivity(currentUser.uid, `Promo Code Claimed (${code})`, rewardAmount, 'credit');
+
+        showToast(`Promo Code Applied! Rs. ${rewardAmount} added to your balance.`, "success");
+        codeInput.value = '';
+      } catch (err) {
+        showToast("Error claiming promo code: " + err.message, "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Claim";
+      }
+    }
+
+    function renderPromoHistory(claims) {
+      const list = document.getElementById('promo-history-list');
+      if (!claims || Object.keys(claims).length === 0) {
+        list.innerHTML = `<p class="text-slate-400 py-3 text-center font-medium">No promo claims yet.</p>`;
+        return;
+      }
+
+      // Take last 5
+      const claimArray = Object.values(claims).sort((a,b) => b.createdAt - a.createdAt).slice(0, 5);
+      let html = '';
+
+      claimArray.forEach(c => {
+        html += `
+          <div class="bg-slate-50 border border-slate-100 rounded-2xl p-3 flex items-center justify-between">
+            <div>
+              <span class="font-bold text-slate-800 font-mono tracking-wide">${c.code}</span>
+              <p class="text-[10px] text-slate-400 mt-0.5">${c.timestamp}</p>
+            </div>
+            <span class="font-black text-[#00875a]">+Rs. ${c.amount}</span>
+          </div>
+        `;
+      });
+
+      list.innerHTML = html;
+    }
+
+    // 12. Withdrawal Dropdown & Handler
+    let selectedWdMethod = "EasyPaisa";
+
+    function toggleWithdrawDropdown() {
+      const dd = document.getElementById('wd-custom-dropdown');
+      dd.classList.toggle('hidden');
+    }
+
+    function renderWithdrawDropdown() {
+      const container = document.getElementById('wd-custom-dropdown');
+      let html = '';
+
+      appWithdrawMethods.forEach(method => {
+        const isSelected = selectedWdMethod === method;
+        html += `
+          <div onclick="selectWithdrawMethod('${method}')" class="px-4 py-3 text-sm flex items-center justify-between cursor-pointer hover:bg-slate-50 transition ${isSelected ? 'bg-emerald-50 text-[#00875a] font-bold' : 'text-slate-800 font-medium'}">
+            <span>${method}</span>
+            ${isSelected ? `<svg class="w-4 h-4 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>` : ''}
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function selectWithdrawMethod(method) {
+      selectedWdMethod = method;
+      document.getElementById('wd-selected-method-label').innerText = method;
+      toggleWithdrawDropdown();
+      renderWithdrawDropdown();
+    }
+
+    async function handleWithdrawalSubmit(e) {
+      e.preventDefault();
+      const amount = Number(document.getElementById('wd-amount').value);
+      const accNumber = document.getElementById('wd-account-number').value.trim();
+      const holderName = document.getElementById('wd-holder-name').value.trim();
+      const submitBtn = document.getElementById('wd-submit-btn');
+
+      const userBalance = Number(currentUserData?.balance) || 0;
+
+      if (amount < 20) {
+        showToast("Minimum withdrawal is 20 PKR.", "error");
+        return;
+      }
+      if (amount > userBalance) {
+        showToast("Insufficient wallet balance.", "error");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Requesting...";
+
+      try {
+        const wdRef = db.ref('withdrawals').push();
+        await wdRef.set({
+          id: wdRef.key,
+          userId: currentUser.uid,
+          userName: currentUserData.name,
+          userEmail: currentUser.email,
+          amountPkr: amount,
+          method: selectedWdMethod,
+          accountNumber: accNumber,
+          holderName: holderName,
+          status: "Pending",
+          timestamp: new Date().toLocaleString(),
+          createdAt: Date.now()
+        });
+
+        await db.ref('users/' + currentUser.uid).update({
+          balance: userBalance - amount
+        });
+
+        await logBalanceActivity(currentUser.uid, `Withdrawal Requested (${selectedWdMethod})`, -amount, 'debit');
+
+        showToast("Withdrawal requested! Processed within 24-48 hours.", "success");
+        document.getElementById('withdraw-form').reset();
+        closeSubPage('withdraw-page');
+        openSubPage('wd-history-page');
+      } catch (err) {
+        showToast("Withdrawal failed: " + err.message, "error");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Request Withdrawal";
+      }
+    }
+
+    // 13. Cash Rewards Levels
+    function renderCashRewardLevels(teamInvestment = 0) {
+      const container = document.getElementById('cash-levels-container');
+      let html = '';
+
+      appRewardLevels.forEach(lvl => {
+        const target = Number(lvl.target) || 5000;
+        const reward = Number(lvl.reward) || 1500;
+        const isUnlocked = teamInvestment >= target;
+        const progressPct = Math.min(100, Math.round((teamInvestment / target) * 100));
+
+        const btnState = isUnlocked 
+          ? `<button onclick="claimCashReward(${lvl.level}, ${reward})" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-2.5 rounded-xl text-xs transition shadow-sm">
+               Claim ${reward.toLocaleString()} PKR
+             </button>`
+          : `<button disabled class="w-full bg-white/20 text-white/70 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-not-allowed">
+               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+               <span>Locked</span>
+             </button>`;
+
+        html += `
+          <div class="bg-white/10 rounded-2xl p-4 border border-white/15 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-full bg-amber-400 text-slate-900 flex items-center justify-center font-black text-xs shadow-sm">
+                  ${lvl.level}
+                </div>
+                <div>
+                  <p class="text-[10px] uppercase font-bold text-amber-300">LEVEL ${lvl.level}</p>
+                  <p class="text-xs font-black">${target.toLocaleString()} PKR Joining</p>
+                </div>
+              </div>
+              <span class="text-sm font-black text-amber-300">${reward.toLocaleString()}</span>
+            </div>
+
+            <div class="space-y-1">
+              <div class="flex justify-between text-[10px] opacity-75">
+                <span>${teamInvestment.toLocaleString()} / ${target.toLocaleString()} PKR</span>
+                <span>${progressPct}%</span>
+              </div>
+              <div class="w-full h-1.5 bg-black/30 rounded-full overflow-hidden">
+                <div class="h-full bg-amber-400 rounded-full" style="width: ${progressPct}%"></div>
+              </div>
+            </div>
+
+            ${btnState}
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    async function claimCashReward(level, rewardAmount) {
+      if (!currentUser) return;
+      try {
+        const curBal = Number(currentUserData.balance) || 0;
+        await db.ref('users/' + currentUser.uid).update({
+          balance: curBal + rewardAmount
+        });
+        await logBalanceActivity(currentUser.uid, `Cash Reward Level ${level} Claimed`, rewardAmount, 'credit');
+        showToast(`Congratulations! Level ${level} Cash Reward Rs. ${rewardAmount} credited!`, "success");
+      } catch (e) {
+        showToast(e.message, "error");
+      }
+    }
+
+    // 14. Activity Logger & History Views
+    async function logBalanceActivity(uid, title, amount, type) {
+      try {
+        await db.ref(`balanceLogs/${uid}`).push().set({
+          title,
+          amount,
+          type,
+          timestamp: new Date().toLocaleString(),
+          createdAt: Date.now()
+        });
+      } catch (e) { console.error(e); }
+    }
+
+    function renderBalanceHistoryUI(records) {
+      const container = document.getElementById('bal-history-container');
+      if (!records || Object.keys(records).length === 0) {
+        container.innerHTML = `
+          <div class="bg-white border border-slate-200/80 rounded-3xl p-12 text-center flex flex-col items-center justify-center space-y-3 shadow-sm">
+            <svg class="w-12 h-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+            <p class="text-sm font-semibold text-slate-600">No balance activity yet</p>
+          </div>
+        `;
+        return;
+      }
+
+      const list = Object.values(records).reverse();
+      let html = '';
+      list.forEach(item => {
+        const isCredit = item.type === 'credit';
+        const color = isCredit ? 'text-[#00875a]' : (item.type === 'pending' ? 'text-amber-500' : 'text-rose-500');
+        const sign = isCredit ? '+' : '';
+
+        html += `
+          <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-xs font-bold text-slate-900">${item.title}</p>
+              <p class="text-[10px] text-slate-400 mt-0.5">${item.timestamp}</p>
+            </div>
+            <span class="text-sm font-black ${color}">${sign}${item.amount} PKR</span>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function renderDepositHistoryUI(records) {
+      const container = document.getElementById('dep-history-container');
+      if (!records || Object.keys(records).length === 0) {
+        container.innerHTML = `
+          <div class="bg-white border border-slate-200/80 rounded-3xl p-12 text-center flex flex-col items-center justify-center space-y-3 shadow-sm">
+            <svg class="w-12 h-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+            <p class="text-sm font-semibold text-slate-600">No deposits yet</p>
+          </div>
+        `;
+        return;
+      }
+
+      const list = Object.values(records).reverse();
+      let html = '';
+      list.forEach(item => {
+        const isApproved = item.status === 'APPROVED';
+        const badgeColor = isApproved ? 'bg-emerald-50 text-[#00875a] border-emerald-200' : 'bg-amber-50 text-amber-600 border-amber-200';
+        html += `
+          <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="text-base font-black text-slate-900">PKR ${Number(item.amountPkr).toFixed(2)}</span>
+              <span class="text-[10px] font-black px-2.5 py-0.5 rounded-full border ${badgeColor}">${item.status || 'PENDING'}</span>
+            </div>
+            <p class="text-xs font-semibold text-slate-600">${item.method} (${item.planName})</p>
+            <p class="text-[11px] font-mono text-slate-500">TXN: ${item.txId || '-'}</p>
+            <p class="text-[10px] text-slate-400 border-t border-slate-50 pt-2">${item.timestamp}</p>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function renderWithdrawalHistoryUI(records) {
+      const container = document.getElementById('wd-history-container');
+      if (!records || Object.keys(records).length === 0) {
+        container.innerHTML = `
+          <div class="bg-white border border-slate-200/80 rounded-3xl p-12 text-center flex flex-col items-center justify-center space-y-3 shadow-sm">
+            <svg class="w-12 h-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+            <p class="text-sm font-semibold text-slate-600">No withdrawals yet</p>
+          </div>
+        `;
+        return;
+      }
+
+      const list = Object.values(records).reverse();
+      let html = '';
+      list.forEach(item => {
+        const badgeColor = item.status === 'Approved' ? 'bg-emerald-50 text-[#00875a]' : 'bg-amber-50 text-amber-600';
+        html += `
+          <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="text-base font-black text-slate-900">PKR ${Number(item.amountPkr).toFixed(2)}</span>
+              <span class="text-[10px] font-black px-2.5 py-0.5 rounded-full ${badgeColor}">${item.status || 'Pending'}</span>
+            </div>
+            <p class="text-xs font-semibold text-slate-700">${item.method} (${item.accountNumber})</p>
+            <p class="text-[11px] text-slate-500">Holder: ${item.holderName}</p>
+            <p class="text-[10px] text-slate-400 border-t border-slate-50 pt-2">${item.timestamp}</p>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    // 15. Auth System (With Rs. 50 Referral Welcome Bonus)
     function toggleAuthMode() {
       isSignUp = !isSignUp;
+      document.getElementById('auth-form').reset();
       renderAuthUI();
     }
 
@@ -681,37 +1696,36 @@
         subtitle.innerText = "Register to start earning daily returns";
         nameField.classList.remove('hidden');
         refField.classList.remove('hidden');
-        submitBtn.querySelector('span').innerText = "Sign Up";
+        submitBtn.innerText = "Sign Up";
         toggleBtn.innerText = "Already have an account? Sign In";
 
         if (inviterData) {
-          document.getElementById('auth-inviter').value = `${inviterData.name} (${inviterData.email})`;
+          document.getElementById('auth-inviter').value = `${inviterData.name} (${inviterUid.substring(0,8).toUpperCase()})`;
         } else {
-          // Direct Signup (No inviter needed)
-          document.getElementById('auth-inviter').value = "Direct Registration (Official)";
+          document.getElementById('auth-inviter').value = "Direct Official Registration";
         }
       } else {
-        title.innerText = "APEX CAPITAL";
-        subtitle.innerText = "Sign in to access your investment portal";
+        title.innerText = "DailyEarn";
+        subtitle.innerText = "Sign in to access your dashboard";
         nameField.classList.add('hidden');
         refField.classList.add('hidden');
-        submitBtn.querySelector('span').innerText = "Sign In";
+        submitBtn.innerText = "Sign In";
         toggleBtn.innerText = "Don't have an account? Sign Up";
       }
     }
 
-    // 7. Auth Handling (Allows Direct & Invited Signups)
-    async function handleAuth(event) {
-      event.preventDefault();
+    async function handleAuth(e) {
+      e.preventDefault();
       const submitBtn = document.getElementById('auth-submit-btn');
       const errBox = document.getElementById('auth-error');
       errBox.classList.add('hidden');
 
       const email = document.getElementById('auth-email').value.trim();
       const password = document.getElementById('auth-password').value;
-      const name = document.getElementById('auth-name').value.trim();
+      const name = document.getElementById('auth-name').value.trim() || 'Investor';
 
-      setBtnLoading(submitBtn, true);
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Processing...";
 
       try {
         if (isSignUp) {
@@ -719,375 +1733,152 @@
           const user = cred.user;
           await user.updateProfile({ displayName: name });
 
-          // Determine L1, L2, L3 uplines if inviter exists
-          const uplineL1 = inviterData ? urlReferrerUid : null;
-          const uplineL2 = inviterData ? (inviterData.referrerL1 || null) : null;
-          const uplineL3 = inviterData ? (inviterData.referrerL2 || null) : null;
+          // If invited, give user Rs. 50 Welcome bonus!
+          const welcomeBonus = inviterUid ? 50 : 0;
 
           const newUserData = {
-            name: name || 'Investor',
+            name: name,
             email: email,
-            balance: 0.00,
-            totalProfit: 0.00,
-            commission: 0.00,
+            balance: welcomeBonus,
+            earnedToday: 0,
+            totalEarned: welcomeBonus,
             activePlan: 'None',
-            dailyIncome: 0.00,
+            dailyIncome: 0,
+            lastClaimDate: "",
             lastClaimTimestamp: 0,
-            referrerL1: uplineL1,
-            referrerL2: uplineL2,
-            referrerL3: uplineL3,
-            joinedAt: new Date().toISOString()
+            referredBy: inviterUid || null,
+            createdAt: new Date().toISOString()
           };
 
-          // Save User Node
           await db.ref('users/' + user.uid).set(newUserData);
 
-          // If invited, link to inviter's team levels
-          if (uplineL1) {
-            const memberRecord = {
-              uid: user.uid,
-              name: name || 'Investor',
-              email: email,
-              activePlan: 'None',
-              joinedAt: new Date().toISOString(),
-              earnedFromMember: 0.00
-            };
-
-            const updates = {};
-            if (uplineL1) updates[`team/${uplineL1}/level1/${user.uid}`] = memberRecord;
-            if (uplineL2) updates[`team/${uplineL2}/level2/${user.uid}`] = memberRecord;
-            if (uplineL3) updates[`team/${uplineL3}/level3/${user.uid}`] = memberRecord;
-
-            await db.ref().update(updates);
+          if (welcomeBonus > 0) {
+            await logBalanceActivity(user.uid, "Referral Welcome Bonus", welcomeBonus, "credit");
           }
 
+          // Link to Inviter's team network
+          if (inviterUid) {
+            await db.ref(`referrals/${inviterUid}/${user.uid}`).set({
+              uid: user.uid,
+              name: name,
+              email: email,
+              depositTotal: 0,
+              commissionEarned: 0,
+              joinedAt: new Date().toISOString()
+            });
+          }
+
+          showToast(welcomeBonus > 0 ? "Account created! Rs. 50 bonus credited to your wallet." : "Account created successfully!", "success");
         } else {
           await auth.signInWithEmailAndPassword(email, password);
+          showToast(`Welcome back, ${email.split('@')[0]}!`, "success");
         }
       } catch (err) {
         errBox.innerText = err.message;
         errBox.classList.remove('hidden');
+        showToast(err.message, "error");
       } finally {
-        setBtnLoading(submitBtn, false);
+        submitBtn.disabled = false;
+        submitBtn.innerText = isSignUp ? "Sign Up" : "Sign In";
       }
     }
 
-    function logoutUser(btn) {
-      setBtnLoading(btn, true);
-      auth.signOut().then(() => {
-        setBtnLoading(btn, false);
-      });
-    }
-
-    // 8. 3-Level Team Switcher & Display
-    function selectLevelTab(lvl) {
-      selectedLevel = lvl;
-      for (let i = 1; i <= 3; i++) {
-        const btn = document.getElementById(`lvl-tab-${i}`);
-        if (i === lvl) {
-          btn.className = "py-2.5 rounded-xl text-xs font-bold transition bg-amber-500/20 text-amber-300 border border-amber-500/30";
-        } else {
-          btn.className = "py-2.5 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white";
-        }
-      }
-      loadTeamLevel(lvl);
-    }
-
-    async function loadTeamLevel(lvl) {
-      if (!currentUser) return;
-      const listContainer = document.getElementById('team-members-list');
-      const countEl = document.getElementById('lvl-member-count');
-      const earnedEl = document.getElementById('lvl-earned-amount');
-
-      listContainer.innerHTML = `<div class="text-center py-6 text-xs text-slate-500">Loading Level ${lvl} members...</div>`;
-
-      try {
-        const snap = await db.ref(`team/${currentUser.uid}/level${lvl}`).once('value');
-        const members = snap.val();
-
-        if (!members) {
-          countEl.innerText = "0";
-          earnedEl.innerText = "$0.00";
-          listContainer.innerHTML = `<div class="text-center py-8 text-xs text-slate-500">No members found in Level ${lvl}.</div>`;
-          return;
-        }
-
-        const memberKeys = Object.keys(members);
-        countEl.innerText = memberKeys.length;
-
-        let totalEarned = 0;
-        let html = '';
-
-        for (const k of memberKeys) {
-          const m = members[k];
-          totalEarned += Number(m.earnedFromMember) || 0;
-          html += `
-            <div class="bg-[#10131b] border border-white/5 rounded-2xl p-3.5 flex items-center justify-between">
-              <div class="space-y-0.5">
-                <p class="text-xs font-bold text-white">${m.name}</p>
-                <p class="text-[10px] text-slate-400 font-mono">${m.email}</p>
-                <span class="inline-block text-[9px] px-2 py-0.5 rounded font-semibold ${m.activePlan !== 'None' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-white/5 text-slate-400'}">
-                  Plan: ${m.activePlan || 'None'}
-                </span>
-              </div>
-              <div class="text-right">
-                <span class="text-[10px] text-slate-400 block">Commission</span>
-                <span class="text-xs font-black text-amber-400">+$${(Number(m.earnedFromMember) || 0).toFixed(2)}</span>
-              </div>
-            </div>
-          `;
-        }
-
-        earnedEl.innerText = `$${totalEarned.toFixed(2)}`;
-        listContainer.innerHTML = html;
-        document.getElementById('user-referrals').innerText = `${memberKeys.length} Level 1 Members →`;
-
-      } catch (e) {
-        listContainer.innerHTML = `<div class="text-center py-6 text-xs text-red-400">Error loading team data.</div>`;
+    function handleLogout() {
+      if (confirm("Are you sure you want to logout?")) {
+        auth.signOut();
+        showToast("Logged out successfully.", "success");
       }
     }
 
-    // 9. Deposit Flow & Full Screen
-    function openDepositPage(planName, usdPrice, dailyIncome, btn) {
-      setBtnLoading(btn, true);
-      setTimeout(() => {
-        setBtnLoading(btn, false);
-        activeDepositPlan = {
-          name: planName,
-          usd: usdPrice,
-          pkr: usdPrice * 280,
-          daily: dailyIncome
-        };
-
-        document.getElementById('dep-plan-name').innerText = activeDepositPlan.name;
-        document.getElementById('dep-plan-usd').innerText = `$${activeDepositPlan.usd}.00`;
-        document.getElementById('dep-plan-pkr').innerText = `Rs ${activeDepositPlan.pkr.toLocaleString()} PKR`;
-        document.getElementById('deposit-page').classList.remove('hidden');
-        document.getElementById('deposit-page').classList.add('flex');
-      }, 300);
-    }
-
-    function closeDepositPage() {
-      document.getElementById('deposit-page').classList.add('hidden');
-      document.getElementById('deposit-page').classList.remove('flex');
-      document.getElementById('payment-form').reset();
-    }
-
-    async function submitDeposit(e) {
-      e.preventDefault();
-      const submitBtn = document.getElementById('dep-submit-btn');
-      const senderAcc = document.getElementById('dep-sender-account').value.trim();
-      const trxId = document.getElementById('dep-trx-id').value.trim();
-
-      if (!activeDepositPlan || !currentUser) return;
-
-      setBtnLoading(submitBtn, true);
-
-      try {
-        const depositRef = db.ref('deposits').push();
-        const depositData = {
-          id: depositRef.key,
-          userId: currentUser.uid,
-          userName: currentUserData.name,
-          userEmail: currentUser.email,
-          planName: activeDepositPlan.name,
-          usdAmount: activeDepositPlan.usd,
-          pkrAmount: activeDepositPlan.pkr,
-          dailyIncome: activeDepositPlan.daily,
-          senderAccount: senderAcc,
-          trxId: trxId,
-          status: "Pending",
-          createdAt: new Date().toISOString()
-        };
-
-        await depositRef.set(depositData);
-        alert("Deposit request submitted successfully! Admin will verify and activate your plan.");
-        closeDepositPage();
-        openHistoryPage();
-      } catch (err) {
-        alert("Failed to submit deposit: " + err.message);
-      } finally {
-        setBtnLoading(submitBtn, false);
-      }
-    }
-
-    // 10. Deposit History View (Full Screen)
-    function openHistoryPage() {
-      document.getElementById('history-page').classList.remove('hidden');
-      document.getElementById('history-page').classList.add('flex');
-    }
-
-    function closeHistoryPage() {
-      document.getElementById('history-page').classList.add('hidden');
-      document.getElementById('history-page').classList.remove('flex');
-    }
-
-    function renderDepositHistory(records) {
-      const container = document.getElementById('history-list');
-      if (!records) {
-        container.innerHTML = `<div class="text-center py-12 text-slate-500 text-xs">No deposit requests found.</div>`;
-        return;
-      }
-
-      const list = Object.values(records).reverse();
-      let html = '';
-
-      list.forEach(item => {
-        let statusBadge = '';
-        if (item.status === 'Approved') {
-          statusBadge = `<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2 py-0.5 rounded">Approved</span>`;
-        } else if (item.status === 'Rejected') {
-          statusBadge = `<span class="bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] font-bold px-2 py-0.5 rounded">Rejected</span>`;
-        } else {
-          statusBadge = `<span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold px-2 py-0.5 rounded">Pending Approval</span>`;
-        }
-
-        html += `
-          <div class="bg-[#121620] border border-white/5 rounded-2xl p-4 space-y-2">
-            <div class="flex justify-between items-center">
-              <span class="text-xs font-bold text-white">${item.planName}</span>
-              ${statusBadge}
-            </div>
-            <div class="flex justify-between items-center text-xs">
-              <span class="text-slate-400">Amount</span>
-              <span class="font-bold text-amber-300">$${item.usdAmount} (Rs ${item.pkrAmount})</span>
-            </div>
-            <div class="flex justify-between items-center text-[11px] text-slate-400 border-t border-white/5 pt-2">
-              <span>Trx ID: <strong class="text-slate-200 font-mono">${item.trxId}</strong></span>
-              <span>${new Date(item.createdAt).toLocaleDateString()}</span>
-            </div>
-          </div>
-        `;
-      });
-
-      container.innerHTML = html;
-    }
-
-    // 11. Daily Ads & 24H Claim Engine (Full Screen)
-    function openAdsPage() {
-      document.getElementById('ads-page').classList.remove('hidden');
-      document.getElementById('ads-page').classList.add('flex');
-      renderAdsView();
-    }
-
-    function closeAdsPage() {
-      document.getElementById('ads-page').classList.add('hidden');
-      document.getElementById('ads-page').classList.remove('flex');
-    }
-
-    function renderAdsView() {
-      const container = document.getElementById('ads-container');
-      if (!currentUserData || !currentUserData.activePlan || currentUserData.activePlan === 'None') {
-        container.innerHTML = `
-          <div class="bg-[#10131b] border border-white/5 rounded-2xl p-6 text-center space-y-3">
-            <p class="text-xs text-slate-400">You don't have an active investment plan yet.</p>
-            <button onclick="closeAdsPage(); switchTab('funds')" class="gold-gradient-btn text-black font-extrabold px-4 py-2.5 rounded-xl text-xs uppercase">
-              Invest In A Plan
-            </button>
-          </div>
-        `;
-        return;
-      }
-
-      const now = Date.now();
-      const lastClaim = currentUserData.lastClaimTimestamp || 0;
-      const hoursRemaining = Math.max(0, (lastClaim + 24 * 60 * 60 * 1000 - now) / (1000 * 60 * 60));
-
-      if (hoursRemaining > 0) {
-        const hrs = Math.floor(hoursRemaining);
-        const mins = Math.floor((hoursRemaining - hrs) * 60);
-        container.innerHTML = `
-          <div class="bg-[#10131b] border border-amber-500/20 rounded-2xl p-6 text-center space-y-2">
-            <span class="text-2xl">⏳</span>
-            <h4 class="text-sm font-bold text-white">Daily Income Already Claimed</h4>
-            <p class="text-xs text-amber-400 font-mono">Next claim available in: ${hrs}h ${mins}m</p>
-            <p class="text-[11px] text-slate-400">You can claim once every 24 hours.</p>
-          </div>
-        `;
-      } else {
-        container.innerHTML = `
-          <div class="bg-gradient-to-br from-[#161a24] to-[#0d0f15] border border-amber-500/40 rounded-3xl p-5 space-y-4">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">🎬</div>
-              <div>
-                <h4 class="text-xs font-bold text-white">Daily Sponsor Ad Task</h4>
-                <p class="text-[10px] text-slate-400">Complete task to credit $${currentUserData.dailyIncome}</p>
-              </div>
-            </div>
-            
-            <div class="p-3 bg-black/40 rounded-xl border border-white/5 text-center">
-              <span class="text-xs font-semibold text-emerald-400">Reward: +$${currentUserData.dailyIncome} USD</span>
-            </div>
-
-            <button onclick="claimDailyIncome(this)" class="w-full gold-gradient-btn text-black font-black py-3 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition flex items-center justify-center gap-2">
-              <span>Watch Ad & Claim Now</span>
-            </button>
-          </div>
-        `;
-      }
-    }
-
-    async function claimDailyIncome(btn) {
-      if (!currentUser || !currentUserData) return;
-      setBtnLoading(btn, true);
-
-      try {
-        const dailyRate = Number(currentUserData.dailyIncome) || 0;
-        const currentBal = Number(currentUserData.balance) || 0;
-        const currentProfit = Number(currentUserData.totalProfit) || 0;
-
-        await db.ref('users/' + currentUser.uid).update({
-          balance: currentBal + dailyRate,
-          totalProfit: currentProfit + dailyRate,
-          lastClaimTimestamp: Date.now()
-        });
-
-        alert(`Congratulations! $${dailyRate} credited to your balance.`);
-        renderAdsView();
-      } catch (err) {
-        alert("Claim failed: " + err.message);
-      } finally {
-        setBtnLoading(btn, false);
-      }
-    }
-
-    // 12. Helper Utilities
-    function copyText(str, btn) {
-      navigator.clipboard.writeText(str);
-      const original = btn.innerText;
-      btn.innerText = "Copied!";
-      setTimeout(() => btn.innerText = original, 1500);
-    }
-
-    function copyRefLink(btn) {
-      const input = document.getElementById('ref-input');
-      input.select();
-      navigator.clipboard.writeText(input.value);
-      setBtnLoading(btn, true);
-      setTimeout(() => {
-        setBtnLoading(btn, false, "Copied!");
-        btn.querySelector('span').innerText = "Copied!";
-        setTimeout(() => btn.querySelector('span').innerText = "Copy", 2000);
-      }, 300);
-    }
-
+    // 16. Tab Navigation without auto-scroll
     function switchTab(target) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      ['home', 'funds', 'network', 'vault', 'mine'].forEach(tab => {
+      ['home', 'ads', 'packages', 'invite', 'profile'].forEach(tab => {
         const view = document.getElementById(`${tab}-view`);
         const navBtn = document.getElementById(`nav-${tab}`);
         if (tab === target) {
           view.classList.remove('hidden');
-          navBtn.className = 'flex flex-col items-center gap-1 text-amber-400 transition flex-1';
-          navBtn.querySelector('span').className = 'text-[9px] font-bold tracking-wider uppercase';
+          navBtn.className = 'flex flex-col items-center gap-1 text-[#00875a] transition flex-1';
+          navBtn.querySelector('span').className = 'text-[10px] font-bold';
         } else {
           view.classList.add('hidden');
-          navBtn.className = 'flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition flex-1';
-          navBtn.querySelector('span').className = 'text-[9px] font-medium tracking-wider uppercase';
+          navBtn.className = 'flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition flex-1';
+          navBtn.querySelector('span').className = 'text-[10px] font-medium';
         }
       });
     }
-  </script>
 
+    function openSubPage(pageId) {
+      const page = document.getElementById(pageId);
+      page.scrollTop = 0;
+      page.classList.remove('hidden');
+      page.classList.add('flex');
+    }
+
+    function closeSubPage(pageId) {
+      const page = document.getElementById(pageId);
+      page.classList.add('hidden');
+      page.classList.remove('flex');
+    }
+
+    // Password Update
+    async function handlePasswordUpdate(e) {
+      e.preventDefault();
+      const p1 = document.getElementById('cp-new-password').value;
+      const p2 = document.getElementById('cp-confirm-password').value;
+      if (p1 !== p2) {
+        showToast("Passwords do not match!", "error");
+        return;
+      }
+      try {
+        await currentUser.updatePassword(p1);
+        showToast("Password updated successfully!", "success");
+        closeSubPage('change-password-page');
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+
+    // Recovery Email Update
+    async function handleRecoveryEmailUpdate(e) {
+      e.preventDefault();
+      const rec = document.getElementById('rec-email-input').value.trim();
+      try {
+        await db.ref('users/' + currentUser.uid).update({ recoveryEmail: rec });
+        showToast("Recovery email saved!", "success");
+        closeSubPage('recovery-email-page');
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+
+    // Utilities
+    function copyText(str, btn) {
+      navigator.clipboard.writeText(str);
+      const orig = btn.innerHTML;
+      btn.innerHTML = `<span class="text-xs font-bold text-[#00875a]">Copied!</span>`;
+      setTimeout(() => btn.innerHTML = orig, 1800);
+      showToast("Copied to clipboard!", "success");
+    }
+
+    function copyRefLink() {
+      const input = document.getElementById('inv-link-input');
+      input.select();
+      navigator.clipboard.writeText(input.value);
+      showToast("Referral link copied!", "success");
+    }
+
+    function shareReferralLink() {
+      const link = document.getElementById('inv-link-input').value;
+      if (navigator.share) {
+        navigator.share({
+          title: 'Join DailyEarn & Earn Daily',
+          text: 'Earn daily profits and get Rs. 50 bonus instantly!',
+          url: link
+        }).catch(() => {});
+      } else {
+        copyRefLink();
+      }
+    }
+  </script>
 </body>
 </html>
