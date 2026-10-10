@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>DailyEarn | Earn & Investment</title>
+  <title>Adds Hub Earn | Earn & Investment</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
@@ -19,13 +19,27 @@
     }
     ::-webkit-scrollbar { width: 0px; background: transparent; }
     .primary-btn {
-      background-color: #00875a;
+      background-color: #00875a !important;
       transition: all 0.2s ease;
     }
-    .primary-btn:hover { background-color: #00754e; }
+    .primary-btn:hover { background-color: #00754e !important; }
     .primary-btn:active { transform: scale(0.98); }
     
-    /* Smooth Slide-Up Alert Just Above Footer */
+    /* Glowing Animated Blue Effect on Logo */
+    .blue-glow-pulse {
+      box-shadow: 0 0 18px rgba(37, 99, 235, 0.75), 0 0 32px rgba(59, 130, 246, 0.45);
+      border: 1.5px solid rgba(96, 165, 250, 0.7);
+      animation: blueGlow 2.2s infinite ease-in-out;
+    }
+    @keyframes blueGlow {
+      0%, 100% {
+        box-shadow: 0 0 14px rgba(37, 99, 235, 0.65), 0 0 28px rgba(59, 130, 246, 0.35);
+      }
+      50% {
+        box-shadow: 0 0 24px rgba(37, 99, 235, 0.95), 0 0 42px rgba(59, 130, 246, 0.65);
+      }
+    }
+
     @keyframes slideUpAboveFooter {
       0% { opacity: 0; transform: translateY(16px); }
       100% { opacity: 1; transform: translateY(0); }
@@ -37,7 +51,7 @@
 </head>
 <body class="bg-[#f8fafc] text-slate-800 flex justify-center min-h-screen antialiased select-none">
 
-  <!-- ==================== TOAST ALERT (VISIBLE ON ALL PAGES ABOVE FOOTER) ==================== -->
+  <!-- ==================== TOAST ALERT (ABOVE BOTTOM NAVIGATION) ==================== -->
   <div id="toast-wrapper" class="fixed bottom-20 inset-x-0 mx-auto max-w-sm px-4 z-[9999] pointer-events-none space-y-2"></div>
 
   <!-- ==================== CUSTOM LOGOUT CONFIRMATION MODAL ==================== -->
@@ -65,12 +79,12 @@
   <div id="auth-modal" class="fixed inset-0 z-50 bg-[#f1f5f9] flex items-center justify-center p-4 overflow-y-auto">
     <div class="w-full max-w-sm bg-white border border-slate-200 rounded-3xl p-6 shadow-xl relative my-auto">
       
-      <!-- Logo Restored to Original Size -->
+      <!-- Glowing Blue Logo -->
       <div class="text-center mb-5">
-        <div class="w-14 h-14 rounded-2xl bg-[#00875a] text-white mx-auto mb-3 flex items-center justify-center font-black text-2xl shadow-sm">
+        <div class="w-14 h-14 rounded-2xl bg-[#00875a] text-white mx-auto mb-3 flex items-center justify-center font-black text-2xl blue-glow-pulse">
           <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
-        <h2 id="auth-title" class="text-xl font-extrabold text-slate-900 tracking-tight">DailyEarn</h2>
+        <h2 id="auth-title" class="text-xl font-extrabold text-slate-900 tracking-tight">Adds Hub Earn</h2>
         <p id="auth-subtitle" class="text-xs text-slate-500 mt-0.5">Sign in to your account</p>
       </div>
 
@@ -107,6 +121,95 @@
         <button onclick="toggleAuthMode()" id="auth-toggle-btn" class="text-xs text-[#00875a] hover:underline font-semibold">
           Don't have an account? Sign Up
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SUB-PAGE: RS. 100 FREE BONUS PAGE (EXACT SCREENSHOT) ==================== -->
+  <div id="bonus-page" class="fixed inset-0 z-50 bg-[#f8fafc] hidden flex-col max-w-md mx-auto overflow-y-auto">
+    <div class="sticky top-0 bg-white/95 backdrop-blur-md px-5 py-4 border-b border-slate-100 flex items-center justify-between z-20">
+      <button onclick="closeSubPage('bonus-page')" class="p-1 -ml-1 text-slate-600 hover:text-slate-900 flex items-center gap-1 text-sm font-semibold">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+        Back
+      </button>
+      <h2 class="text-base font-black text-slate-900">Claim Free Bonus</h2>
+      <div class="w-6"></div>
+    </div>
+
+    <div class="p-5 space-y-4 flex-1">
+      <!-- Main Green Bonus Card -->
+      <div class="bg-gradient-to-br from-[#00b074] via-[#009b63] to-[#00875a] rounded-3xl p-6 text-white shadow-sm space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md border border-white/25 flex items-center justify-center text-white shrink-0">
+            <svg class="w-6 h-6 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>
+          </div>
+          <div>
+            <h3 class="text-2xl font-black tracking-tight leading-tight">Rs. 100 FREE</h3>
+            <p class="text-xs font-semibold opacity-90 mt-0.5">One-time bonus for all members</p>
+          </div>
+        </div>
+
+        <p class="text-xs text-white/95 leading-relaxed font-normal">
+          Join both official channels below to get the official 5-digit verification code. Enter the code in the verification box to receive Rs. 100 into your dashboard wallet instantly.
+        </p>
+      </div>
+
+      <!-- WhatsApp Channel Button Card -->
+      <div class="bg-white border border-slate-200/90 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+            <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.299.144.347.491 1.2.534 1.287.043.087.072.188.014.303-.058.116-.087.188-.173.289l-.26.302c-.087.086-.177.18-.076.353.101.173.449.741.964 1.2 1.348 1.102 1.487 1.185 1.703 1.287.173.087.275.072.376-.043.101-.116.433-.505.549-.679.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.043.072.043.419-.101.824z"/></svg>
+          </div>
+          <div>
+            <h4 class="text-sm font-extrabold text-slate-900 leading-tight">WhatsApp Channel</h4>
+            <p class="text-[11px] text-slate-400 font-medium mt-0.5">Official updates & payment p...</p>
+          </div>
+        </div>
+        <button onclick="openExternalChannel('whatsapp')" class="primary-btn text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          <span>Join</span>
+        </button>
+      </div>
+
+      <!-- Telegram Channel Button Card -->
+      <div class="bg-white border border-slate-200/90 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
+            <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06-.01.19-.02.27z"/></svg>
+          </div>
+          <div>
+            <h4 class="text-sm font-extrabold text-slate-900 leading-tight">Telegram Channel</h4>
+            <p class="text-[11px] text-slate-400 font-medium mt-0.5">Daily promo codes & announ...</p>
+          </div>
+        </div>
+        <button onclick="openExternalChannel('telegram')" class="primary-btn text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          <span>Join</span>
+        </button>
+      </div>
+
+      <!-- Verification Section (Code Input or Already Claimed) -->
+      <div id="bonus-claim-container" class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-sm space-y-3.5 text-center">
+        <!-- Rendered dynamically via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== FULLSCREEN NOTIFICATION PAGE ==================== -->
+  <div id="notification-page" class="fixed inset-0 z-50 bg-[#f8fafc] hidden flex-col max-w-md mx-auto overflow-y-auto">
+    <div class="sticky top-0 bg-white/95 backdrop-blur-md px-5 py-4 border-b border-slate-100 flex items-center justify-between z-20">
+      <button onclick="closeSubPage('notification-page')" class="p-1 -ml-1 text-slate-600 hover:text-slate-900 flex items-center gap-1 text-sm font-semibold">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+        Back
+      </button>
+      <h2 class="text-base font-black text-slate-900">Notifications</h2>
+      <div class="w-6"></div>
+    </div>
+
+    <div class="p-5 space-y-3 flex-1" id="notifications-list-container">
+      <div class="bg-white border border-slate-200/90 rounded-3xl p-10 text-center space-y-2 shadow-sm">
+        <svg class="w-10 h-10 text-slate-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        <p class="text-xs text-slate-500 font-medium">No notification messages yet.</p>
       </div>
     </div>
   </div>
@@ -160,7 +263,7 @@
     </div>
 
     <div class="p-5 space-y-4 flex-1">
-      <div class="bg-gradient-to-r from-[#00b074] to-[#00875a] text-white rounded-3xl p-5 shadow-sm space-y-3">
+      <div id="dep-method-banner-card" class="bg-gradient-to-r from-[#00b074] to-[#00875a] text-white rounded-3xl p-5 shadow-sm space-y-3">
         <div>
           <span class="text-[10px] uppercase tracking-wider font-semibold opacity-90">YOU'RE BUYING</span>
           <h2 id="dep-method-plan-name" class="text-2xl font-black mt-0.5">VIP 1</h2>
@@ -200,7 +303,7 @@
     </div>
 
     <div class="p-5 space-y-4 flex-1">
-      <div class="bg-gradient-to-r from-[#00b074] to-[#00875a] text-white rounded-3xl p-5 shadow-sm space-y-3">
+      <div id="dep-chk-banner-card" class="bg-gradient-to-r from-[#00b074] to-[#00875a] text-white rounded-3xl p-5 shadow-sm space-y-3">
         <div>
           <span class="text-[10px] uppercase tracking-wider font-semibold opacity-90">YOU'RE BUYING</span>
           <h2 id="dep-chk-plan-name" class="text-2xl font-black mt-0.5">VIP 1</h2>
@@ -297,7 +400,7 @@
         </div>
       </div>
 
-      <form id="withdraw-form" onsubmit="handleWithdrawalSubmit(event)" class="space-y-3.5 pt-1 relative">
+      <form id="withdraw-form" onsubmit="handleWithdrawalSubmit(event)" class="space-y-3.5 pt-1 relative" autocomplete="off">
         <div>
           <label class="text-xs font-bold text-slate-700 block mb-1">Amount (PKR)</label>
           <input type="number" id="wd-amount" min="20" required placeholder="Minimum 20 PKR" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-[#00875a]">
@@ -379,7 +482,7 @@
         Back
       </button>
     </div>
-    <div class="p-5 space-y-5 flex-1">
+    <div class="p-5 space-y-4 flex-1">
       <h2 class="text-2xl font-black text-slate-900">Change Password</h2>
       <form onsubmit="handlePasswordUpdate(event)" class="space-y-3.5">
         <div>
@@ -422,112 +525,115 @@
   <!-- ==================== MAIN MOBILE APP CONTAINER ==================== -->
   <div id="app-container" class="w-full max-w-md bg-white min-h-screen pb-24 shadow-sm relative flex flex-col hidden">
 
-    <!-- Top Sticky Header -->
-    <header class="sticky top-0 bg-white/95 backdrop-blur-md px-5 py-3 border-b border-slate-100 flex items-center justify-between z-40">
-      <div class="flex items-center gap-2.5">
-        <div class="w-9 h-9 rounded-2xl bg-[#00875a] flex items-center justify-center text-white shadow-sm">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <!-- ==================== TAB 1: HOME (HEADER IS ONLY HERE) ==================== -->
+    <div id="home-view" class="flex flex-col flex-1">
+      
+      <!-- Top Sticky Header ONLY on Home Tab -->
+      <header class="sticky top-0 bg-white/95 backdrop-blur-md px-5 py-3.5 border-b border-slate-100 flex items-center justify-between z-40">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-[#00875a] flex items-center justify-center text-white blue-glow-pulse">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div>
+            <h1 class="text-base font-extrabold text-slate-900 leading-tight">Adds Hub Earn</h1>
+            <p class="text-[9px] font-bold text-[#00875a] tracking-wider uppercase">EARN DAILY</p>
+          </div>
         </div>
+
+        <!-- Notification Bell Icon -->
+        <button onclick="openNotificationPage()" class="relative p-2 text-slate-600 hover:text-[#00875a] transition">
+          <svg class="w-6 h-6 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/></svg>
+          <span id="notif-badge" class="hidden absolute top-2 right-2 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-white"></span>
+        </button>
+      </header>
+
+      <div class="p-5 space-y-4 flex-1">
+        <!-- Welcome Text -->
         <div>
-          <h1 class="text-sm font-extrabold text-slate-900 leading-tight">DailyEarn</h1>
-          <p class="text-[9px] font-bold text-[#00875a] tracking-wider uppercase">EARN DAILY</p>
-        </div>
-      </div>
-      <button onclick="promptLogoutDialog()" class="p-2 text-slate-400 hover:text-slate-800 transition">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-      </button>
-    </header>
-
-    <!-- ==================== TAB 1: HOME ==================== -->
-    <div id="home-view" class="p-5 space-y-3.5 flex-1">
-      <!-- Welcome Text (Compact) -->
-      <div>
-        <p class="text-[11px] text-slate-500 font-medium">Welcome back,</p>
-        <h2 id="home-username-display" class="text-xl font-black text-slate-900 tracking-tight">Investor</h2>
-      </div>
-
-      <!-- Wallet Balance Card (Compact Height) -->
-      <div class="bg-gradient-to-br from-[#00b074] via-[#009b63] to-[#00875a] rounded-3xl p-5 text-white shadow-md relative space-y-3">
-        <div class="flex items-center gap-1.5 opacity-90">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
-          <span class="text-[10px] font-bold uppercase tracking-wider">WALLET BALANCE</span>
-        </div>
-        <h3 id="home-wallet-balance" class="text-3xl font-black tracking-tight leading-none">Rs 0</h3>
-
-        <div class="grid grid-cols-2 gap-2.5 pt-1">
-          <button onclick="switchTab('ads')" class="bg-white text-slate-900 font-extrabold py-2.5 px-3 rounded-2xl text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition">
-            <svg class="w-3 h-3 fill-slate-900" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-            <span>Earn now</span>
-          </button>
-          <button onclick="openSubPage('withdraw-page')" class="bg-white/20 hover:bg-white/30 text-white font-extrabold py-2.5 px-3 rounded-2xl text-xs flex items-center justify-center gap-1.5 active:scale-95 transition">
-            <span>Withdraw</span>
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- Metrics & Action Cards Grid (Compact Height) -->
-      <div class="grid grid-cols-2 gap-3">
-        <!-- Earned Today -->
-        <div class="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-sm space-y-2">
-          <div class="w-8 h-8 rounded-xl bg-emerald-50 text-[#00875a] flex items-center justify-center">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
-          </div>
-          <div>
-            <p class="text-[11px] text-slate-500 font-medium">Earned today</p>
-            <p id="home-earned-today" class="text-base font-black text-slate-900 mt-0.5">Rs 0</p>
-          </div>
+          <p class="text-xs text-slate-500 font-medium">Welcome back,</p>
+          <h2 id="home-username-display" class="text-2xl font-black text-slate-900 tracking-tight">Investor</h2>
         </div>
 
-        <!-- Total Earned -->
-        <div class="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-sm space-y-2">
-          <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+        <!-- Wallet Balance Card -->
+        <div class="bg-gradient-to-br from-[#00b074] via-[#009b63] to-[#00875a] rounded-[28px] p-6 text-white shadow-md relative space-y-4">
+          <div class="flex items-center gap-2 opacity-90">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+            <span class="text-xs font-bold uppercase tracking-wider">WALLET BALANCE</span>
           </div>
-          <div>
-            <p class="text-[11px] text-slate-500 font-medium">Total earned</p>
-            <p id="home-total-earned" class="text-base font-black text-slate-900 mt-0.5">Rs 0</p>
+          <h3 id="home-wallet-balance" class="text-4xl font-black tracking-tight leading-none">Rs 0</h3>
+
+          <!-- Only Withdraw Button -->
+          <div class="pt-1">
+            <button onclick="openSubPage('withdraw-page')" class="w-full bg-white/20 hover:bg-white/30 text-white font-extrabold py-3.5 px-4 rounded-2xl text-xs flex items-center justify-center gap-2 active:scale-95 transition shadow-xs backdrop-blur-sm">
+              <span>Withdraw</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </button>
           </div>
         </div>
 
-        <!-- Active Plans -->
-        <div class="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-sm space-y-2">
-          <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+        <!-- Metrics & Action Cards Grid -->
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Earned Today -->
+          <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm space-y-2">
+            <div class="w-9 h-9 rounded-xl bg-emerald-50 text-[#00875a] flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+            </div>
+            <div>
+              <p class="text-[11px] text-slate-500 font-medium">Earned today</p>
+              <p id="home-earned-today" class="text-lg font-black text-slate-900 mt-0.5">Rs 0</p>
+            </div>
           </div>
-          <div>
-            <p class="text-[11px] text-slate-500 font-medium">Active plans</p>
-            <p id="home-active-plans-count" class="text-base font-black text-slate-900 mt-0.5">0</p>
+
+          <!-- Total Earned -->
+          <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm space-y-2">
+            <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+            </div>
+            <div>
+              <p class="text-[11px] text-slate-500 font-medium">Total earned</p>
+              <p id="home-total-earned" class="text-lg font-black text-slate-900 mt-0.5">Rs 0</p>
+            </div>
+          </div>
+
+          <!-- Active Plans -->
+          <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm space-y-2">
+            <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+            </div>
+            <div>
+              <p class="text-[11px] text-slate-500 font-medium">Active plans</p>
+              <p id="home-active-plans-count" class="text-lg font-black text-slate-900 mt-0.5">0</p>
+            </div>
+          </div>
+
+          <!-- Promo Code Card -->
+          <div onclick="openSubPage('promo-page')" class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm space-y-2 cursor-pointer hover:border-[#00875a]/50 transition">
+            <div class="flex items-center gap-1.5 text-slate-800">
+              <svg class="w-4 h-4 text-slate-700 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
+              <span class="text-[11px] font-bold text-slate-800">Promo Code</span>
+            </div>
+            <button class="w-full primary-btn text-white text-[11px] font-bold py-2 rounded-xl mt-1 shadow-xs">
+              Claim Code
+            </button>
           </div>
         </div>
 
-        <!-- Promo Code Card -->
-        <div onclick="openSubPage('promo-page')" class="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-sm space-y-2 cursor-pointer hover:border-[#00875a]/50 transition">
-          <div class="flex items-center gap-1.5 text-slate-800">
-            <svg class="w-4 h-4 text-slate-700 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
-            <span class="text-[11px] font-bold text-slate-800">Promo Code</span>
+        <!-- Free Rs. 100 Promo Banner (Opens Free Rs. 100 Sub Page) -->
+        <div onclick="openSubPage('bonus-page')" class="bg-gradient-to-r from-[#00b074] to-[#00875a] rounded-3xl p-5 text-white flex items-center justify-between cursor-pointer active:scale-98 transition shadow-sm mt-2">
+          <div class="flex items-center gap-3.5">
+            <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm border border-white/25 flex items-center justify-center shrink-0">
+              <svg class="w-6 h-6 text-white stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>
+            </div>
+            <div>
+              <span class="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider bg-white/20 px-2.5 py-0.5 rounded-full mb-1">
+                <span>✨</span> LIMITED TO ONE CLAIM
+              </span>
+              <h4 class="text-sm font-black leading-tight">Rs. 100 FREE for All Members</h4>
+              <p class="text-[11px] opacity-85 mt-0.5">Join both channels and claim instantly</p>
+            </div>
           </div>
-          <button class="w-full primary-btn text-white text-[10px] font-bold py-1.5 rounded-xl mt-1 shadow-xs">
-            Claim Code
-          </button>
+          <svg class="w-5 h-5 text-white shrink-0 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </div>
-      </div>
-
-      <!-- Free Rs. 100 Promo Banner (At VERY BOTTOM of Home View) -->
-      <div onclick="openWhatsAppChannel()" class="bg-gradient-to-r from-[#00b074] to-[#00875a] rounded-3xl p-4 text-white flex items-center justify-between cursor-pointer active:scale-98 transition shadow-sm mt-1">
-        <div class="flex items-center gap-3">
-          <div class="w-11 h-11 rounded-2xl bg-white/20 backdrop-blur-sm border border-white/25 flex items-center justify-center shrink-0">
-            <svg class="w-5 h-5 text-white stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>
-          </div>
-          <div>
-            <span class="inline-flex items-center gap-1 text-[8.5px] font-bold uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded-full mb-0.5">
-              <span>✨</span> LIMITED TO ONE CLAIM
-            </span>
-            <h4 class="text-xs font-black leading-tight">Rs. 100 FREE for All Members</h4>
-            <p class="text-[10px] opacity-85 mt-0.5">Join both channels and claim instantly</p>
-          </div>
-        </div>
-        <svg class="w-4 h-4 text-white shrink-0 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
       </div>
     </div>
 
@@ -538,11 +644,11 @@
         <p class="text-xs text-slate-500 mt-0.5">One task per each of your active packages daily.</p>
       </div>
 
-      <div id="tasks-container" class="space-y-3.5 pt-1"></div>
+      <div id="tasks-container" class="space-y-4 pt-1"></div>
     </div>
 
     <!-- ==================== TAB 3: PACKAGES ==================== -->
-    <div id="packages-view" class="p-5 space-y-4 flex-1 hidden">
+    <div id="packages-view" class="p-5 space-y-5 flex-1 hidden">
       <div>
         <h2 class="text-2xl font-black text-slate-900">Investment Plans</h2>
         <p class="text-xs text-slate-500 mt-1 leading-relaxed">
@@ -550,7 +656,7 @@
         </p>
       </div>
 
-      <div class="space-y-4" id="packages-list-container"></div>
+      <div class="space-y-5" id="packages-list-container"></div>
     </div>
 
     <!-- ==================== TAB 4: INVITE FRIENDS ==================== -->
@@ -558,14 +664,14 @@
       <h2 class="text-2xl font-black text-slate-900">Invite Friends</h2>
 
       <!-- Top Referral Code Banner -->
-      <div class="bg-gradient-to-r from-[#00b074] to-[#00875a] text-white rounded-3xl p-5 text-center space-y-1.5 shadow-sm">
-        <span class="text-[10px] font-bold uppercase tracking-wider opacity-90">YOUR REFERRAL CODE</span>
-        <h3 id="inv-code-display" class="text-2xl font-black tracking-widest font-mono">74AD9D07</h3>
-        <p class="text-[11px] opacity-90 pt-0.5">Earn 10% commission on every referral's package purchase</p>
+      <div class="bg-gradient-to-r from-[#00b074] to-[#00875a] text-white rounded-3xl p-6 text-center space-y-2 shadow-sm">
+        <span class="text-[11px] font-bold uppercase tracking-wider opacity-90">YOUR REFERRAL CODE</span>
+        <h3 id="inv-code-display" class="text-3xl font-black tracking-widest font-mono">74AD9D07</h3>
+        <p class="text-xs opacity-90 pt-1">Earn 10% commission on every referral's package purchase</p>
       </div>
 
       <!-- Referral Link Box -->
-      <div class="bg-white border border-slate-200/90 rounded-2xl p-4 space-y-2.5 shadow-sm">
+      <div class="bg-white border border-slate-200/90 rounded-2xl p-4 space-y-3 shadow-sm">
         <span class="text-xs font-bold text-slate-700 block">Referral Link</span>
         <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
           <input type="text" id="inv-link-input" readonly class="w-full bg-transparent text-xs text-slate-600 font-mono focus:outline-none">
@@ -573,38 +679,38 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
           </button>
         </div>
-        <button onclick="shareReferralLink()" class="w-full primary-btn text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm active:scale-95 transition">
+        <button onclick="shareReferralLink()" class="w-full primary-btn text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm active:scale-95 transition">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
           <span>Share Link</span>
         </button>
       </div>
 
       <!-- 3 Metrics Cards -->
-      <div class="space-y-2.5">
-        <div class="bg-white border border-slate-200/80 rounded-2xl p-3.5 flex items-center justify-between shadow-sm">
+      <div class="space-y-3">
+        <div class="bg-white border border-slate-200/80 rounded-2xl p-4 flex items-center justify-between shadow-sm">
           <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-2xl bg-emerald-50 text-[#00875a] flex items-center justify-center">
-              <svg class="w-4.5 h-4.5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-[#00875a] flex items-center justify-center">
+              <svg class="w-5 h-5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
             </div>
             <span class="text-xs font-bold text-slate-800">Total Team Members</span>
           </div>
           <span id="inv-total-members" class="text-sm font-black text-slate-900">0</span>
         </div>
 
-        <div class="bg-white border border-slate-200/80 rounded-2xl p-3.5 flex items-center justify-between shadow-sm">
+        <div class="bg-white border border-slate-200/80 rounded-2xl p-4 flex items-center justify-between shadow-sm">
           <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-2xl bg-emerald-50 text-[#00875a] flex items-center justify-center">
-              <svg class="w-4.5 h-4.5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+            <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-[#00875a] flex items-center justify-center">
+              <svg class="w-5 h-5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
             </div>
             <span class="text-xs font-bold text-slate-800">Total Team Deposits</span>
           </div>
           <span id="inv-team-deposits" class="text-sm font-black text-slate-900">0.00 PKR</span>
         </div>
 
-        <div class="bg-white border border-slate-200/80 rounded-2xl p-3.5 flex items-center justify-between shadow-sm">
+        <div class="bg-white border border-slate-200/80 rounded-2xl p-4 flex items-center justify-between shadow-sm">
           <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-2xl bg-emerald-50 text-[#00875a] flex items-center justify-center">
-              <svg class="w-4.5 h-4.5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+            <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-[#00875a] flex items-center justify-center">
+              <svg class="w-5 h-5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
             </div>
             <span class="text-xs font-bold text-slate-800">Total Referral Commission</span>
           </div>
@@ -613,7 +719,7 @@
       </div>
 
       <!-- Cash Rewards Levels Card -->
-      <div class="bg-gradient-to-b from-[#49348d] via-[#543b9d] to-[#713998] rounded-3xl p-5 text-white space-y-3.5 shadow-md">
+      <div class="bg-gradient-to-b from-[#49348d] via-[#543b9d] to-[#713998] rounded-3xl p-5 text-white space-y-4 shadow-md">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-amber-300">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>
@@ -624,21 +730,21 @@
           </div>
         </div>
 
-        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-3.5 border border-white/15">
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/15">
           <div class="flex justify-between items-center text-xs opacity-90 font-medium">
             <span>Your Team Investment</span>
             <span>✨</span>
           </div>
-          <h4 id="team-investment-stat" class="text-xl font-black mt-0.5">PKR 0</h4>
+          <h4 id="team-investment-stat" class="text-2xl font-black mt-1">PKR 0</h4>
         </div>
 
         <div class="space-y-3" id="cash-levels-container"></div>
       </div>
 
       <!-- How it works Card -->
-      <div class="bg-white border border-slate-200/90 rounded-3xl p-5 space-y-2.5 shadow-sm text-xs leading-relaxed">
+      <div class="bg-white border border-slate-200/90 rounded-3xl p-5 space-y-3 shadow-sm text-xs leading-relaxed">
         <h4 class="text-sm font-black text-slate-900">How it works</h4>
-        <ol class="space-y-1.5 text-slate-600 font-medium">
+        <ol class="space-y-2 text-slate-600 font-medium">
           <li>1. Share your referral link with friends</li>
           <li>2. They sign up and buy a package</li>
           <li>3. You earn <strong class="text-[#00875a] font-bold">10% commission</strong> on their package purchase</li>
@@ -651,43 +757,43 @@
     <div id="profile-view" class="p-5 space-y-4 flex-1 hidden">
       <h2 class="text-2xl font-black text-slate-900">Profile</h2>
 
-      <!-- Profile Avatar Restored to Exact Original Size (w-14 h-14) -->
-      <div class="bg-white border border-slate-200/90 rounded-3xl p-4 shadow-sm">
-        <div class="flex items-center gap-3.5">
+      <!-- Profile Avatar -->
+      <div class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-sm">
+        <div class="flex items-center gap-4">
           <div class="w-14 h-14 rounded-full bg-[#00875a] flex items-center justify-center text-white text-xl">
             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
           </div>
           <div>
-            <h3 id="prof-user-name" class="text-sm font-bold text-slate-900 leading-tight">Investor</h3>
+            <h3 id="prof-user-name" class="text-base font-bold text-slate-900 leading-tight">Investor</h3>
             <p id="prof-user-email" class="text-xs text-slate-500 font-mono mt-0.5">user@gmail.com</p>
-            <p class="text-xs text-[#00875a] font-bold mt-0.5">Code: <span id="prof-user-code">74AD9D07</span></p>
+            <p class="text-xs text-[#00875a] font-bold mt-1">Code: <span id="prof-user-code">74AD9D07</span></p>
           </div>
         </div>
       </div>
 
       <div class="space-y-2">
-        <div onclick="switchTab('packages')" class="bg-white border border-slate-200/90 rounded-2xl p-3.5 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition shadow-sm">
+        <div onclick="switchTab('packages')" class="bg-white border border-slate-200/90 rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition shadow-sm">
           <div class="flex items-center gap-3">
             <svg class="w-5 h-5 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-            <span class="text-xs font-bold text-slate-800">Deposit</span>
+            <span class="text-sm font-bold text-slate-800">Deposit</span>
           </div>
           <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
         </div>
 
-        <div onclick="openSubPage('withdraw-page')" class="bg-white border border-slate-200/90 rounded-2xl p-3.5 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition shadow-sm">
+        <div onclick="openSubPage('withdraw-page')" class="bg-white border border-slate-200/90 rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition shadow-sm">
           <div class="flex items-center gap-3">
             <svg class="w-5 h-5 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
-            <span class="text-xs font-bold text-slate-800">Withdraw</span>
+            <span class="text-sm font-bold text-slate-800">Withdraw</span>
           </div>
           <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
         </div>
       </div>
 
-      <div class="space-y-2 pt-0.5">
-        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">HISTORY</span>
+      <div class="space-y-2 pt-1">
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">HISTORY</span>
         
         <div class="bg-white border border-slate-200/90 rounded-2xl divide-y divide-slate-100 shadow-sm overflow-hidden text-xs">
-          <div onclick="openSubPage('wd-history-page')" class="p-3.5 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
+          <div onclick="openSubPage('wd-history-page')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
             <div class="flex items-center gap-3">
               <svg class="w-4 h-4 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
               <span class="font-bold text-slate-800">Withdrawal History</span>
@@ -695,7 +801,7 @@
             <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
           </div>
 
-          <div onclick="openSubPage('dep-history-page')" class="p-3.5 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
+          <div onclick="openSubPage('dep-history-page')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
             <div class="flex items-center gap-3">
               <svg class="w-4 h-4 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
               <span class="font-bold text-slate-800">Deposit History</span>
@@ -703,7 +809,7 @@
             <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
           </div>
 
-          <div onclick="openSubPage('bal-history-page')" class="p-3.5 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
+          <div onclick="openSubPage('bal-history-page')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
             <div class="flex items-center gap-3">
               <svg class="w-4 h-4 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
               <span class="font-bold text-slate-800">Balance History</span>
@@ -713,11 +819,11 @@
         </div>
       </div>
 
-      <div class="space-y-2 pt-0.5">
-        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">ACCOUNT</span>
+      <div class="space-y-2 pt-1">
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">ACCOUNT</span>
         
         <div class="bg-white border border-slate-200/90 rounded-2xl divide-y divide-slate-100 shadow-sm overflow-hidden text-xs">
-          <div onclick="openSubPage('change-password-page')" class="p-3.5 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
+          <div onclick="openSubPage('change-password-page')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
             <div class="flex items-center gap-3">
               <svg class="w-4 h-4 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
               <span class="font-bold text-slate-800">Change Password</span>
@@ -725,7 +831,7 @@
             <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
           </div>
 
-          <div onclick="openSubPage('recovery-email-page')" class="p-3.5 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
+          <div onclick="openSubPage('recovery-email-page')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
             <div class="flex items-center gap-3">
               <svg class="w-4 h-4 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/></svg>
               <span class="font-bold text-slate-800">Add Recovery Email</span>
@@ -733,6 +839,11 @@
             <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
           </div>
         </div>
+
+        <button onclick="promptLogoutDialog()" class="w-full mt-3 py-3.5 bg-rose-50 border border-rose-200 text-rose-600 font-bold rounded-2xl text-xs active:scale-95 transition flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          <span>Logout Account</span>
+        </button>
       </div>
     </div>
 
@@ -781,14 +892,14 @@
     const auth = firebase.auth();
     const db = firebase.database();
 
-    // Default Packages without hardcoded discounts
+    // Default Packages (Card color customizable via Firebase 'cardColor' or 'gradient')
     const DEFAULT_PACKAGES = [
-      { id: "vip1", name: "VIP 1", price: 270, daily: 80, duration: "Lifetime", gradient: "from-[#00b074] to-[#009b63]" },
-      { id: "vip2", name: "VIP 2", price: 430, daily: 150, duration: "Lifetime", gradient: "from-[#1d8cf8] to-[#3a5afc]" },
-      { id: "vip3", name: "VIP 3", price: 1080, daily: 350, duration: "Lifetime", gradient: "from-[#f59e0b] to-[#ea580c]" },
-      { id: "vip4", name: "VIP 4", price: 2700, daily: 900, duration: "Lifetime", gradient: "from-[#8b5cf6] to-[#6d28d9]" },
-      { id: "vip5", name: "VIP 5", price: 5400, daily: 2000, duration: "Lifetime", gradient: "from-[#00b074] to-[#009b63]" },
-      { id: "vip6", name: "VIP 6", price: 10800, daily: 4500, duration: "Lifetime", gradient: "from-[#1d8cf8] to-[#3a5afc]" }
+      { id: "vip1", name: "VIP 1", price: 270, daily: 80, duration: "Lifetime", gradient: "from-[#00b074] to-[#009b63]", referralTaskWithdrawable: 20 },
+      { id: "vip2", name: "VIP 2", price: 430, daily: 150, duration: "Lifetime", gradient: "from-[#1d8cf8] to-[#3a5afc]", referralTaskWithdrawable: 30 },
+      { id: "vip3", name: "VIP 3", price: 1080, daily: 350, duration: "Lifetime", gradient: "from-[#f59e0b] to-[#ea580c]", referralTaskWithdrawable: 50 },
+      { id: "vip4", name: "VIP 4", price: 2700, daily: 900, duration: "Lifetime", gradient: "from-[#8b5cf6] to-[#6d28d9]", referralTaskWithdrawable: 100 },
+      { id: "vip5", name: "VIP 5", price: 5400, daily: 2000, duration: "Lifetime", gradient: "from-[#059669] to-[#047857]", referralTaskWithdrawable: 200 },
+      { id: "vip6", name: "VIP 6", price: 10800, daily: 4500, duration: "Lifetime", gradient: "from-[#0284c7] to-[#1e40af]", referralTaskWithdrawable: 400 }
     ];
 
     const DEFAULT_WITHDRAW_METHODS = [
@@ -829,6 +940,8 @@
     let appRewardLevels = DEFAULT_REWARD_LEVELS;
     let appPaymentAccounts = DEFAULT_PAYMENT_ACCOUNTS;
     let whatsappChannelUrl = "https://whatsapp.com/channel";
+    let telegramChannelUrl = "https://t.me";
+    let freeBonusVerificationCode = "58291"; // Fallback 5-digit code if not set in DB
     let checkoutFieldsConfig = { showTrxId: true, showSenderAccount: true, showScreenshot: true };
 
     let countdownInterval = null;
@@ -845,17 +958,13 @@
       return `${start}****${end}`;
     }
 
-    // 2. Animated Toast Message (Always on top with no duplicate stacking)
+    // 2. Animated Toast Message
     function showToast(message, type = "success") {
       const container = document.getElementById('toast-wrapper');
       
-      // Prevent stacking duplicate messages
       const existing = container.querySelector('[data-msg="' + message + '"]');
-      if (existing) {
-        existing.remove();
-      }
+      if (existing) existing.remove();
 
-      // Keep maximum 2 toasts at a time
       if (container.children.length >= 2) {
         container.firstElementChild.remove();
       }
@@ -889,7 +998,7 @@
       }, 3000);
     }
 
-    // 3. App Initialization & Short Referral Link Detection
+    // 3. App Initialization & Referral Detection
     window.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('auth-form').reset();
       
@@ -924,7 +1033,7 @@
 
     // 4. Dynamic Firebase Settings
     function bindDynamicSettings() {
-      // 1. Packages
+      // 1. Packages (Custom Color, Gradients, and Details)
       db.ref('packages').on('value', snap => {
         if (snap.exists() && snap.val()) {
           const val = snap.val();
@@ -946,19 +1055,28 @@
         renderWithdrawDropdown();
       });
 
-      // 3. Payment Accounts
+      // 3. Payment Accounts (Supports full edit, add, delete per method)
       db.ref('settings/paymentAccounts').on('value', snap => {
         if (snap.exists() && snap.val()) {
           const val = snap.val();
           if (Array.isArray(val)) {
-            appPaymentAccounts = val;
+            appPaymentAccounts = val.filter(item => item && item.account);
           } else if (typeof val === 'object') {
-            appPaymentAccounts = [
-              { method: "EasyPaisa", account: val.easyPaisa || "03468660923", title: val.title || "Task Hub Earn" },
-              { method: "JazzCash", account: val.jazzCash || "03064964031", title: val.title || "Task Hub Earn" },
-              { method: "UPaisa", account: val.uPaisa || "03326861211", title: val.title || "Task Hub Earn" }
-            ];
+            appPaymentAccounts = Object.keys(val).map(k => {
+              const item = val[k];
+              if (typeof item === 'object') {
+                return {
+                  key: k,
+                  method: item.method || k,
+                  account: item.account || item.number || '',
+                  title: item.title || 'Task Hub Earn'
+                };
+              }
+              return { key: k, method: k, account: item, title: "Task Hub Earn" };
+            }).filter(item => item.account);
           }
+        } else {
+          appPaymentAccounts = DEFAULT_PAYMENT_ACCOUNTS;
         }
         renderPaymentMethodsList();
       });
@@ -974,10 +1092,18 @@
         renderCashRewardLevels();
       });
 
-      // 5. WhatsApp Channel URL
+      // 5. Official Channels & Free Bonus Code
       db.ref('settings/whatsappChannel').on('value', snap => {
+        if (snap.exists() && snap.val()) whatsappChannelUrl = snap.val();
+      });
+
+      db.ref('settings/telegramChannel').on('value', snap => {
+        if (snap.exists() && snap.val()) telegramChannelUrl = snap.val();
+      });
+
+      db.ref('settings/freeBonusCode').on('value', snap => {
         if (snap.exists() && snap.val()) {
-          whatsappChannelUrl = snap.val();
+          freeBonusVerificationCode = String(snap.val()).trim();
         }
       });
 
@@ -1000,9 +1126,10 @@
       if (ssBox) ssBox.style.display = checkoutFieldsConfig.showScreenshot !== false ? 'block' : 'none';
     }
 
-    function openWhatsAppChannel() {
-      window.open(whatsappChannelUrl, '_blank');
-      showToast("Opening WhatsApp Channel...", "success");
+    function openExternalChannel(type) {
+      const url = type === 'whatsapp' ? whatsappChannelUrl : telegramChannelUrl;
+      window.open(url, '_blank');
+      showToast(`Opening ${type === 'whatsapp' ? 'WhatsApp' : 'Telegram'} Channel...`, "success");
     }
 
     // 5. Auth State Observer
@@ -1060,6 +1187,8 @@
         renderPromoHistory(snap.val());
       });
 
+      listenNotifications(uid);
+
       // Team Network Data
       db.ref('referrals/' + uid).on('value', snap => {
         const refs = snap.val() || {};
@@ -1080,11 +1209,57 @@
       });
     }
 
+    function listenNotifications(uid) {
+      db.ref('notifications/' + uid).on('value', snap => {
+        renderNotificationsList(snap.val());
+      });
+    }
+
+    function renderNotificationsList(notifs) {
+      const container = document.getElementById('notifications-list-container');
+      const badge = document.getElementById('notif-badge');
+
+      if (!notifs || Object.keys(notifs).length === 0) {
+        badge.classList.add('hidden');
+        container.innerHTML = `
+          <div class="bg-white border border-slate-200/90 rounded-3xl p-10 text-center space-y-2 shadow-sm">
+            <svg class="w-10 h-10 text-slate-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+            <p class="text-xs text-slate-500 font-medium">No notification messages yet.</p>
+          </div>
+        `;
+        return;
+      }
+
+      badge.classList.remove('hidden');
+      const list = Object.values(notifs).reverse();
+      let html = '';
+
+      list.forEach(n => {
+        html += `
+          <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm space-y-1.5">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-slate-900">${n.title || 'Notification'}</span>
+              <span class="text-[9.5px] text-slate-400">${n.timestamp || ''}</span>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">${n.message || ''}</p>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function openNotificationPage() {
+      openSubPage('notification-page');
+      document.getElementById('notif-badge').classList.add('hidden');
+    }
+
     // 7. Render App UI
     function renderAppUI(data) {
       const balance = Number(data.balance) || 0;
       const earnedToday = Number(data.earnedToday) || 0;
       const totalEarned = Number(data.totalEarned) || 0;
+      const withdrawableBalance = Number(data.withdrawableBalance) || 0;
       
       const activePkgs = getUserActivePackages(data);
       const activeCount = Object.keys(activePkgs).length;
@@ -1098,7 +1273,7 @@
 
       // Withdraw Screen
       document.getElementById('wd-dash-bal').innerText = `PKR ${balance.toFixed(2)}`;
-      document.getElementById('wd-withdrawable-bal').innerText = `PKR ${balance.toFixed(2)}`;
+      document.getElementById('wd-withdrawable-bal').innerText = `PKR ${withdrawableBalance.toFixed(2)}`;
 
       // Profile Screen & Referral Code
       const refCode = data.referralCode || currentUser.uid.substring(0, 8).toUpperCase();
@@ -1107,12 +1282,12 @@
       document.getElementById('prof-user-code').innerText = refCode;
       document.getElementById('inv-code-display').innerText = refCode;
 
-      // Clean Referral Link with SHORT Code
       const cleanRefLink = `${window.location.origin}${window.location.pathname}?ref=${refCode}`;
       document.getElementById('inv-link-input').value = cleanRefLink;
 
       renderDailyTasks(data);
       renderPackagesUI();
+      renderBonusClaimSection(data);
     }
 
     function getUserActivePackages(data) {
@@ -1126,64 +1301,89 @@
       return {};
     }
 
-    // 8. Render Dynamic Packages (Show Discount only if explicitly set)
+    // Helper: Returns background style/classes based on Firebase color
+    function getCardHeaderStyle(pkg, defaultGradient) {
+      if (pkg.cardColor && (pkg.cardColor.startsWith('#') || pkg.cardColor.startsWith('rgb'))) {
+        return { style: `style="background: ${pkg.cardColor};"`, classes: '' };
+      }
+      if (pkg.cardColor) {
+        return { style: '', classes: pkg.cardColor };
+      }
+      if (pkg.gradient) {
+        return { style: '', classes: `bg-gradient-to-b ${pkg.gradient}` };
+      }
+      return { style: '', classes: `bg-gradient-to-b ${defaultGradient}` };
+    }
+
+    // 8. Render Dynamic Packages (Firebase Color Supported, Green Invest Button Kept)
     function renderPackagesUI() {
       const container = document.getElementById('packages-list-container');
       const activePkgs = getUserActivePackages(currentUserData || {});
 
       let html = '';
-      appPackages.forEach(pkg => {
+      appPackages.forEach((pkg, index) => {
         const pkgKey = (pkg.id || pkg.name).toLowerCase().replace(/\s+/g, '');
         const isCurrent = !!activePkgs[pkgKey];
 
-        const activeBadge = isCurrent 
-          ? `<span class="absolute top-3 right-3 text-[9px] font-black uppercase tracking-wider text-emerald-950 bg-white/95 px-2 py-0.5 rounded-full shadow-xs">ACTIVE</span>` 
-          : (pkg.discount ? `<span class="absolute top-3 right-3 text-[9px] font-black uppercase tracking-wider text-rose-600 bg-white px-2 py-0.5 rounded-full shadow-xs">${pkg.discount}</span>` : '');
+        const defaultGradients = [
+          'from-[#00b074] to-[#009b63]',
+          'from-[#1d8cf8] to-[#3a5afc]',
+          'from-[#f59e0b] to-[#ea580c]',
+          'from-[#8b5cf6] to-[#6d28d9]',
+          'from-[#059669] to-[#047857]',
+          'from-[#0284c7] to-[#1e40af]'
+        ];
+        
+        const headerStyleObj = getCardHeaderStyle(pkg, defaultGradients[index % defaultGradients.length]);
 
-        // Only show strikethrough price if originalPrice exists and is set
+        const cornerBadge = isCurrent 
+          ? `<span class="absolute top-3.5 right-3.5 text-[10px] font-black uppercase tracking-wider text-emerald-950 bg-white/95 px-2.5 py-0.5 rounded-full shadow-xs">ACTIVE</span>` 
+          : (pkg.discount ? `<span class="absolute top-3.5 right-3.5 text-[10px] font-black uppercase tracking-wider text-rose-600 bg-white px-2.5 py-0.5 rounded-full shadow-sm">${pkg.discount}</span>` : '');
+
         const originalPriceHtml = (pkg.originalPrice && Number(pkg.originalPrice) > Number(pkg.price)) 
           ? `<span class="line-through text-xs text-white/70 block mt-0.5">Rs. ${Number(pkg.originalPrice).toLocaleString()}</span>` 
           : '';
 
+        // Invest Button ALWAYS uses .primary-btn (#00875a green)
         const actionBtn = isCurrent
-          ? `<button disabled class="w-full bg-[#00875a]/20 text-[#00875a] font-bold py-2.5 rounded-2xl text-xs flex items-center justify-center gap-1.5 cursor-default">
+          ? `<button disabled class="w-full bg-[#00875a]/20 text-[#00875a] font-bold py-3 rounded-2xl text-xs flex items-center justify-center gap-1.5 cursor-default">
                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                <span>Activated</span>
              </button>`
-          : `<button onclick="startPackagePurchase('${pkg.name}', ${pkg.price}, ${pkg.daily})" class="w-full primary-btn text-white font-bold py-2.5 rounded-2xl text-xs active:scale-95 transition">
-               Invest Rs. ${pkg.price.toLocaleString()}
+          : `<button onclick="startPackagePurchase('${pkg.name}', ${pkg.price}, ${pkg.daily})" class="w-full primary-btn text-white font-bold py-3 rounded-2xl text-xs active:scale-95 transition">
+               Invest Rs. ${Number(pkg.price).toLocaleString()}
              </button>`;
 
         html += `
           <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-            <div class="bg-gradient-to-b ${pkg.gradient || 'from-[#00b074] to-[#009b63]'} p-4 text-center relative flex flex-col items-center">
-              ${activeBadge}
-              <div class="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex flex-col items-center justify-center text-white mb-1.5 shadow-inner">
-                <span class="text-lg font-black leading-none">${pkg.price.toLocaleString()}</span>
-                <span class="text-[8.5px] font-bold uppercase opacity-90 mt-0.5">PKR PRICE</span>
+            <div ${headerStyleObj.style} class="${headerStyleObj.classes} p-5 text-center relative flex flex-col items-center">
+              ${cornerBadge}
+              <div class="w-24 h-24 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex flex-col items-center justify-center text-white mb-2 shadow-inner">
+                <span class="text-xl font-black leading-none">${Number(pkg.price).toLocaleString()}</span>
+                <span class="text-[9px] font-bold uppercase opacity-90 mt-1">PKR PRICE</span>
                 ${originalPriceHtml}
               </div>
-              <h3 class="text-lg font-black text-white">${pkg.name}</h3>
+              <h3 class="text-xl font-black text-white">${pkg.name}</h3>
             </div>
-            <div class="p-4 space-y-2.5 text-xs">
-              <div class="flex justify-between items-center py-0.5 border-b border-slate-100">
+            <div class="p-5 space-y-3 text-xs">
+              <div class="flex justify-between items-center py-1 border-b border-slate-100">
                 <span class="text-slate-500 font-medium">Daily Earning</span>
-                <span class="font-bold text-[#00875a] text-sm">Rs. ${pkg.daily.toLocaleString()}</span>
+                <span class="font-bold text-[#00875a] text-sm">Rs. ${Number(pkg.daily).toLocaleString()}</span>
               </div>
-              <div class="flex justify-between items-center py-0.5 border-b border-slate-100">
+              <div class="flex justify-between items-center py-1 border-b border-slate-100">
                 <span class="text-slate-500 font-medium">Total Earning</span>
                 <span class="font-bold text-slate-800">Unlimited</span>
               </div>
-              <div class="flex justify-between items-center py-0.5 border-b border-slate-100">
+              <div class="flex justify-between items-center py-1 border-b border-slate-100">
                 <span class="text-slate-500 font-medium">Package Duration</span>
                 <span class="font-bold text-slate-800">${pkg.duration || 'Lifetime'}</span>
               </div>
-              <div class="space-y-1 pt-0.5 text-slate-600 font-medium text-[10.5px]">
-                <div class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg> Daily Withdrawal</div>
-                <div class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg> No Referral Required</div>
-                <div class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg> Lifetime Earning Period</div>
+              <div class="space-y-1.5 pt-1 text-slate-600 font-medium text-[11px]">
+                <div class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg> Daily Withdrawal</div>
+                <div class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg> No Referral Required</div>
+                <div class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-[#00875a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg> Lifetime Earning Period</div>
               </div>
-              <div class="pt-1.5">${actionBtn}</div>
+              <div class="pt-2">${actionBtn}</div>
             </div>
           </div>
         `;
@@ -1192,31 +1392,121 @@
       container.innerHTML = html;
     }
 
+    // 8.1 Rs. 100 Free Bonus Verification Form Render
+    function renderBonusClaimSection(userData) {
+      const box = document.getElementById('bonus-claim-container');
+      const isClaimed = userData && (userData.claimedFreeBonus === true || (userData.promoClaims && userData.promoClaims['FREE100_CHANNEL']));
+
+      if (isClaimed) {
+        box.innerHTML = `
+          <div class="py-4 space-y-2">
+            <div class="w-12 h-12 rounded-full bg-emerald-50 text-[#00875a] mx-auto flex items-center justify-center">
+              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <h4 class="text-sm font-extrabold text-slate-900">Bonus Claimed!</h4>
+            <p class="text-xs text-slate-500 font-medium">You have already received your one-time Rs. 100 bonus.</p>
+          </div>
+        `;
+      } else {
+        box.innerHTML = `
+          <form onsubmit="handleClaimFreeBonus(event)" class="space-y-3.5 pt-1">
+            <div>
+              <label class="text-xs font-bold text-slate-700 block mb-1">5-Digit Verification Code</label>
+              <input type="text" id="bonus-input-code" maxlength="5" pattern="[0-9]{5}" required placeholder="e.g. 58291" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-center text-lg font-black tracking-widest text-slate-900 focus:outline-none focus:border-[#00875a] font-mono">
+              <p class="text-[10px] text-slate-400 mt-1">Get the 5-digit verification code from both channels above.</p>
+            </div>
+            <button type="submit" id="bonus-claim-btn" class="w-full primary-btn text-white font-bold py-3.5 rounded-xl text-xs shadow-sm active:scale-95 transition">
+              Verify & Claim Rs. 100
+            </button>
+          </form>
+        `;
+      }
+    }
+
+    async function handleClaimFreeBonus(e) {
+      e.preventDefault();
+      if (!currentUser || !currentUserData) return;
+      const codeInput = document.getElementById('bonus-input-code');
+      const enteredCode = (codeInput.value || '').trim();
+      const btn = document.getElementById('bonus-claim-btn');
+
+      if (enteredCode.length !== 5) {
+        showToast("Please enter a valid 5-digit code.", "error");
+        return;
+      }
+
+      if (enteredCode !== String(freeBonusVerificationCode).trim()) {
+        showToast("Invalid verification code! Check channels.", "error");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "Verifying...";
+
+      try {
+        const checkSnap = await db.ref(`users/${currentUser.uid}/claimedFreeBonus`).once('value');
+        if (checkSnap.exists() && checkSnap.val() === true) {
+          showToast("You have already claimed this bonus!", "error");
+          renderBonusClaimSection({ claimedFreeBonus: true });
+          return;
+        }
+
+        const bonusAmount = 100;
+        const curBal = Number(currentUserData.balance) || 0;
+        const curToday = Number(currentUserData.earnedToday) || 0;
+        const curTotal = Number(currentUserData.totalEarned) || 0;
+
+        await db.ref('users/' + currentUser.uid).update({
+          balance: curBal + bonusAmount,
+          earnedToday: curToday + bonusAmount,
+          totalEarned: curTotal + bonusAmount,
+          claimedFreeBonus: true
+        });
+
+        await logBalanceActivity(currentUser.uid, "Channels Free Bonus", bonusAmount, "credit");
+        showToast("Verification successful! +Rs. 100 added to wallet.", "success");
+        renderBonusClaimSection({ claimedFreeBonus: true });
+      } catch (err) {
+        showToast("Failed to claim: " + err.message, "error");
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = "Verify & Claim Rs. 100";
+        }
+      }
+    }
+
     // 9. Deposit Flow
     function startPackagePurchase(name, price, daily) {
       selectedPackage = { name, price, daily };
       document.getElementById('dep-method-plan-name').innerText = name;
-      document.getElementById('dep-method-invest').innerText = `Rs. ${price.toLocaleString()}`;
-      document.getElementById('dep-method-daily').innerText = `Rs. ${daily.toLocaleString()}`;
+      document.getElementById('dep-method-invest').innerText = `Rs. ${Number(price).toLocaleString()}`;
+      document.getElementById('dep-method-daily').innerText = `Rs. ${Number(daily).toLocaleString()}`;
       renderPaymentMethodsList();
       openSubPage('deposit-method-page');
     }
 
     function renderPaymentMethodsList() {
       const container = document.getElementById('deposit-methods-list-container');
+      if (!appPaymentAccounts || appPaymentAccounts.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">No active payment methods configured.</p>`;
+        return;
+      }
+
       let html = '';
       appPaymentAccounts.forEach(acc => {
         html += `
-          <div class="bg-white border border-slate-200/80 rounded-2xl p-3.5 flex items-center justify-between shadow-sm">
+          <div class="bg-white border border-slate-200/80 rounded-2xl p-4 flex items-center justify-between shadow-sm">
             <div>
-              <p class="text-xs font-bold text-slate-900">${acc.method}</p>
-              <p class="text-sm font-bold text-slate-800 tracking-wide mt-0.5 font-mono">${acc.account}</p>
+              <p class="text-sm font-bold text-slate-900">${acc.method}</p>
+              <p class="text-base font-bold text-slate-800 tracking-wide mt-0.5 font-mono">${acc.account}</p>
+              <p class="text-[10px] text-slate-400 font-medium">${acc.title || 'Task Hub Earn'}</p>
             </div>
             <div class="flex items-center gap-2">
               <button onclick="copyText('${acc.account}', this)" class="p-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
               </button>
-              <button onclick="proceedToCheckout('${acc.method}', '${acc.account}', '${acc.title}')" class="primary-btn text-white text-xs font-bold px-3.5 py-1.5 rounded-xl">
+              <button onclick="proceedToCheckout('${acc.method}', '${acc.account}', '${acc.title || 'Task Hub Earn'}')" class="primary-btn text-white text-xs font-bold px-4 py-2 rounded-xl">
                 Pay
               </button>
             </div>
@@ -1229,12 +1519,12 @@
     function proceedToCheckout(methodName, accountNo, title) {
       selectedPayment = { method: methodName, account: accountNo, title };
       document.getElementById('dep-chk-plan-name').innerText = selectedPackage.name;
-      document.getElementById('dep-chk-invest').innerText = `Rs. ${selectedPackage.price.toLocaleString()}`;
-      document.getElementById('dep-chk-daily').innerText = `Rs. ${selectedPackage.daily.toLocaleString()}`;
+      document.getElementById('dep-chk-invest').innerText = `Rs. ${Number(selectedPackage.price).toLocaleString()}`;
+      document.getElementById('dep-chk-daily').innerText = `Rs. ${Number(selectedPackage.daily).toLocaleString()}`;
       document.getElementById('dep-chk-method-name').innerText = methodName;
       document.getElementById('dep-chk-account-no').innerText = accountNo;
       document.getElementById('dep-chk-title').innerText = title;
-      document.getElementById('dep-chk-amount-text').innerText = `Rs. ${selectedPackage.price.toLocaleString()}`;
+      document.getElementById('dep-chk-amount-text').innerText = `Rs. ${Number(selectedPackage.price).toLocaleString()}`;
       closeSubPage('deposit-method-page');
       openSubPage('deposit-checkout-page');
     }
@@ -1307,7 +1597,7 @@
       }
     }
 
-    // 10. Daily Tasks (Instant Claim - No 5s Delay)
+    // 10. Daily Tasks & Automatic Inviter Withdrawable Boost
     function renderDailyTasks(userData) {
       const container = document.getElementById('tasks-container');
       const activePkgs = getUserActivePackages(userData);
@@ -1339,11 +1629,11 @@
         const isClaimedToday = (claimInfo.lastClaimDate === todayStr);
 
         const btnHtml = isClaimedToday
-          ? `<button disabled data-task-key="${k}" class="task-timer-btn w-full bg-slate-100 text-slate-500 font-black py-3 rounded-2xl text-xs flex items-center justify-center gap-1 font-mono cursor-default">
+          ? `<button disabled data-task-key="${k}" class="task-timer-btn w-full bg-slate-100 text-slate-500 font-black py-3.5 rounded-2xl text-xs flex items-center justify-center gap-1 font-mono cursor-default">
                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                <span class="timer-display">Calculating...</span>
              </button>`
-          : `<button onclick="startSinglePackageTask('${k}', ${pkg.dailyIncome}, '${pkg.planName}', this)" class="w-full primary-btn text-white font-bold py-3 rounded-2xl text-xs flex items-center justify-center gap-2 active:scale-95 transition shadow-sm">
+          : `<button onclick="startSinglePackageTask('${k}', ${pkg.dailyIncome}, '${pkg.planName}', this)" class="w-full primary-btn text-white font-bold py-3.5 rounded-2xl text-xs flex items-center justify-center gap-2 active:scale-95 transition shadow-sm">
                <svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                <span>Start Task</span>
              </button>`;
@@ -1366,7 +1656,7 @@
               </div>
             </div>
             
-            <div class="p-3.5">
+            <div class="p-4">
               ${btnHtml}
             </div>
           </div>
@@ -1404,11 +1694,10 @@
       countdownInterval = setInterval(updateTimers, 1000);
     }
 
-    // Instant Task Claim (5 second wait removed)
+    // Task Execution: Credits user and increases inviter's Withdrawable Limit automatically
     async function startSinglePackageTask(pkgKey, dailyReward, planName, btn) {
       if (!currentUser || !currentUserData) return;
       btn.disabled = true;
-      btn.innerText = "Claiming...";
 
       try {
         const currentBal = Number(currentUserData.balance) || 0;
@@ -1416,11 +1705,13 @@
         const totalEarned = Number(currentUserData.totalEarned) || 0;
         const todayStr = getTodayDateStr();
 
+        // 1. Mark task claimed for today
         await db.ref(`users/${currentUser.uid}/taskClaims/${pkgKey}`).set({
           lastClaimDate: todayStr,
           lastClaimTimestamp: Date.now()
         });
 
+        // 2. Update user's earnings
         await db.ref('users/' + currentUser.uid).update({
           balance: currentBal + dailyReward,
           earnedToday: earnedToday + dailyReward,
@@ -1430,6 +1721,18 @@
 
         await logBalanceActivity(currentUser.uid, `Daily Task (${planName})`, dailyReward, 'credit');
         showToast(`Task completed! +Rs. ${dailyReward}`, "success");
+
+        // 3. BOOST INVITER's WITHDRAWABLE LIMIT (HIDDEN RULE)
+        if (currentUserData.referredBy) {
+          const matchedPkg = appPackages.find(p => (p.id || p.name).toLowerCase().replace(/\s+/g, '') === pkgKey.toLowerCase());
+          const inviterBonusLimit = Number(matchedPkg?.referralTaskWithdrawable) || 20; // Default 20 for VIP 1 or set per pkg
+
+          if (inviterBonusLimit > 0) {
+            db.ref(`users/${currentUserData.referredBy}/withdrawableBalance`).transaction(current => {
+              return (Number(current) || 0) + inviterBonusLimit;
+            });
+          }
+        }
       } catch (e) {
         showToast("Error: " + e.message, "error");
         btn.disabled = false;
@@ -1539,7 +1842,7 @@
       list.innerHTML = html;
     }
 
-    // 12. Withdrawal Dropdown & Handler
+    // 12. Withdrawal Dropdown & Handler (Strict Package & Withdrawable Limit Validation)
     let selectedWdMethod = "EasyPaisa";
 
     function toggleWithdrawDropdown() {
@@ -1579,13 +1882,30 @@
       const submitBtn = document.getElementById('wd-submit-btn');
 
       const userBalance = Number(currentUserData?.balance) || 0;
+      const withdrawableLimit = Number(currentUserData?.withdrawableBalance) || 0;
+      const activePkgs = getUserActivePackages(currentUserData || {});
 
+      // 1. Check Package Requirement
+      if (Object.keys(activePkgs).length === 0) {
+        showToast("You must have an active package to withdraw!", "error");
+        return;
+      }
+
+      // 2. Check Minimum
       if (amount < 20) {
         showToast("Minimum withdrawal is 20 PKR.", "error");
         return;
       }
+
+      // 3. Check Overall Dashboard Balance
       if (amount > userBalance) {
-        showToast("Insufficient balance.", "error");
+        showToast("Insufficient dashboard balance.", "error");
+        return;
+      }
+
+      // 4. Check Withdrawable Limit
+      if (amount > withdrawableLimit) {
+        showToast(`Withdrawal exceeds your current withdrawable limit (PKR ${withdrawableLimit.toFixed(2)}).`, "error");
         return;
       }
 
@@ -1608,8 +1928,10 @@
           createdAt: Date.now()
         });
 
+        // Deduct from BOTH Balance AND Withdrawable Balance
         await db.ref('users/' + currentUser.uid).update({
-          balance: userBalance - amount
+          balance: userBalance - amount,
+          withdrawableBalance: Math.max(0, withdrawableLimit - amount)
         });
 
         showToast("Withdrawal requested successfully!", "success");
@@ -1617,14 +1939,14 @@
         closeSubPage('withdraw-page');
         openSubPage('wd-history-page');
       } catch (err) {
-        showToast("Withdrawal failed.", "error");
+        showToast("Withdrawal failed: " + err.message, "error");
       } finally {
         submitBtn.disabled = false;
         submitBtn.innerText = "Request Withdrawal";
       }
     }
 
-    // 13. Cash Rewards Levels (Locked permanently after claim)
+    // 13. Cash Rewards Levels
     function renderCashRewardLevels(teamInvestment = 0) {
       const container = document.getElementById('cash-levels-container');
       let html = '';
@@ -1640,31 +1962,30 @@
 
         let btnState = '';
         if (isClaimed) {
-          // Locked permanently after claim
-          btnState = `<button disabled class="w-full bg-white/20 text-white/90 font-black py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-not-allowed">
-                        <svg class="w-3.5 h-3.5 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                        <span>Claimed (Locked)</span>
+          btnState = `<button disabled class="w-full bg-white/20 text-white/90 font-black py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-not-allowed">
+                        <svg class="w-4 h-4 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                        <span>✓ Claimed</span>
                       </button>`;
         } else if (isUnlocked) {
-          btnState = `<button onclick="claimCashReward(${lvl.level}, ${reward})" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-2 rounded-xl text-xs transition shadow-sm active:scale-95">
+          btnState = `<button onclick="claimCashReward(${lvl.level}, ${reward})" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-2.5 rounded-xl text-xs transition shadow-sm active:scale-95">
                         Claim ${reward.toLocaleString()} PKR
                       </button>`;
         } else {
-          btnState = `<button disabled class="w-full bg-white/10 text-white/60 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-not-allowed">
+          btnState = `<button disabled class="w-full bg-white/10 text-white/60 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-not-allowed">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                         <span>Locked</span>
                       </button>`;
         }
 
         html += `
-          <div class="bg-white/10 rounded-2xl p-3.5 border border-white/15 space-y-2">
+          <div class="bg-white/10 rounded-2xl p-4 border border-white/15 space-y-2.5">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2.5">
-                <div class="w-6 h-6 rounded-full bg-amber-400 text-slate-900 flex items-center justify-center font-black text-xs shadow-sm">
+                <div class="w-7 h-7 rounded-full bg-amber-400 text-slate-900 flex items-center justify-center font-black text-xs shadow-sm">
                   ${lvl.level}
                 </div>
                 <div>
-                  <p class="text-[9px] uppercase font-bold text-amber-300">LEVEL ${lvl.level}</p>
+                  <p class="text-[10px] uppercase font-bold text-amber-300">LEVEL ${lvl.level}</p>
                   <p class="text-xs font-black">${target.toLocaleString()} PKR Joining</p>
                 </div>
               </div>
@@ -1672,7 +1993,7 @@
             </div>
 
             <div class="space-y-1">
-              <div class="flex justify-between text-[9.5px] opacity-75">
+              <div class="flex justify-between text-[10px] opacity-75">
                 <span>${teamInvestment.toLocaleString()} / ${target.toLocaleString()} PKR</span>
                 <span>${progressPct}%</span>
               </div>
@@ -1695,6 +2016,10 @@
         showToast("Already claimed this level!", "error");
         return;
       }
+
+      if (!currentUserData.claimedRewardLevels) currentUserData.claimedRewardLevels = {};
+      currentUserData.claimedRewardLevels[level] = true;
+      renderCashRewardLevels(Number(document.getElementById('team-investment-stat').innerText.replace(/\D/g,'')) || 0);
 
       try {
         const curBal = Number(currentUserData.balance) || 0;
@@ -1728,7 +2053,6 @@
       } catch (e) { console.error(e); }
     }
 
-    // Balance History: Filtered (Excludes Deposits and Withdrawals)
     function renderBalanceHistoryUI(records) {
       const container = document.getElementById('bal-history-container');
       if (!records || Object.keys(records).length === 0) {
@@ -1758,19 +2082,18 @@
       let html = '';
       list.forEach(item => {
         html += `
-          <div class="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-sm flex items-center justify-between">
+          <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm flex items-center justify-between">
             <div>
               <p class="text-xs font-bold text-slate-900">${item.title}</p>
               <p class="text-[10px] text-slate-400 mt-0.5">${item.timestamp}</p>
             </div>
-            <span class="text-xs font-black text-[#00875a]">+${item.amount} PKR</span>
+            <span class="text-sm font-black text-[#00875a]">+${item.amount} PKR</span>
           </div>
         `;
       });
       container.innerHTML = html;
     }
 
-    // Deposit History: Clean without "(VIP 1)"
     function renderDepositHistoryUI(records) {
       const container = document.getElementById('dep-history-container');
       if (!records || Object.keys(records).length === 0) {
@@ -1790,21 +2113,20 @@
         const isApproved = (item.status || '').toUpperCase() === 'APPROVED';
         const badgeColor = isApproved ? 'bg-emerald-50 text-[#00875a] border-emerald-200' : 'bg-amber-50 text-amber-600 border-amber-200';
         html += `
-          <div class="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-sm space-y-1.5">
+          <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm space-y-2">
             <div class="flex justify-between items-center">
-              <span class="text-sm font-black text-slate-900">PKR ${Number(item.amountPkr).toFixed(2)}</span>
-              <span class="text-[9.5px] font-black px-2 py-0.5 rounded-full border ${badgeColor}">${item.status || 'PENDING'}</span>
+              <span class="text-base font-black text-slate-900">PKR ${Number(item.amountPkr).toFixed(2)}</span>
+              <span class="text-[10px] font-black px-2.5 py-0.5 rounded-full border ${badgeColor}">${item.status || 'PENDING'}</span>
             </div>
             <p class="text-xs font-semibold text-slate-700">${item.method || 'Payment'}</p>
-            <p class="text-[10px] font-mono text-slate-500">TXN: ${item.txId || '-'}</p>
-            <p class="text-[9.5px] text-slate-400 border-t border-slate-50 pt-1.5">${item.timestamp}</p>
+            <p class="text-[11px] font-mono text-slate-500">TXN: ${item.txId || '-'}</p>
+            <p class="text-[10px] text-slate-400 border-t border-slate-50 pt-2">${item.timestamp}</p>
           </div>
         `;
       });
       container.innerHTML = html;
     }
 
-    // Withdrawal History: Number masked in middle
     function renderWithdrawalHistoryUI(records) {
       const container = document.getElementById('wd-history-container');
       if (!records || Object.keys(records).length === 0) {
@@ -1824,21 +2146,21 @@
         const isApp = (item.status || '').toLowerCase() === 'approved';
         const badgeColor = isApp ? 'bg-emerald-50 text-[#00875a]' : 'bg-amber-50 text-amber-600';
         html += `
-          <div class="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-sm space-y-1.5">
+          <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm space-y-2">
             <div class="flex justify-between items-center">
-              <span class="text-sm font-black text-slate-900">PKR ${Number(item.amountPkr).toFixed(2)}</span>
-              <span class="text-[9.5px] font-black px-2 py-0.5 rounded-full ${badgeColor}">${item.status || 'Pending'}</span>
+              <span class="text-base font-black text-slate-900">PKR ${Number(item.amountPkr).toFixed(2)}</span>
+              <span class="text-[10px] font-black px-2.5 py-0.5 rounded-full ${badgeColor}">${item.status || 'Pending'}</span>
             </div>
             <p class="text-xs font-semibold text-slate-700">${item.method} (${maskAccountNumber(item.accountNumber)})</p>
-            <p class="text-[10px] text-slate-500">Holder: ${item.holderName}</p>
-            <p class="text-[9.5px] text-slate-400 border-t border-slate-50 pt-1.5">${item.timestamp}</p>
+            <p class="text-[11px] text-slate-500">Holder: ${item.holderName}</p>
+            <p class="text-[10px] text-slate-400 border-t border-slate-50 pt-2">${item.timestamp}</p>
           </div>
         `;
       });
       container.innerHTML = html;
     }
 
-    // 15. Sign In / Sign Up Handlers (Accurate Validations & Clear Alerts)
+    // 15. Sign In / Sign Up Handlers
     function toggleAuthMode() {
       isSignUp = !isSignUp;
       document.getElementById('auth-form').reset();
@@ -1866,7 +2188,7 @@
         submitBtn.innerText = "Sign Up";
         toggleBtn.innerText = "Already have an account? Sign In";
       } else {
-        title.innerText = "DailyEarn";
+        title.innerText = "Adds Hub Earn";
         subtitle.innerText = "Sign in to access your dashboard";
         nameField.classList.add('hidden');
         refField.classList.add('hidden');
@@ -1895,7 +2217,6 @@
       const manualRefCode = document.getElementById('auth-inviter').value.trim().toUpperCase();
 
       if (isSignUp) {
-        // 1. Username validation: Letters and numbers both required
         if (!name || name.length < 3) {
           setAuthError("Username must be at least 3 characters.");
           return;
@@ -1905,13 +2226,11 @@
           return;
         }
 
-        // 2. Email validation: Must end with @gmail.com
         if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
           setAuthError("Email address must end with @gmail.com.");
           return;
         }
 
-        // 3. Password validation: Minimum 6 characters
         if (!password || password.length < 6) {
           setAuthError("Password must be at least 6 characters long.");
           return;
@@ -1946,6 +2265,7 @@
             name: name,
             email: email,
             balance: welcomeBonus,
+            withdrawableBalance: 0, // Starts at 0, earned via referrals
             earnedToday: welcomeBonus,
             totalEarned: welcomeBonus,
             todayDate: todayDateStr,
@@ -1953,6 +2273,7 @@
             activePackages: {},
             taskClaims: {},
             claimedRewardLevels: {},
+            claimedFreeBonus: false,
             referredBy: finalInviterUid || null,
             createdAt: new Date().toISOString()
           };
@@ -1982,7 +2303,6 @@
           submitBtn.innerText = "Sign Up";
         }
       } else {
-        // Sign In Flow Validations
         if (!email || !/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
           setAuthError("Please enter a valid @gmail.com address.");
           return;
@@ -2031,13 +2351,16 @@
       showToast("Signed out successfully.", "success");
     }
 
-    // 16. Tab Navigation Controls
+    // 16. Tab Navigation Controls (Always scroll to TOP on switch)
     function switchTab(target) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      
       ['home', 'ads', 'packages', 'invite', 'profile'].forEach(tab => {
         const view = document.getElementById(`${tab}-view`);
         const navBtn = document.getElementById(`nav-${tab}`);
         if (tab === target) {
           view.classList.remove('hidden');
+          view.scrollTop = 0;
           navBtn.className = 'flex flex-col items-center gap-1 text-[#00875a] transition flex-1';
           navBtn.querySelector('span').className = 'text-[10px] font-bold';
         } else {
@@ -2049,7 +2372,15 @@
     }
 
     function openSubPage(pageId) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
       const page = document.getElementById(pageId);
+      
+      // AUTO RESET WITHDRAWAL FORM FIELDS ON OPEN
+      if (pageId === 'withdraw-page') {
+        const wdForm = document.getElementById('withdraw-form');
+        if (wdForm) wdForm.reset();
+      }
+
       page.scrollTop = 0;
       page.classList.remove('hidden');
       page.classList.add('flex');
@@ -2057,6 +2388,13 @@
 
     function closeSubPage(pageId) {
       const page = document.getElementById(pageId);
+      
+      // AUTO RESET WITHDRAWAL FORM FIELDS ON CLOSE
+      if (pageId === 'withdraw-page') {
+        const wdForm = document.getElementById('withdraw-form');
+        if (wdForm) wdForm.reset();
+      }
+
       page.classList.add('hidden');
       page.classList.remove('flex');
     }
@@ -2120,7 +2458,7 @@
       const link = document.getElementById('inv-link-input').value;
       if (navigator.share) {
         navigator.share({
-          title: 'Join DailyEarn & Earn Daily',
+          title: 'Join Adds Hub Earn & Earn Daily',
           text: 'Earn daily profits and get Rs. 50 bonus instantly!',
           url: link
         }).catch(() => {});
