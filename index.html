@@ -2386,14 +2386,16 @@
     }
 
     function resetAllAppInputsAndForms() {
-      document.querySelectorAll('form').forEach(f => f.reset());
-      document.querySelectorAll('input').forEach(i => {
-        if (i.type !== 'submit' && i.type !== 'button') i.value = '';
-      });
-      const fileText = document.getElementById('screenshot-filename');
-      if (fileText) fileText.innerText = "Tap to upload screenshot";
-      base64Screenshot = "";
+  document.querySelectorAll('form').forEach(f => f.reset());
+  document.querySelectorAll('input:not([readonly])').forEach(i => {
+    if (i.type !== 'submit' && i.type !== 'button' && i.id !== 'inv-link-input') {
+      i.value = '';
     }
+  });
+  const fileText = document.getElementById('screenshot-filename');
+  if (fileText) fileText.innerText = "Tap to upload screenshot";
+  base64Screenshot = "";
+}
 
     function confirmLogoutAction() {
       closeLogoutModal();
@@ -2404,24 +2406,32 @@
 
     // 16. Tab Navigation Controls (Auto-resets inputs on page change)
     function switchTab(target) {
-      window.scrollTo({ top: 0, behavior: 'instant' });
-      resetAllAppInputsAndForms();
-      
-      ['home', 'ads', 'packages', 'invite', 'profile'].forEach(tab => {
-        const view = document.getElementById(`${tab}-view`);
-        const navBtn = document.getElementById(`nav-${tab}`);
-        if (tab === target) {
-          view.classList.remove('hidden');
-          view.scrollTop = 0;
-          navBtn.className = 'flex flex-col items-center gap-1 text-[#00875a] transition flex-1';
-          navBtn.querySelector('span').className = 'text-[10px] font-bold';
-        } else {
-          view.classList.add('hidden');
-          navBtn.className = 'flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition flex-1';
-          navBtn.querySelector('span').className = 'text-[10px] font-medium';
-        }
-      });
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  resetAllAppInputsAndForms();
+  
+  // Ensure referral link always shows when opening invite tab
+  if (target === 'invite' && currentUser) {
+    const refCode = currentUserData?.referralCode || currentUser.uid.substring(0, 8).toUpperCase();
+    const cleanRefLink = `${window.location.origin}${window.location.pathname}?ref=${refCode}`;
+    const linkInput = document.getElementById('inv-link-input');
+    if (linkInput) linkInput.value = cleanRefLink;
+  }
+  
+  ['home', 'ads', 'packages', 'invite', 'profile'].forEach(tab => {
+    const view = document.getElementById(`${tab}-view`);
+    const navBtn = document.getElementById(`nav-${tab}`);
+    if (tab === target) {
+      view.classList.remove('hidden');
+      view.scrollTop = 0;
+      navBtn.className = 'flex flex-col items-center gap-1 text-[#00875a] transition flex-1';
+      navBtn.querySelector('span').className = 'text-[10px] font-bold';
+    } else {
+      view.classList.add('hidden');
+      navBtn.className = 'flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition flex-1';
+      navBtn.querySelector('span').className = 'text-[10px] font-medium';
     }
+  });
+}
 
     function openSubPage(pageId) {
       window.scrollTo({ top: 0, behavior: 'instant' });
