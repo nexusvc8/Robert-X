@@ -125,7 +125,7 @@
     </div>
   </div>
 
-  <!-- ==================== SUB-PAGE: RS. 100 FREE BONUS PAGE (EXACT SCREENSHOT) ==================== -->
+  <!-- ==================== SUB-PAGE: RS. 100 FREE BONUS PAGE ==================== -->
   <div id="bonus-page" class="fixed inset-0 z-50 bg-[#f8fafc] hidden flex-col max-w-md mx-auto overflow-y-auto">
     <div class="sticky top-0 bg-white/95 backdrop-blur-md px-5 py-4 border-b border-slate-100 flex items-center justify-between z-20">
       <button onclick="closeSubPage('bonus-page')" class="p-1 -ml-1 text-slate-600 hover:text-slate-900 flex items-center gap-1 text-sm font-semibold">
@@ -137,7 +137,6 @@
     </div>
 
     <div class="p-5 space-y-4 flex-1">
-      <!-- Main Green Bonus Card -->
       <div class="bg-gradient-to-br from-[#00b074] via-[#009b63] to-[#00875a] rounded-3xl p-6 text-white shadow-sm space-y-4">
         <div class="flex items-center gap-3">
           <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md border border-white/25 flex items-center justify-center text-white shrink-0">
@@ -154,7 +153,6 @@
         </p>
       </div>
 
-      <!-- WhatsApp Channel Button Card -->
       <div class="bg-white border border-slate-200/90 rounded-2xl p-4 flex items-center justify-between shadow-sm">
         <div class="flex items-center gap-3">
           <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
@@ -162,7 +160,7 @@
           </div>
           <div>
             <h4 class="text-sm font-extrabold text-slate-900 leading-tight">WhatsApp Channel</h4>
-            <p class="text-[11px] text-slate-400 font-medium mt-0.5">Official updates & payment p...</p>
+            <p class="text-[11px] text-slate-400 font-medium mt-0.5">Official updates & payment proofs</p>
           </div>
         </div>
         <button onclick="openExternalChannel('whatsapp')" class="primary-btn text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1">
@@ -171,7 +169,6 @@
         </button>
       </div>
 
-      <!-- Telegram Channel Button Card -->
       <div class="bg-white border border-slate-200/90 rounded-2xl p-4 flex items-center justify-between shadow-sm">
         <div class="flex items-center gap-3">
           <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
@@ -179,7 +176,7 @@
           </div>
           <div>
             <h4 class="text-sm font-extrabold text-slate-900 leading-tight">Telegram Channel</h4>
-            <p class="text-[11px] text-slate-400 font-medium mt-0.5">Daily promo codes & announ...</p>
+            <p class="text-[11px] text-slate-400 font-medium mt-0.5">Daily promo codes & announcements</p>
           </div>
         </div>
         <button onclick="openExternalChannel('telegram')" class="primary-btn text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1">
@@ -188,10 +185,8 @@
         </button>
       </div>
 
-      <!-- Verification Section (Code Input or Already Claimed) -->
-      <div id="bonus-claim-container" class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-sm space-y-3.5 text-center">
-        <!-- Rendered dynamically via JavaScript -->
-      </div>
+      <!-- Verification Section (Code input placeholder is completely blank as requested) -->
+      <div id="bonus-claim-container" class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-sm space-y-3.5 text-center"></div>
     </div>
   </div>
 
@@ -232,7 +227,7 @@
           <h3 class="text-base font-bold text-slate-900">Claim Promo Code</h3>
         </div>
 
-        <form onsubmit="handleClaimPromo(event)" class="space-y-4">
+        <form id="promo-claim-form" onsubmit="handleClaimPromo(event)" class="space-y-4">
           <div>
             <label class="text-xs font-bold text-slate-700 block mb-1">Enter Promo Code</label>
             <input type="text" id="promo-input-code" required placeholder="Enter promo code" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#00875a] uppercase font-mono">
@@ -435,7 +430,7 @@
     </div>
   </div>
 
-  <!-- ==================== SUB-PAGES: HISTORIES & ACCOUNT ==================== -->
+  <!-- ==================== SUB-PAGES: HISTORIES (COMPACT CARDS) ==================== -->
   <div id="wd-history-page" class="fixed inset-0 z-50 bg-[#f8fafc] hidden flex-col max-w-md mx-auto overflow-y-auto">
     <div class="sticky top-0 bg-white/95 backdrop-blur-md px-5 py-4 border-b border-slate-100 flex items-center justify-between z-20">
       <button onclick="closeSubPage('wd-history-page')" class="p-1 -ml-1 text-slate-600 hover:text-slate-900 flex items-center gap-1 text-sm font-semibold">
@@ -443,9 +438,9 @@
         Back
       </button>
     </div>
-    <div class="p-5 space-y-4 flex-1">
+    <div class="p-5 space-y-3 flex-1">
       <h2 class="text-2xl font-black text-slate-900">Withdrawal History</h2>
-      <div id="wd-history-container" class="space-y-3 pt-2"></div>
+      <div id="wd-history-container" class="space-y-2.5 pt-1"></div>
     </div>
   </div>
 
@@ -456,9 +451,9 @@
         Back
       </button>
     </div>
-    <div class="p-5 space-y-4 flex-1">
+    <div class="p-5 space-y-3 flex-1">
       <h2 class="text-2xl font-black text-slate-900">Deposit History</h2>
-      <div id="dep-history-container" class="space-y-3 pt-2"></div>
+      <div id="dep-history-container" class="space-y-2.5 pt-1"></div>
     </div>
   </div>
 
@@ -469,9 +464,9 @@
         Back
       </button>
     </div>
-    <div class="p-5 space-y-4 flex-1">
+    <div class="p-5 space-y-3 flex-1">
       <h2 class="text-2xl font-black text-slate-900">Balance History</h2>
-      <div id="bal-history-container" class="space-y-3 pt-2"></div>
+      <div id="bal-history-container" class="space-y-2 pt-1"></div>
     </div>
   </div>
 
@@ -484,7 +479,7 @@
     </div>
     <div class="p-5 space-y-4 flex-1">
       <h2 class="text-2xl font-black text-slate-900">Change Password</h2>
-      <form onsubmit="handlePasswordUpdate(event)" class="space-y-3.5">
+      <form id="cp-form" onsubmit="handlePasswordUpdate(event)" class="space-y-3.5">
         <div>
           <label class="text-xs font-bold text-slate-700 block mb-1">New Password</label>
           <input type="password" id="cp-new-password" required class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#00875a]">
@@ -510,7 +505,7 @@
     <div class="p-5 space-y-4 flex-1">
       <h2 class="text-2xl font-black text-slate-900">Add Recovery Email</h2>
       <p class="text-xs text-slate-500">This Gmail will be used to recover your password if you forget it.</p>
-      <form onsubmit="handleRecoveryEmailUpdate(event)" class="space-y-4 pt-1">
+      <form id="rec-form" onsubmit="handleRecoveryEmailUpdate(event)" class="space-y-4 pt-1">
         <div>
           <label class="text-xs font-bold text-slate-700 block mb-1">Recovery Gmail</label>
           <input type="email" id="rec-email-input" required placeholder="yourname@gmail.com" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#00875a]">
@@ -525,10 +520,8 @@
   <!-- ==================== MAIN MOBILE APP CONTAINER ==================== -->
   <div id="app-container" class="w-full max-w-md bg-white min-h-screen pb-24 shadow-sm relative flex flex-col hidden">
 
-    <!-- ==================== TAB 1: HOME (HEADER IS ONLY HERE) ==================== -->
+    <!-- ==================== TAB 1: HOME ==================== -->
     <div id="home-view" class="flex flex-col flex-1">
-      
-      <!-- Top Sticky Header ONLY on Home Tab -->
       <header class="sticky top-0 bg-white/95 backdrop-blur-md px-5 py-3.5 border-b border-slate-100 flex items-center justify-between z-40">
         <div class="flex items-center gap-2.5">
           <div class="w-10 h-10 rounded-2xl bg-[#00875a] flex items-center justify-center text-white blue-glow-pulse">
@@ -540,7 +533,6 @@
           </div>
         </div>
 
-        <!-- Notification Bell Icon -->
         <button onclick="openNotificationPage()" class="relative p-2 text-slate-600 hover:text-[#00875a] transition">
           <svg class="w-6 h-6 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/></svg>
           <span id="notif-badge" class="hidden absolute top-2 right-2 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-white"></span>
@@ -548,7 +540,6 @@
       </header>
 
       <div class="p-5 space-y-4 flex-1">
-        <!-- Welcome Text -->
         <div>
           <p class="text-xs text-slate-500 font-medium">Welcome back,</p>
           <h2 id="home-username-display" class="text-2xl font-black text-slate-900 tracking-tight">Investor</h2>
@@ -562,7 +553,6 @@
           </div>
           <h3 id="home-wallet-balance" class="text-4xl font-black tracking-tight leading-none">Rs 0</h3>
 
-          <!-- Only Withdraw Button -->
           <div class="pt-1">
             <button onclick="openSubPage('withdraw-page')" class="w-full bg-white/20 hover:bg-white/30 text-white font-extrabold py-3.5 px-4 rounded-2xl text-xs flex items-center justify-center gap-2 active:scale-95 transition shadow-xs backdrop-blur-sm">
               <span>Withdraw</span>
@@ -606,19 +596,21 @@
             </div>
           </div>
 
-          <!-- Promo Code Card -->
-          <div onclick="openSubPage('promo-page')" class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm space-y-2 cursor-pointer hover:border-[#00875a]/50 transition">
-            <div class="flex items-center gap-1.5 text-slate-800">
-              <svg class="w-4 h-4 text-slate-700 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
-              <span class="text-[11px] font-bold text-slate-800">Promo Code</span>
+          <!-- Promo Code Card (Updated: Icon at top, Text below icon, Above Claim Button) -->
+          <div onclick="openSubPage('promo-page')" class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm flex flex-col justify-between cursor-pointer hover:border-[#00875a]/50 transition">
+            <div class="space-y-1.5">
+              <div class="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                <svg class="w-5 h-5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
+              </div>
+              <p class="text-[11px] font-bold text-slate-800">Promo Code</p>
             </div>
-            <button class="w-full primary-btn text-white text-[11px] font-bold py-2 rounded-xl mt-1 shadow-xs">
+            <button class="w-full primary-btn text-white text-[11px] font-bold py-2 rounded-xl mt-2 shadow-xs pointer-events-none">
               Claim Code
             </button>
           </div>
         </div>
 
-        <!-- Free Rs. 100 Promo Banner (Opens Free Rs. 100 Sub Page) -->
+        <!-- Free Rs. 100 Promo Banner -->
         <div onclick="openSubPage('bonus-page')" class="bg-gradient-to-r from-[#00b074] to-[#00875a] rounded-3xl p-5 text-white flex items-center justify-between cursor-pointer active:scale-98 transition shadow-sm mt-2">
           <div class="flex items-center gap-3.5">
             <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm border border-white/25 flex items-center justify-center shrink-0">
@@ -663,14 +655,12 @@
     <div id="invite-view" class="p-5 space-y-4 flex-1 hidden">
       <h2 class="text-2xl font-black text-slate-900">Invite Friends</h2>
 
-      <!-- Top Referral Code Banner -->
       <div class="bg-gradient-to-r from-[#00b074] to-[#00875a] text-white rounded-3xl p-6 text-center space-y-2 shadow-sm">
         <span class="text-[11px] font-bold uppercase tracking-wider opacity-90">YOUR REFERRAL CODE</span>
         <h3 id="inv-code-display" class="text-3xl font-black tracking-widest font-mono">74AD9D07</h3>
         <p class="text-xs opacity-90 pt-1">Earn 10% commission on every referral's package purchase</p>
       </div>
 
-      <!-- Referral Link Box -->
       <div class="bg-white border border-slate-200/90 rounded-2xl p-4 space-y-3 shadow-sm">
         <span class="text-xs font-bold text-slate-700 block">Referral Link</span>
         <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
@@ -685,7 +675,6 @@
         </button>
       </div>
 
-      <!-- 3 Metrics Cards -->
       <div class="space-y-3">
         <div class="bg-white border border-slate-200/80 rounded-2xl p-4 flex items-center justify-between shadow-sm">
           <div class="flex items-center gap-3">
@@ -741,7 +730,6 @@
         <div class="space-y-3" id="cash-levels-container"></div>
       </div>
 
-      <!-- How it works Card -->
       <div class="bg-white border border-slate-200/90 rounded-3xl p-5 space-y-3 shadow-sm text-xs leading-relaxed">
         <h4 class="text-sm font-black text-slate-900">How it works</h4>
         <ol class="space-y-2 text-slate-600 font-medium">
@@ -757,7 +745,6 @@
     <div id="profile-view" class="p-5 space-y-4 flex-1 hidden">
       <h2 class="text-2xl font-black text-slate-900">Profile</h2>
 
-      <!-- Profile Avatar -->
       <div class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-sm">
         <div class="flex items-center gap-4">
           <div class="w-14 h-14 rounded-full bg-[#00875a] flex items-center justify-center text-white text-xl">
@@ -892,7 +879,7 @@
     const auth = firebase.auth();
     const db = firebase.database();
 
-    // Default Packages (Card color customizable via Firebase 'cardColor' or 'gradient')
+    // Default Packages
     const DEFAULT_PACKAGES = [
       { id: "vip1", name: "VIP 1", price: 270, daily: 80, duration: "Lifetime", gradient: "from-[#00b074] to-[#009b63]", referralTaskWithdrawable: 20 },
       { id: "vip2", name: "VIP 2", price: 430, daily: 150, duration: "Lifetime", gradient: "from-[#1d8cf8] to-[#3a5afc]", referralTaskWithdrawable: 30 },
@@ -939,9 +926,12 @@
     let appWithdrawMethods = DEFAULT_WITHDRAW_METHODS;
     let appRewardLevels = DEFAULT_REWARD_LEVELS;
     let appPaymentAccounts = DEFAULT_PAYMENT_ACCOUNTS;
+    let userPendingDeposits = {}; // Plan names in pending state for current user
+    let userNotifications = {};
+    let globalNotifications = {};
     let whatsappChannelUrl = "https://whatsapp.com/channel";
     let telegramChannelUrl = "https://t.me";
-    let freeBonusVerificationCode = "58291"; // Fallback 5-digit code if not set in DB
+    let freeBonusVerificationCode = "58291";
     let checkoutFieldsConfig = { showTrxId: true, showSenderAccount: true, showScreenshot: true };
 
     let countdownInterval = null;
@@ -961,7 +951,6 @@
     // 2. Animated Toast Message
     function showToast(message, type = "success") {
       const container = document.getElementById('toast-wrapper');
-      
       const existing = container.querySelector('[data-msg="' + message + '"]');
       if (existing) existing.remove();
 
@@ -971,7 +960,6 @@
 
       const toast = document.createElement('div');
       toast.setAttribute('data-msg', message);
-      
       const isGreen = type === "success";
       const icon = isGreen 
         ? `<svg class="w-4 h-4 text-[#00875a] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>`
@@ -1033,7 +1021,7 @@
 
     // 4. Dynamic Firebase Settings
     function bindDynamicSettings() {
-      // 1. Packages (Custom Color, Gradients, and Details)
+      // 1. Packages
       db.ref('packages').on('value', snap => {
         if (snap.exists() && snap.val()) {
           const val = snap.val();
@@ -1055,7 +1043,7 @@
         renderWithdrawDropdown();
       });
 
-      // 3. Payment Accounts (Supports full edit, add, delete per method)
+      // 3. Payment Accounts
       db.ref('settings/paymentAccounts').on('value', snap => {
         if (snap.exists() && snap.val()) {
           const val = snap.val();
@@ -1066,13 +1054,12 @@
               const item = val[k];
               if (typeof item === 'object') {
                 return {
-                  key: k,
                   method: item.method || k,
                   account: item.account || item.number || '',
                   title: item.title || 'Task Hub Earn'
                 };
               }
-              return { key: k, method: k, account: item, title: "Task Hub Earn" };
+              return { method: k, account: item, title: "Task Hub Earn" };
             }).filter(item => item.account);
           }
         } else {
@@ -1114,6 +1101,12 @@
         }
         renderDynamicCheckoutFields();
       });
+
+      // 7. Global Notifications Listener (Live Sync)
+      db.ref('globalNotifications').on('value', snap => {
+        globalNotifications = snap.val() || {};
+        renderCombinedNotifications();
+      });
     }
 
     function renderDynamicCheckoutFields() {
@@ -1143,27 +1136,30 @@
         currentUser = null;
         currentUserData = null;
         if (countdownInterval) clearInterval(countdownInterval);
+        resetAllAppInputsAndForms();
         document.getElementById('auth-modal').classList.remove('hidden');
         document.getElementById('app-container').classList.add('hidden');
         renderAuthUI();
       }
     });
 
-    // 6. Realtime User Listeners
+    // 6. Realtime User Listeners (With Midnight Reset for Earned Today & Withdrawable Limit)
     function bindUserRealtime(uid) {
       db.ref('users/' + uid).on('value', snap => {
         const val = snap.val();
         if (val) {
           currentUserData = val;
 
-          // Midnight 12:00 AM Reset for Earned Today
+          // Midnight 12:00 AM Reset for BOTH Earned Today & Withdrawable Balance Limit
           const currentDayStr = getTodayDateStr();
           if (val.todayDate !== currentDayStr) {
             db.ref('users/' + uid).update({
               earnedToday: 0,
+              withdrawableBalance: 0, // Reset to zero at 12:00 AM if not withdrawn
               todayDate: currentDayStr
             });
             val.earnedToday = 0;
+            val.withdrawableBalance = 0;
             val.todayDate = currentDayStr;
           }
 
@@ -1171,8 +1167,18 @@
         }
       });
 
+      // User Deposits Listener (Tracks Pending packages to disable invest button)
       db.ref('deposits').orderByChild('userId').equalTo(uid).on('value', snap => {
-        renderDepositHistoryUI(snap.val());
+        const deps = snap.val() || {};
+        userPendingDeposits = {};
+        Object.values(deps).forEach(d => {
+          if ((d.status || '').toUpperCase() === 'PENDING' && d.planName) {
+            const key = d.planName.toLowerCase().replace(/\s+/g, '');
+            userPendingDeposits[key] = true;
+          }
+        });
+        renderDepositHistoryUI(deps);
+        renderPackagesUI();
       });
 
       db.ref('withdrawals').orderByChild('userId').equalTo(uid).on('value', snap => {
@@ -1187,7 +1193,11 @@
         renderPromoHistory(snap.val());
       });
 
-      listenNotifications(uid);
+      // Individual User Notifications Listener
+      db.ref('notifications/' + uid).on('value', snap => {
+        userNotifications = snap.val() || {};
+        renderCombinedNotifications();
+      });
 
       // Team Network Data
       db.ref('referrals/' + uid).on('value', snap => {
@@ -1209,17 +1219,24 @@
       });
     }
 
-    function listenNotifications(uid) {
-      db.ref('notifications/' + uid).on('value', snap => {
-        renderNotificationsList(snap.val());
-      });
-    }
-
-    function renderNotificationsList(notifs) {
+    // 6.1 Combined Notifications (Single User + Global, Real-Time Edit/Delete Support)
+    function renderCombinedNotifications() {
       const container = document.getElementById('notifications-list-container');
       const badge = document.getElementById('notif-badge');
 
-      if (!notifs || Object.keys(notifs).length === 0) {
+      const combined = [];
+      
+      // Global notices
+      Object.keys(globalNotifications).forEach(k => {
+        combined.push({ id: k, ...globalNotifications[k], isGlobal: true });
+      });
+
+      // Personal notices
+      Object.keys(userNotifications).forEach(k => {
+        combined.push({ id: k, ...userNotifications[k], isGlobal: false });
+      });
+
+      if (combined.length === 0) {
         badge.classList.add('hidden');
         container.innerHTML = `
           <div class="bg-white border border-slate-200/90 rounded-3xl p-10 text-center space-y-2 shadow-sm">
@@ -1231,10 +1248,10 @@
       }
 
       badge.classList.remove('hidden');
-      const list = Object.values(notifs).reverse();
-      let html = '';
+      combined.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
-      list.forEach(n => {
+      let html = '';
+      combined.forEach(n => {
         html += `
           <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm space-y-1.5">
             <div class="flex justify-between items-center">
@@ -1301,7 +1318,6 @@
       return {};
     }
 
-    // Helper: Returns background style/classes based on Firebase color
     function getCardHeaderStyle(pkg, defaultGradient) {
       if (pkg.cardColor && (pkg.cardColor.startsWith('#') || pkg.cardColor.startsWith('rgb'))) {
         return { style: `style="background: ${pkg.cardColor};"`, classes: '' };
@@ -1315,7 +1331,7 @@
       return { style: '', classes: `bg-gradient-to-b ${defaultGradient}` };
     }
 
-    // 8. Render Dynamic Packages (Firebase Color Supported, Green Invest Button Kept)
+    // 8. Render Dynamic Packages (With Pending Status Button & Formatted Discount Tag)
     function renderPackagesUI() {
       const container = document.getElementById('packages-list-container');
       const activePkgs = getUserActivePackages(currentUserData || {});
@@ -1324,6 +1340,7 @@
       appPackages.forEach((pkg, index) => {
         const pkgKey = (pkg.id || pkg.name).toLowerCase().replace(/\s+/g, '');
         const isCurrent = !!activePkgs[pkgKey];
+        const isPending = !!userPendingDeposits[pkgKey];
 
         const defaultGradients = [
           'from-[#00b074] to-[#009b63]',
@@ -1336,23 +1353,38 @@
         
         const headerStyleObj = getCardHeaderStyle(pkg, defaultGradients[index % defaultGradients.length]);
 
+        // Clean formatted discount tag (e.g. 20%)
+        let formattedDiscount = '';
+        if (pkg.discount) {
+          const dStr = String(pkg.discount).trim();
+          formattedDiscount = dStr.includes('%') ? dStr : `${dStr}%`;
+        }
+
         const cornerBadge = isCurrent 
           ? `<span class="absolute top-3.5 right-3.5 text-[10px] font-black uppercase tracking-wider text-emerald-950 bg-white/95 px-2.5 py-0.5 rounded-full shadow-xs">ACTIVE</span>` 
-          : (pkg.discount ? `<span class="absolute top-3.5 right-3.5 text-[10px] font-black uppercase tracking-wider text-rose-600 bg-white px-2.5 py-0.5 rounded-full shadow-sm">${pkg.discount}</span>` : '');
+          : (formattedDiscount ? `<span class="absolute top-3.5 right-3.5 text-[10px] font-black uppercase tracking-wider text-rose-600 bg-white px-2.5 py-0.5 rounded-full shadow-sm">${formattedDiscount}</span>` : '');
 
         const originalPriceHtml = (pkg.originalPrice && Number(pkg.originalPrice) > Number(pkg.price)) 
           ? `<span class="line-through text-xs text-white/70 block mt-0.5">Rs. ${Number(pkg.originalPrice).toLocaleString()}</span>` 
           : '';
 
-        // Invest Button ALWAYS uses .primary-btn (#00875a green)
-        const actionBtn = isCurrent
-          ? `<button disabled class="w-full bg-[#00875a]/20 text-[#00875a] font-bold py-3 rounded-2xl text-xs flex items-center justify-center gap-1.5 cursor-default">
-               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-               <span>Activated</span>
-             </button>`
-          : `<button onclick="startPackagePurchase('${pkg.name}', ${pkg.price}, ${pkg.daily})" class="w-full primary-btn text-white font-bold py-3 rounded-2xl text-xs active:scale-95 transition">
-               Invest Rs. ${Number(pkg.price).toLocaleString()}
-             </button>`;
+        // Dynamic Action Button State (Activated, Pending or Invest)
+        let actionBtn = '';
+        if (isCurrent) {
+          actionBtn = `<button disabled class="w-full bg-[#00875a]/20 text-[#00875a] font-bold py-3 rounded-2xl text-xs flex items-center justify-center gap-1.5 cursor-default">
+                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                         <span>Activated</span>
+                       </button>`;
+        } else if (isPending) {
+          actionBtn = `<button disabled class="w-full bg-amber-500/20 text-amber-700 border border-amber-300 font-bold py-3 rounded-2xl text-xs flex items-center justify-center gap-1.5 cursor-not-allowed">
+                         <svg class="w-3.5 h-3.5 animate-spin text-amber-600" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+                         <span>Pending Approval</span>
+                       </button>`;
+        } else {
+          actionBtn = `<button onclick="startPackagePurchase('${pkg.name}', ${pkg.price}, ${pkg.daily})" class="w-full primary-btn text-white font-bold py-3 rounded-2xl text-xs active:scale-95 transition">
+                         Invest Rs. ${Number(pkg.price).toLocaleString()}
+                       </button>`;
+        }
 
         html += `
           <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
@@ -1392,7 +1424,7 @@
       container.innerHTML = html;
     }
 
-    // 8.1 Rs. 100 Free Bonus Verification Form Render
+    // 8.1 Rs. 100 Free Bonus Section (Blank placeholder as requested)
     function renderBonusClaimSection(userData) {
       const box = document.getElementById('bonus-claim-container');
       const isClaimed = userData && (userData.claimedFreeBonus === true || (userData.promoClaims && userData.promoClaims['FREE100_CHANNEL']));
@@ -1412,7 +1444,7 @@
           <form onsubmit="handleClaimFreeBonus(event)" class="space-y-3.5 pt-1">
             <div>
               <label class="text-xs font-bold text-slate-700 block mb-1">5-Digit Verification Code</label>
-              <input type="text" id="bonus-input-code" maxlength="5" pattern="[0-9]{5}" required placeholder="e.g. 58291" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-center text-lg font-black tracking-widest text-slate-900 focus:outline-none focus:border-[#00875a] font-mono">
+              <input type="text" id="bonus-input-code" maxlength="5" pattern="[0-9]{5}" required placeholder="" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-center text-lg font-black tracking-widest text-slate-900 focus:outline-none focus:border-[#00875a] font-mono">
               <p class="text-[10px] text-slate-400 mt-1">Get the 5-digit verification code from both channels above.</p>
             </div>
             <button type="submit" id="bonus-claim-btn" class="w-full primary-btn text-white font-bold py-3.5 rounded-xl text-xs shadow-sm active:scale-95 transition">
@@ -1537,7 +1569,8 @@
     function closeDepositPages() {
       closeSubPage('deposit-method-page');
       closeSubPage('deposit-checkout-page');
-      document.getElementById('deposit-submit-form').reset();
+      const form = document.getElementById('deposit-submit-form');
+      if (form) form.reset();
       document.getElementById('screenshot-filename').innerText = "Tap to upload screenshot";
       base64Screenshot = "";
     }
@@ -1597,7 +1630,7 @@
       }
     }
 
-    // 10. Daily Tasks & Automatic Inviter Withdrawable Boost
+    // 10. Daily Tasks
     function renderDailyTasks(userData) {
       const container = document.getElementById('tasks-container');
       const activePkgs = getUserActivePackages(userData);
@@ -1694,7 +1727,6 @@
       countdownInterval = setInterval(updateTimers, 1000);
     }
 
-    // Task Execution: Credits user and increases inviter's Withdrawable Limit automatically
     async function startSinglePackageTask(pkgKey, dailyReward, planName, btn) {
       if (!currentUser || !currentUserData) return;
       btn.disabled = true;
@@ -1705,13 +1737,11 @@
         const totalEarned = Number(currentUserData.totalEarned) || 0;
         const todayStr = getTodayDateStr();
 
-        // 1. Mark task claimed for today
         await db.ref(`users/${currentUser.uid}/taskClaims/${pkgKey}`).set({
           lastClaimDate: todayStr,
           lastClaimTimestamp: Date.now()
         });
 
-        // 2. Update user's earnings
         await db.ref('users/' + currentUser.uid).update({
           balance: currentBal + dailyReward,
           earnedToday: earnedToday + dailyReward,
@@ -1722,10 +1752,10 @@
         await logBalanceActivity(currentUser.uid, `Daily Task (${planName})`, dailyReward, 'credit');
         showToast(`Task completed! +Rs. ${dailyReward}`, "success");
 
-        // 3. BOOST INVITER's WITHDRAWABLE LIMIT (HIDDEN RULE)
+        // Inviter Withdrawable Limit Boost on Referral Task
         if (currentUserData.referredBy) {
           const matchedPkg = appPackages.find(p => (p.id || p.name).toLowerCase().replace(/\s+/g, '') === pkgKey.toLowerCase());
-          const inviterBonusLimit = Number(matchedPkg?.referralTaskWithdrawable) || 20; // Default 20 for VIP 1 or set per pkg
+          const inviterBonusLimit = Number(matchedPkg?.referralTaskWithdrawable) || 20;
 
           if (inviterBonusLimit > 0) {
             db.ref(`users/${currentUserData.referredBy}/withdrawableBalance`).transaction(current => {
@@ -1842,7 +1872,7 @@
       list.innerHTML = html;
     }
 
-    // 12. Withdrawal Dropdown & Handler (Strict Package & Withdrawable Limit Validation)
+    // 12. Withdrawal Dropdown & Handler
     let selectedWdMethod = "EasyPaisa";
 
     function toggleWithdrawDropdown() {
@@ -1885,25 +1915,21 @@
       const withdrawableLimit = Number(currentUserData?.withdrawableBalance) || 0;
       const activePkgs = getUserActivePackages(currentUserData || {});
 
-      // 1. Check Package Requirement
       if (Object.keys(activePkgs).length === 0) {
         showToast("You must have an active package to withdraw!", "error");
         return;
       }
 
-      // 2. Check Minimum
       if (amount < 20) {
         showToast("Minimum withdrawal is 20 PKR.", "error");
         return;
       }
 
-      // 3. Check Overall Dashboard Balance
       if (amount > userBalance) {
         showToast("Insufficient dashboard balance.", "error");
         return;
       }
 
-      // 4. Check Withdrawable Limit
       if (amount > withdrawableLimit) {
         showToast(`Withdrawal exceeds your current withdrawable limit (PKR ${withdrawableLimit.toFixed(2)}).`, "error");
         return;
@@ -1928,7 +1954,6 @@
           createdAt: Date.now()
         });
 
-        // Deduct from BOTH Balance AND Withdrawable Balance
         await db.ref('users/' + currentUser.uid).update({
           balance: userBalance - amount,
           withdrawableBalance: Math.max(0, withdrawableLimit - amount)
@@ -1946,7 +1971,7 @@
       }
     }
 
-    // 13. Cash Rewards Levels
+    // 13. Cash Rewards Levels (Deleted double tick mark)
     function renderCashRewardLevels(teamInvestment = 0) {
       const container = document.getElementById('cash-levels-container');
       let html = '';
@@ -1962,9 +1987,10 @@
 
         let btnState = '';
         if (isClaimed) {
+          // Exactly 1 checkmark icon (deleted the second duplicate text tick mark)
           btnState = `<button disabled class="w-full bg-white/20 text-white/90 font-black py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-not-allowed">
                         <svg class="w-4 h-4 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                        <span>✓ Claimed</span>
+                        <span>Claimed</span>
                       </button>`;
         } else if (isUnlocked) {
           btnState = `<button onclick="claimCashReward(${lvl.level}, ${reward})" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-2.5 rounded-xl text-xs transition shadow-sm active:scale-95">
@@ -2040,7 +2066,7 @@
       }
     }
 
-    // 14. Activity Logger & Filtered History Views
+    // 14. Activity Logger & Compact History Cards
     async function logBalanceActivity(uid, title, amount, type) {
       try {
         await db.ref(`balanceLogs/${uid}`).push().set({
@@ -2057,9 +2083,9 @@
       const container = document.getElementById('bal-history-container');
       if (!records || Object.keys(records).length === 0) {
         container.innerHTML = `
-          <div class="bg-white border border-slate-200/80 rounded-3xl p-12 text-center flex flex-col items-center justify-center space-y-3 shadow-sm">
-            <svg class="w-12 h-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
-            <p class="text-sm font-semibold text-slate-600">No balance activity yet</p>
+          <div class="bg-white border border-slate-200/80 rounded-3xl p-8 text-center flex flex-col items-center justify-center space-y-2 shadow-sm">
+            <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+            <p class="text-xs font-semibold text-slate-600">No balance activity yet</p>
           </div>
         `;
         return;
@@ -2071,9 +2097,9 @@
 
       if (list.length === 0) {
         container.innerHTML = `
-          <div class="bg-white border border-slate-200/80 rounded-3xl p-12 text-center flex flex-col items-center justify-center space-y-3 shadow-sm">
-            <svg class="w-12 h-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
-            <p class="text-sm font-semibold text-slate-600">No balance earnings yet</p>
+          <div class="bg-white border border-slate-200/80 rounded-3xl p-8 text-center flex flex-col items-center justify-center space-y-2 shadow-sm">
+            <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+            <p class="text-xs font-semibold text-slate-600">No balance earnings yet</p>
           </div>
         `;
         return;
@@ -2082,25 +2108,26 @@
       let html = '';
       list.forEach(item => {
         html += `
-          <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+          <div class="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-sm flex items-center justify-between">
             <div>
               <p class="text-xs font-bold text-slate-900">${item.title}</p>
-              <p class="text-[10px] text-slate-400 mt-0.5">${item.timestamp}</p>
+              <p class="text-[9.5px] text-slate-400 mt-0.5">${item.timestamp}</p>
             </div>
-            <span class="text-sm font-black text-[#00875a]">+${item.amount} PKR</span>
+            <span class="text-xs font-black text-[#00875a]">+${item.amount} PKR</span>
           </div>
         `;
       });
       container.innerHTML = html;
     }
 
+    // Deposit History: Clean, compact and less spacing
     function renderDepositHistoryUI(records) {
       const container = document.getElementById('dep-history-container');
       if (!records || Object.keys(records).length === 0) {
         container.innerHTML = `
-          <div class="bg-white border border-slate-200/80 rounded-3xl p-12 text-center flex flex-col items-center justify-center space-y-3 shadow-sm">
-            <svg class="w-12 h-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
-            <p class="text-sm font-semibold text-slate-600">No deposits yet</p>
+          <div class="bg-white border border-slate-200/80 rounded-3xl p-8 text-center flex flex-col items-center justify-center space-y-2 shadow-sm">
+            <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+            <p class="text-xs font-semibold text-slate-600">No deposits yet</p>
           </div>
         `;
         return;
@@ -2111,29 +2138,36 @@
 
       list.forEach(item => {
         const isApproved = (item.status || '').toUpperCase() === 'APPROVED';
-        const badgeColor = isApproved ? 'bg-emerald-50 text-[#00875a] border-emerald-200' : 'bg-amber-50 text-amber-600 border-amber-200';
+        const isRejected = (item.status || '').toUpperCase() === 'REJECTED';
+        const badgeColor = isApproved 
+          ? 'bg-emerald-50 text-[#00875a] border-emerald-200' 
+          : (isRejected ? 'bg-rose-50 text-rose-500 border-rose-200' : 'bg-amber-50 text-amber-600 border-amber-200');
+
         html += `
-          <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm space-y-2">
+          <div class="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-sm space-y-1.5">
             <div class="flex justify-between items-center">
-              <span class="text-base font-black text-slate-900">PKR ${Number(item.amountPkr).toFixed(2)}</span>
-              <span class="text-[10px] font-black px-2.5 py-0.5 rounded-full border ${badgeColor}">${item.status || 'PENDING'}</span>
+              <span class="text-sm font-black text-slate-900">PKR ${Number(item.amountPkr).toFixed(2)}</span>
+              <span class="text-[9.5px] font-black px-2 py-0.5 rounded-full border ${badgeColor}">${item.status || 'PENDING'}</span>
             </div>
-            <p class="text-xs font-semibold text-slate-700">${item.method || 'Payment'}</p>
-            <p class="text-[11px] font-mono text-slate-500">TXN: ${item.txId || '-'}</p>
-            <p class="text-[10px] text-slate-400 border-t border-slate-50 pt-2">${item.timestamp}</p>
+            <div class="flex justify-between text-xs text-slate-600">
+              <span>${item.method || 'Payment'}</span>
+              <span class="font-mono text-[10px] text-slate-400">TXN: ${item.txId || '-'}</span>
+            </div>
+            <p class="text-[9.5px] text-slate-400 border-t border-slate-50 pt-1.5">${item.timestamp}</p>
           </div>
         `;
       });
       container.innerHTML = html;
     }
 
+    // Withdrawal History: Compact size & masked account number
     function renderWithdrawalHistoryUI(records) {
       const container = document.getElementById('wd-history-container');
       if (!records || Object.keys(records).length === 0) {
         container.innerHTML = `
-          <div class="bg-white border border-slate-200/80 rounded-3xl p-12 text-center flex flex-col items-center justify-center space-y-3 shadow-sm">
-            <svg class="w-12 h-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
-            <p class="text-sm font-semibold text-slate-600">No withdrawals yet</p>
+          <div class="bg-white border border-slate-200/80 rounded-3xl p-8 text-center flex flex-col items-center justify-center space-y-2 shadow-sm">
+            <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+            <p class="text-xs font-semibold text-slate-600">No withdrawals yet</p>
           </div>
         `;
         return;
@@ -2144,16 +2178,22 @@
 
       list.forEach(item => {
         const isApp = (item.status || '').toLowerCase() === 'approved';
-        const badgeColor = isApp ? 'bg-emerald-50 text-[#00875a]' : 'bg-amber-50 text-amber-600';
+        const isRej = (item.status || '').toLowerCase() === 'rejected';
+        const badgeColor = isApp 
+          ? 'bg-emerald-50 text-[#00875a]' 
+          : (isRej ? 'bg-rose-50 text-rose-500' : 'bg-amber-50 text-amber-600');
+
         html += `
-          <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm space-y-2">
+          <div class="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-sm space-y-1.5">
             <div class="flex justify-between items-center">
-              <span class="text-base font-black text-slate-900">PKR ${Number(item.amountPkr).toFixed(2)}</span>
-              <span class="text-[10px] font-black px-2.5 py-0.5 rounded-full ${badgeColor}">${item.status || 'Pending'}</span>
+              <span class="text-sm font-black text-slate-900">PKR ${Number(item.amountPkr).toFixed(2)}</span>
+              <span class="text-[9.5px] font-black px-2 py-0.5 rounded-full ${badgeColor}">${item.status || 'Pending'}</span>
             </div>
-            <p class="text-xs font-semibold text-slate-700">${item.method} (${maskAccountNumber(item.accountNumber)})</p>
-            <p class="text-[11px] text-slate-500">Holder: ${item.holderName}</p>
-            <p class="text-[10px] text-slate-400 border-t border-slate-50 pt-2">${item.timestamp}</p>
+            <div class="flex justify-between text-xs text-slate-600">
+              <span>${item.method} (${maskAccountNumber(item.accountNumber)})</span>
+              <span class="text-[10px] text-slate-500">${item.holderName}</span>
+            </div>
+            <p class="text-[9.5px] text-slate-400 border-t border-slate-50 pt-1.5">${item.timestamp}</p>
           </div>
         `;
       });
@@ -2265,7 +2305,7 @@
             name: name,
             email: email,
             balance: welcomeBonus,
-            withdrawableBalance: 0, // Starts at 0, earned via referrals
+            withdrawableBalance: 0,
             earnedToday: welcomeBonus,
             totalEarned: welcomeBonus,
             todayDate: todayDateStr,
@@ -2334,7 +2374,7 @@
       }
     }
 
-    // Custom Logout Modal Dialog
+    // Fast Instant Logout & Auto-Clear Fields across entire website
     function promptLogoutDialog() {
       document.getElementById('logout-modal').classList.remove('hidden');
       document.getElementById('logout-modal').classList.add('flex');
@@ -2345,15 +2385,27 @@
       document.getElementById('logout-modal').classList.remove('flex');
     }
 
+    function resetAllAppInputsAndForms() {
+      document.querySelectorAll('form').forEach(f => f.reset());
+      document.querySelectorAll('input').forEach(i => {
+        if (i.type !== 'submit' && i.type !== 'button') i.value = '';
+      });
+      const fileText = document.getElementById('screenshot-filename');
+      if (fileText) fileText.innerText = "Tap to upload screenshot";
+      base64Screenshot = "";
+    }
+
     function confirmLogoutAction() {
       closeLogoutModal();
+      resetAllAppInputsAndForms();
       auth.signOut();
       showToast("Signed out successfully.", "success");
     }
 
-    // 16. Tab Navigation Controls (Always scroll to TOP on switch)
+    // 16. Tab Navigation Controls (Auto-resets inputs on page change)
     function switchTab(target) {
       window.scrollTo({ top: 0, behavior: 'instant' });
+      resetAllAppInputsAndForms();
       
       ['home', 'ads', 'packages', 'invite', 'profile'].forEach(tab => {
         const view = document.getElementById(`${tab}-view`);
@@ -2375,11 +2427,9 @@
       window.scrollTo({ top: 0, behavior: 'instant' });
       const page = document.getElementById(pageId);
       
-      // AUTO RESET WITHDRAWAL FORM FIELDS ON OPEN
-      if (pageId === 'withdraw-page') {
-        const wdForm = document.getElementById('withdraw-form');
-        if (wdForm) wdForm.reset();
-      }
+      // Auto-clear inputs whenever any sub-page opens
+      const form = page.querySelector('form');
+      if (form) form.reset();
 
       page.scrollTop = 0;
       page.classList.remove('hidden');
@@ -2388,12 +2438,8 @@
 
     function closeSubPage(pageId) {
       const page = document.getElementById(pageId);
-      
-      // AUTO RESET WITHDRAWAL FORM FIELDS ON CLOSE
-      if (pageId === 'withdraw-page') {
-        const wdForm = document.getElementById('withdraw-form');
-        if (wdForm) wdForm.reset();
-      }
+      const form = page.querySelector('form');
+      if (form) form.reset();
 
       page.classList.add('hidden');
       page.classList.remove('flex');
@@ -2438,7 +2484,7 @@
       }
     }
 
-    // Utilities
+    // Professional Share Referral Link
     function copyText(str, btn) {
       navigator.clipboard.writeText(str);
       const orig = btn.innerHTML;
@@ -2456,14 +2502,28 @@
 
     function shareReferralLink() {
       const link = document.getElementById('inv-link-input').value;
+      const refCode = currentUserData?.referralCode || '';
+      
+      const professionalMsg = 
+`🌟 *Adds Hub Earn - Official Daily Earning Platform* 🌟
+
+Join Pakistan's trusted daily returns community today!
+🎁 *Rs. 50 FREE Welcome Bonus* on Registration
+✅ Daily Instant Withdrawals (EasyPaisa / JazzCash)
+🚫 *No Referral Mandatory* for your daily withdrawals
+📈 Multiple VIP Plans with Lifetime Daily Returns
+
+🔗 *Register Here:* ${link}
+🔑 *Referral Code:* ${refCode}`;
+
       if (navigator.share) {
         navigator.share({
           title: 'Join Adds Hub Earn & Earn Daily',
-          text: 'Earn daily profits and get Rs. 50 bonus instantly!',
-          url: link
+          text: professionalMsg
         }).catch(() => {});
       } else {
-        copyRefLink();
+        navigator.clipboard.writeText(professionalMsg);
+        showToast("Invite message copied to clipboard!", "success");
       }
     }
   </script>
