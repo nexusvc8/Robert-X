@@ -37,11 +37,11 @@
 </head>
 <body class="bg-[#f8fafc] text-slate-800 flex justify-center min-h-screen antialiased select-none">
 
-  <!-- ==================== TOAST ALERT (ABOVE BOTTOM NAVIGATION) ==================== -->
-  <div id="toast-wrapper" class="fixed bottom-20 inset-x-0 mx-auto max-w-sm px-4 z-50 pointer-events-none space-y-2"></div>
+  <!-- ==================== TOAST ALERT (VISIBLE ON ALL PAGES ABOVE FOOTER) ==================== -->
+  <div id="toast-wrapper" class="fixed bottom-20 inset-x-0 mx-auto max-w-sm px-4 z-[9999] pointer-events-none space-y-2"></div>
 
   <!-- ==================== CUSTOM LOGOUT CONFIRMATION MODAL ==================== -->
-  <div id="logout-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden items-center justify-center p-4">
+  <div id="logout-modal" class="fixed inset-0 z-[999] bg-black/50 backdrop-blur-xs hidden items-center justify-center p-4">
     <div class="w-full max-w-xs bg-white rounded-3xl p-5 shadow-2xl text-center space-y-3.5">
       <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-500 mx-auto flex items-center justify-center">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
@@ -64,17 +64,20 @@
   <!-- ==================== AUTH MODAL (SIGN IN / SIGN UP) ==================== -->
   <div id="auth-modal" class="fixed inset-0 z-50 bg-[#f1f5f9] flex items-center justify-center p-4 overflow-y-auto">
     <div class="w-full max-w-sm bg-white border border-slate-200 rounded-3xl p-6 shadow-xl relative my-auto">
+      
+      <!-- Logo Restored to Original Size -->
       <div class="text-center mb-5">
-        <div class="w-13 h-13 rounded-2xl bg-[#00875a] text-white mx-auto mb-2.5 flex items-center justify-center font-black text-2xl shadow-sm">
-          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <div class="w-14 h-14 rounded-2xl bg-[#00875a] text-white mx-auto mb-3 flex items-center justify-center font-black text-2xl shadow-sm">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
         <h2 id="auth-title" class="text-xl font-extrabold text-slate-900 tracking-tight">DailyEarn</h2>
         <p id="auth-subtitle" class="text-xs text-slate-500 mt-0.5">Sign in to your account</p>
       </div>
 
-      <div id="auth-error" class="hidden mb-3.5 p-3 bg-rose-50 border border-rose-200 text-rose-600 text-xs rounded-xl font-semibold"></div>
+      <!-- Auth Error Box -->
+      <div id="auth-error" class="hidden mb-3.5 p-3 bg-rose-50 border border-rose-200 text-rose-600 text-xs rounded-xl font-semibold leading-relaxed"></div>
 
-      <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-3" autocomplete="off">
+      <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-3" autocomplete="off" novalidate>
         <div id="referrer-field" class="hidden space-y-1">
           <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Referral Code (Optional)</label>
           <input type="text" id="auth-inviter" placeholder="Enter referral code" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 font-semibold focus:outline-none focus:border-[#00875a] uppercase font-mono">
@@ -243,7 +246,6 @@
       </div>
 
       <form id="deposit-submit-form" onsubmit="submitDepositRecord(event)" class="space-y-4">
-        <!-- Dynamic Checkout Fields Form Container -->
         <div id="dynamic-checkout-fields" class="space-y-3.5">
           <div id="field-txnid-box">
             <label class="text-xs font-bold text-slate-700 block mb-1">Transaction ID (Trx ID)</label>
@@ -377,7 +379,7 @@
         Back
       </button>
     </div>
-    <div class="p-5 space-y-4 flex-1">
+    <div class="p-5 space-y-5 flex-1">
       <h2 class="text-2xl font-black text-slate-900">Change Password</h2>
       <form onsubmit="handlePasswordUpdate(event)" class="space-y-3.5">
         <div>
@@ -511,7 +513,7 @@
         </div>
       </div>
 
-      <!-- Free Rs. 100 Promo Banner (Positioned at VERY BOTTOM of Home View) -->
+      <!-- Free Rs. 100 Promo Banner (At VERY BOTTOM of Home View) -->
       <div onclick="openWhatsAppChannel()" class="bg-gradient-to-r from-[#00b074] to-[#00875a] rounded-3xl p-4 text-white flex items-center justify-between cursor-pointer active:scale-98 transition shadow-sm mt-1">
         <div class="flex items-center gap-3">
           <div class="w-11 h-11 rounded-2xl bg-white/20 backdrop-blur-sm border border-white/25 flex items-center justify-center shrink-0">
@@ -649,10 +651,11 @@
     <div id="profile-view" class="p-5 space-y-4 flex-1 hidden">
       <h2 class="text-2xl font-black text-slate-900">Profile</h2>
 
+      <!-- Profile Avatar Restored to Exact Original Size (w-14 h-14) -->
       <div class="bg-white border border-slate-200/90 rounded-3xl p-4 shadow-sm">
         <div class="flex items-center gap-3.5">
-          <div class="w-13 h-13 rounded-full bg-[#00875a] flex items-center justify-center text-white text-xl">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          <div class="w-14 h-14 rounded-full bg-[#00875a] flex items-center justify-center text-white text-xl">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
           </div>
           <div>
             <h3 id="prof-user-name" class="text-sm font-bold text-slate-900 leading-tight">Investor</h3>
@@ -766,26 +769,26 @@
   <script>
     // 1. Firebase Initialization
     const firebaseConfig = {
-  apiKey: "AIzaSyCQf40YXusJSGPdKd7GwGeCZ8Al3v3qo7g",
-  authDomain: "auto-ef807.firebaseapp.com",
-  projectId: "auto-ef807",
-  storageBucket: "auto-ef807.firebasestorage.app",
-  messagingSenderId: "294091824972",
-  appId: "1:294091824972:web:a29a9f07df510b13d039e9"
-};
+      apiKey: "AIzaSyCQf40YXusJSGPdKd7GwGeCZ8Al3v3qo7g",
+      authDomain: "auto-ef807.firebaseapp.com",
+      projectId: "auto-ef807",
+      storageBucket: "auto-ef807.firebasestorage.app",
+      messagingSenderId: "294091824972",
+      appId: "1:294091824972:web:a29a9f07df510b13d039e9"
+    };
 
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
 
-    // Default Fallbacks
+    // Default Packages without hardcoded discounts
     const DEFAULT_PACKAGES = [
-      { id: "vip1", name: "VIP 1", price: 270, originalPrice: 300, discount: "10% OFF", daily: 80, duration: "Lifetime", gradient: "from-[#00b074] to-[#009b63]" },
-      { id: "vip2", name: "VIP 2", price: 430, originalPrice: 500, discount: "14% OFF", daily: 150, duration: "Lifetime", gradient: "from-[#1d8cf8] to-[#3a5afc]" },
-      { id: "vip3", name: "VIP 3", price: 1080, originalPrice: 1200, discount: "10% OFF", daily: 350, duration: "Lifetime", gradient: "from-[#f59e0b] to-[#ea580c]" },
-      { id: "vip4", name: "VIP 4", price: 2700, originalPrice: 3000, discount: "10% OFF", daily: 900, duration: "Lifetime", gradient: "from-[#8b5cf6] to-[#6d28d9]" },
-      { id: "vip5", name: "VIP 5", price: 5400, originalPrice: 6000, discount: "10% OFF", daily: 2000, duration: "Lifetime", gradient: "from-[#00b074] to-[#009b63]" },
-      { id: "vip6", name: "VIP 6", price: 10800, originalPrice: 12000, discount: "10% OFF", daily: 4500, duration: "Lifetime", gradient: "from-[#1d8cf8] to-[#3a5afc]" }
+      { id: "vip1", name: "VIP 1", price: 270, daily: 80, duration: "Lifetime", gradient: "from-[#00b074] to-[#009b63]" },
+      { id: "vip2", name: "VIP 2", price: 430, daily: 150, duration: "Lifetime", gradient: "from-[#1d8cf8] to-[#3a5afc]" },
+      { id: "vip3", name: "VIP 3", price: 1080, daily: 350, duration: "Lifetime", gradient: "from-[#f59e0b] to-[#ea580c]" },
+      { id: "vip4", name: "VIP 4", price: 2700, daily: 900, duration: "Lifetime", gradient: "from-[#8b5cf6] to-[#6d28d9]" },
+      { id: "vip5", name: "VIP 5", price: 5400, daily: 2000, duration: "Lifetime", gradient: "from-[#00b074] to-[#009b63]" },
+      { id: "vip6", name: "VIP 6", price: 10800, daily: 4500, duration: "Lifetime", gradient: "from-[#1d8cf8] to-[#3a5afc]" }
     ];
 
     const DEFAULT_WITHDRAW_METHODS = [
@@ -830,13 +833,11 @@
 
     let countdownInterval = null;
 
-    // Helper: Get Today's Date String for Pakistan Time (Midnight 12 AM calculation)
     function getTodayDateStr() {
       const now = new Date();
       return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     }
 
-    // Helper: Mask phone / account number (e.g. 03468660923 -> 0346****923)
     function maskAccountNumber(acc) {
       if (!acc || acc.length < 7) return acc || '-';
       const start = acc.slice(0, 4);
@@ -844,10 +845,23 @@
       return `${start}****${end}`;
     }
 
-    // 2. Animated Toast Message (Appears Just Above Bottom Navigation Bar)
+    // 2. Animated Toast Message (Always on top with no duplicate stacking)
     function showToast(message, type = "success") {
       const container = document.getElementById('toast-wrapper');
+      
+      // Prevent stacking duplicate messages
+      const existing = container.querySelector('[data-msg="' + message + '"]');
+      if (existing) {
+        existing.remove();
+      }
+
+      // Keep maximum 2 toasts at a time
+      if (container.children.length >= 2) {
+        container.firstElementChild.remove();
+      }
+
       const toast = document.createElement('div');
+      toast.setAttribute('data-msg', message);
       
       const isGreen = type === "success";
       const icon = isGreen 
@@ -855,8 +869,8 @@
         : `<svg class="w-4 h-4 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>`;
 
       const borderBg = isGreen 
-        ? "bg-white border border-emerald-200 text-slate-800 shadow-xl" 
-        : "bg-white border border-rose-200 text-slate-800 shadow-xl";
+        ? "bg-white border border-emerald-200 text-slate-800 shadow-2xl" 
+        : "bg-white border border-rose-200 text-slate-800 shadow-2xl";
 
       toast.className = `animate-toast flex items-center gap-2.5 p-3 rounded-2xl pointer-events-auto transition-all duration-300 ${borderBg}`;
       toast.innerHTML = `
@@ -884,7 +898,6 @@
 
       if (refCodeParam) {
         try {
-          // Check by referralCode first
           const snap = await db.ref('users').orderByChild('referralCode').equalTo(refCodeParam.toUpperCase()).once('value');
           if (snap.exists()) {
             const data = snap.val();
@@ -894,7 +907,6 @@
             renderAuthUI();
             document.getElementById('auth-inviter').value = refCodeParam.toUpperCase();
           } else {
-            // Fallback check by raw UID
             const directSnap = await db.ref('users/' + refCodeParam).once('value');
             if (directSnap.exists()) {
               inviterUid = refCodeParam;
@@ -1074,7 +1086,6 @@
       const earnedToday = Number(data.earnedToday) || 0;
       const totalEarned = Number(data.totalEarned) || 0;
       
-      // Calculate Active Plans count
       const activePkgs = getUserActivePackages(data);
       const activeCount = Object.keys(activePkgs).length;
 
@@ -1104,7 +1115,6 @@
       renderPackagesUI();
     }
 
-    // Helper: Normalize multiple active packages
     function getUserActivePackages(data) {
       if (data.activePackages && typeof data.activePackages === 'object') {
         return data.activePackages;
@@ -1116,7 +1126,7 @@
       return {};
     }
 
-    // 8. Render Dynamic Packages (With Discount and Original Price)
+    // 8. Render Dynamic Packages (Show Discount only if explicitly set)
     function renderPackagesUI() {
       const container = document.getElementById('packages-list-container');
       const activePkgs = getUserActivePackages(currentUserData || {});
@@ -1130,8 +1140,9 @@
           ? `<span class="absolute top-3 right-3 text-[9px] font-black uppercase tracking-wider text-emerald-950 bg-white/95 px-2 py-0.5 rounded-full shadow-xs">ACTIVE</span>` 
           : (pkg.discount ? `<span class="absolute top-3 right-3 text-[9px] font-black uppercase tracking-wider text-rose-600 bg-white px-2 py-0.5 rounded-full shadow-xs">${pkg.discount}</span>` : '');
 
-        const originalPriceHtml = pkg.originalPrice 
-          ? `<span class="line-through text-xs text-white/70 block mt-0.5">Rs. ${pkg.originalPrice.toLocaleString()}</span>` 
+        // Only show strikethrough price if originalPrice exists and is set
+        const originalPriceHtml = (pkg.originalPrice && Number(pkg.originalPrice) > Number(pkg.price)) 
+          ? `<span class="line-through text-xs text-white/70 block mt-0.5">Rs. ${Number(pkg.originalPrice).toLocaleString()}</span>` 
           : '';
 
         const actionBtn = isCurrent
@@ -1255,7 +1266,6 @@
       if (selectedPayment) copyText(selectedPayment.account, btn);
     }
 
-    // Submit Deposit (Pending Status)
     async function submitDepositRecord(e) {
       e.preventDefault();
       const txId = (document.getElementById('dep-input-txnid')?.value || '').trim();
@@ -1297,7 +1307,7 @@
       }
     }
 
-    // 10. Daily Tasks (Multiple Packages + Exact Countdown on Button)
+    // 10. Daily Tasks (Instant Claim - No 5s Delay)
     function renderDailyTasks(userData) {
       const container = document.getElementById('tasks-container');
       const activePkgs = getUserActivePackages(userData);
@@ -1328,7 +1338,6 @@
         const claimInfo = taskClaims[k] || {};
         const isClaimedToday = (claimInfo.lastClaimDate === todayStr);
 
-        // Exact Start Task or Countdown on button
         const btnHtml = isClaimedToday
           ? `<button disabled data-task-key="${k}" class="task-timer-btn w-full bg-slate-100 text-slate-500 font-black py-3 rounded-2xl text-xs flex items-center justify-center gap-1 font-mono cursor-default">
                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -1395,42 +1404,40 @@
       countdownInterval = setInterval(updateTimers, 1000);
     }
 
+    // Instant Task Claim (5 second wait removed)
     async function startSinglePackageTask(pkgKey, dailyReward, planName, btn) {
       if (!currentUser || !currentUserData) return;
       btn.disabled = true;
-      btn.innerText = "Processing... (5s)";
+      btn.innerText = "Claiming...";
 
-      setTimeout(async () => {
-        try {
-          const currentBal = Number(currentUserData.balance) || 0;
-          const earnedToday = Number(currentUserData.earnedToday) || 0;
-          const totalEarned = Number(currentUserData.totalEarned) || 0;
-          const todayStr = getTodayDateStr();
+      try {
+        const currentBal = Number(currentUserData.balance) || 0;
+        const earnedToday = Number(currentUserData.earnedToday) || 0;
+        const totalEarned = Number(currentUserData.totalEarned) || 0;
+        const todayStr = getTodayDateStr();
 
-          // Save specific task claim & update balances
-          await db.ref(`users/${currentUser.uid}/taskClaims/${pkgKey}`).set({
-            lastClaimDate: todayStr,
-            lastClaimTimestamp: Date.now()
-          });
+        await db.ref(`users/${currentUser.uid}/taskClaims/${pkgKey}`).set({
+          lastClaimDate: todayStr,
+          lastClaimTimestamp: Date.now()
+        });
 
-          await db.ref('users/' + currentUser.uid).update({
-            balance: currentBal + dailyReward,
-            earnedToday: earnedToday + dailyReward,
-            totalEarned: totalEarned + dailyReward,
-            todayDate: todayStr
-          });
+        await db.ref('users/' + currentUser.uid).update({
+          balance: currentBal + dailyReward,
+          earnedToday: earnedToday + dailyReward,
+          totalEarned: totalEarned + dailyReward,
+          todayDate: todayStr
+        });
 
-          await logBalanceActivity(currentUser.uid, `Daily Task (${planName})`, dailyReward, 'credit');
-          showToast(`Task completed! +Rs. ${dailyReward}`, "success");
-        } catch (e) {
-          showToast("Error: " + e.message, "error");
-          btn.disabled = false;
-          btn.innerText = "Start Task";
-        }
-      }, 5000);
+        await logBalanceActivity(currentUser.uid, `Daily Task (${planName})`, dailyReward, 'credit');
+        showToast(`Task completed! +Rs. ${dailyReward}`, "success");
+      } catch (e) {
+        showToast("Error: " + e.message, "error");
+        btn.disabled = false;
+        btn.innerText = "Start Task";
+      }
     }
 
-    // 11. Promo Code System (With User Limit)
+    // 11. Promo Code System
     async function handleClaimPromo(e) {
       e.preventDefault();
       const codeInput = document.getElementById('promo-input-code');
@@ -1465,7 +1472,6 @@
           return;
         }
 
-        // Check Max User Limit
         const usedCount = Number(promoData.usedCount) || 0;
         const maxUses = Number(promoData.maxUses) || 999999;
         if (usedCount >= maxUses) {
@@ -1486,7 +1492,6 @@
           totalEarned: curTotal + rewardAmount
         });
 
-        // Increment Promo code usage count
         await db.ref(`promoCodes/${code}/usedCount`).set(usedCount + 1);
 
         const claimRecord = {
@@ -1619,7 +1624,7 @@
       }
     }
 
-    // 13. Cash Rewards Levels (Completed Status)
+    // 13. Cash Rewards Levels (Locked permanently after claim)
     function renderCashRewardLevels(teamInvestment = 0) {
       const container = document.getElementById('cash-levels-container');
       let html = '';
@@ -1635,9 +1640,10 @@
 
         let btnState = '';
         if (isClaimed) {
-          btnState = `<button disabled class="w-full bg-white/20 text-white/90 font-black py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-default">
+          // Locked permanently after claim
+          btnState = `<button disabled class="w-full bg-white/20 text-white/90 font-black py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-not-allowed">
                         <svg class="w-3.5 h-3.5 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                        <span>Completed</span>
+                        <span>Claimed (Locked)</span>
                       </button>`;
         } else if (isUnlocked) {
           btnState = `<button onclick="claimCashReward(${lvl.level}, ${reward})" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-2 rounded-xl text-xs transition shadow-sm active:scale-95">
@@ -1685,6 +1691,11 @@
 
     async function claimCashReward(level, rewardAmount) {
       if (!currentUser) return;
+      if (currentUserData?.claimedRewardLevels?.[level]) {
+        showToast("Already claimed this level!", "error");
+        return;
+      }
+
       try {
         const curBal = Number(currentUserData.balance) || 0;
         const curToday = Number(currentUserData.earnedToday) || 0;
@@ -1730,7 +1741,6 @@
         return;
       }
 
-      // Filter: only earnings (credit)
       const list = Object.values(records)
         .filter(item => item.type === 'credit' && !item.title.toLowerCase().includes('deposit') && !item.title.toLowerCase().includes('withdrawal'))
         .reverse();
@@ -1828,10 +1838,13 @@
       container.innerHTML = html;
     }
 
-    // 15. Sign In / Sign Up Handlers (Strict Validations)
+    // 15. Sign In / Sign Up Handlers (Accurate Validations & Clear Alerts)
     function toggleAuthMode() {
       isSignUp = !isSignUp;
       document.getElementById('auth-form').reset();
+      const errBox = document.getElementById('auth-error');
+      errBox.classList.add('hidden');
+      errBox.innerText = '';
       renderAuthUI();
     }
 
@@ -1862,33 +1875,45 @@
       }
     }
 
+    function setAuthError(msg) {
+      const errBox = document.getElementById('auth-error');
+      errBox.innerText = msg;
+      errBox.classList.remove('hidden');
+      showToast(msg, "error");
+    }
+
     async function handleAuth(e) {
       e.preventDefault();
       const submitBtn = document.getElementById('auth-submit-btn');
       const errBox = document.getElementById('auth-error');
       errBox.classList.add('hidden');
+      errBox.innerText = '';
 
       const email = document.getElementById('auth-email').value.trim();
       const password = document.getElementById('auth-password').value;
       const name = document.getElementById('auth-name').value.trim();
       const manualRefCode = document.getElementById('auth-inviter').value.trim().toUpperCase();
 
-      // Email Validation: Must end with @gmail.com
-      if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
-        showToast("Email must end with @gmail.com", "error");
-        return;
-      }
-
-      // Password Validation: Minimum 6 characters
-      if (password.length < 6) {
-        showToast("Password must be at least 6 characters", "error");
-        return;
-      }
-
       if (isSignUp) {
-        // Username Validation: Strong username (letters AND numbers)
+        // 1. Username validation: Letters and numbers both required
+        if (!name || name.length < 3) {
+          setAuthError("Username must be at least 3 characters.");
+          return;
+        }
         if (!/(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9_]{3,}/.test(name)) {
-          showToast("Username must contain letters and numbers", "error");
+          setAuthError("Username must contain both letters and numbers (e.g. user123).");
+          return;
+        }
+
+        // 2. Email validation: Must end with @gmail.com
+        if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
+          setAuthError("Email address must end with @gmail.com.");
+          return;
+        }
+
+        // 3. Password validation: Minimum 6 characters
+        if (!password || password.length < 6) {
+          setAuthError("Password must be at least 6 characters long.");
           return;
         }
 
@@ -1896,14 +1921,13 @@
         submitBtn.innerText = "Creating account...";
 
         try {
-          // Resolve Inviter if code entered manually
           let finalInviterUid = inviterUid;
           if (!finalInviterUid && manualRefCode) {
             const checkRefSnap = await db.ref('users').orderByChild('referralCode').equalTo(manualRefCode).once('value');
             if (checkRefSnap.exists()) {
               finalInviterUid = Object.keys(checkRefSnap.val())[0];
             } else {
-              showToast("Invalid Referral Code entered!", "error");
+              setAuthError("Invalid Referral Code entered.");
               submitBtn.disabled = false;
               submitBtn.innerText = "Sign Up";
               return;
@@ -1952,13 +1976,22 @@
 
           showToast(welcomeBonus > 0 ? "Account created! +Rs. 50 bonus" : "Account created successfully!", "success");
         } catch (err) {
-          showToast(err.message || "Registration failed.", "error");
+          setAuthError(err.message || "Registration failed.");
         } finally {
           submitBtn.disabled = false;
           submitBtn.innerText = "Sign Up";
         }
       } else {
-        // Sign In Flow
+        // Sign In Flow Validations
+        if (!email || !/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
+          setAuthError("Please enter a valid @gmail.com address.");
+          return;
+        }
+        if (!password || password.length < 6) {
+          setAuthError("Password must be at least 6 characters.");
+          return;
+        }
+
         submitBtn.disabled = true;
         submitBtn.innerText = "Signing in...";
 
@@ -1968,11 +2001,11 @@
         } catch (err) {
           const code = err.code || "";
           if (code === 'auth/wrong-password' || code === 'auth/invalid-login-credentials' || code === 'auth/invalid-credential') {
-            showToast("Incorrect password or email.", "error");
+            setAuthError("Incorrect password or email.");
           } else if (code === 'auth/user-not-found') {
-            showToast("Email not registered.", "error");
+            setAuthError("Email not registered.");
           } else {
-            showToast("Incorrect email or password.", "error");
+            setAuthError("Incorrect email or password.");
           }
         } finally {
           submitBtn.disabled = false;
