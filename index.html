@@ -2728,7 +2728,7 @@ Join Pakistan's trusted daily returns community today!
       }
     }
 
-    // ==================== PWA INSTALL APP LOGIC (ZERO FIREBASE COST) ====================
+    // ==================== PWA INSTALL APP LOGIC (PERMANENT HIDE IF INSTALLED) ====================
     let deferredPrompt = null;
 
     if ('serviceWorker' in navigator) {
@@ -2740,8 +2740,17 @@ Join Pakistan's trusted daily returns community today!
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
+
+      // 1. Agar pehle se install hai ya standalone mode mein hai to HAMESHA chupa kar rakhein
+      const isAlreadyInstalled = localStorage.getItem('pwa_app_installed') === 'true';
+      const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+      if (isAlreadyInstalled || isStandaloneMode) {
+        return; // Banner kabhi show nahi hoga
+      }
+
       const banner = document.getElementById('pwa-install-banner');
-      if (banner && !window.matchMedia('(display-mode: standalone)').matches) {
+      if (banner) {
         banner.classList.remove('hidden');
       }
     });
@@ -2754,6 +2763,8 @@ Join Pakistan's trusted daily returns community today!
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') {
+        // Hamesha ke liye browser memory mein lock kar dein
+        localStorage.setItem('pwa_app_installed', 'true');
         const banner = document.getElementById('pwa-install-banner');
         if (banner) banner.classList.add('hidden');
         showToast("App installed successfully!", "success");
@@ -2761,7 +2772,9 @@ Join Pakistan's trusted daily returns community today!
       deferredPrompt = null;
     }
 
+    // Android/Chrome event jab app successfully install ho jaye
     window.addEventListener('appinstalled', () => {
+      localStorage.setItem('pwa_app_installed', 'true');
       const banner = document.getElementById('pwa-install-banner');
       if (banner) banner.classList.add('hidden');
     });
