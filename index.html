@@ -4,6 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Adds Hub Earn | Earn & Investment</title>
+  
+  <!-- PWA App Manifest & Mobile Meta Tags -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#00875a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AddsHub">
+  
+  <!-- Preconnect & DNS Prefetch for Lightning Fast CDNs -->
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://www.gstatic.com">
+  <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://www.gstatic.com">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
@@ -13,23 +30,38 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
   <style>
+    * {
+      -webkit-overflow-scrolling: touch;
+    }
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       -webkit-tap-highlight-color: transparent;
+      overscroll-behavior-y: contain;
     }
     ::-webkit-scrollbar { width: 0px; background: transparent; }
+
+    /* 300ms Mobile Tap Delay Removal */
+    button, a, input, select, [role="button"] {
+      touch-action: manipulation;
+    }
+
+    /* GPU Hardware Acceleration for Buttery Smooth Buttons */
     .primary-btn {
       background-color: #00875a !important;
-      transition: all 0.2s ease;
+      transition: transform 0.15s ease, background-color 0.15s ease;
+      will-change: transform;
+      transform: translateZ(0);
     }
     .primary-btn:hover { background-color: #00754e !important; }
-    .primary-btn:active { transform: scale(0.98); }
+    .primary-btn:active { transform: scale(0.96) translateZ(0); }
     
-    /* Glowing Animated Blue Effect on Logo */
+    /* Glowing Animated Blue Effect on Logo (GPU Optimized) */
     .blue-glow-pulse {
       box-shadow: 0 0 18px rgba(37, 99, 235, 0.75), 0 0 32px rgba(59, 130, 246, 0.45);
       border: 1.5px solid rgba(96, 165, 250, 0.7);
       animation: blueGlow 2.2s infinite ease-in-out;
+      will-change: box-shadow;
+      transform: translateZ(0);
     }
     @keyframes blueGlow {
       0%, 100% {
@@ -46,7 +78,10 @@
     }
     .animate-toast {
       animation: slideUpAboveFooter 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      will-change: transform, opacity;
+      transform: translateZ(0);
     }
+
   </style>
 </head>
 <body class="bg-[#f8fafc] text-slate-800 flex justify-center min-h-screen antialiased select-none">
@@ -185,7 +220,7 @@
         </button>
       </div>
 
-      <!-- Verification Section (Code input placeholder is completely blank as requested) -->
+      <!-- Verification Section -->
       <div id="bonus-claim-container" class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-sm space-y-3.5 text-center"></div>
     </div>
   </div>
@@ -347,14 +382,15 @@
         <div id="dynamic-checkout-fields" class="space-y-3.5">
           <div id="field-txnid-box">
             <label class="text-xs font-bold text-slate-700 block mb-1">Transaction ID (Trx ID)</label>
-            <input type="text" id="dep-input-txnid" required placeholder="e.g. TXN12345678" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#00875a]">
+            <input type="text" id="dep-input-txnid" oninput="this.value = this.value.trim().toUpperCase()" required placeholder="e.g. TXN12345678" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#00875a] uppercase font-mono">
           </div>
 
           <div id="field-sender-box">
-            <label class="text-xs font-bold text-slate-700 block mb-1">Enter Your Account Number</label>
-            <input type="text" id="dep-input-sender" placeholder="03xxxxxxxxx" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#00875a]">
+            <label class="text-xs font-bold text-slate-700 block mb-1">Enter Your Account Number (03xxxxxxxxx)</label>
+            <input type="tel" id="dep-input-sender" maxlength="11" oninput="formatPakPhone(this)" placeholder="03xxxxxxxxx" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#00875a] font-mono">
           </div>
 
+          <!-- Screenshot input: controlled dynamically from checkoutFieldsConfig -->
           <div id="field-screenshot-box">
             <label class="text-xs font-bold text-slate-700 block mb-1">Payment Screenshot</label>
             <label class="border-2 border-dashed border-slate-200 rounded-2xl p-4 flex flex-col items-center justify-center cursor-pointer hover:border-[#00875a] transition bg-white text-center">
@@ -398,8 +434,24 @@
       <form id="withdraw-form" onsubmit="handleWithdrawalSubmit(event)" class="space-y-3.5 pt-1 relative" autocomplete="off">
         <div>
           <label class="text-xs font-bold text-slate-700 block mb-1">Amount (PKR)</label>
-          <input type="number" id="wd-amount" min="20" required placeholder="Minimum 20 PKR" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-[#00875a]">
+          <input type="number" id="wd-amount" min="20" oninput="updateWithdrawSummary(this.value)" required placeholder="Minimum 20 PKR" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-[#00875a]">
           <p class="text-[10px] text-slate-400 mt-1">Minimum withdrawal: 20 PKR</p>
+          
+          <!-- Live Realtime Breakdown Box (0 Firebase Cost) -->
+          <div id="wd-summary-box" class="hidden mt-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1 text-xs">
+            <div class="flex justify-between text-slate-500">
+              <span>Withdrawal Amount:</span>
+              <span id="wd-sum-amount" class="font-bold text-slate-800">PKR 0</span>
+            </div>
+            <div class="flex justify-between text-slate-500">
+              <span>Platform Fee (0%):</span>
+              <span class="font-bold text-emerald-600">PKR 0.00</span>
+            </div>
+            <div class="flex justify-between font-bold text-slate-900 border-t border-slate-200/60 pt-1 mt-1">
+              <span>You will receive:</span>
+              <span id="wd-sum-final" class="text-[#00875a] font-black">PKR 0</span>
+            </div>
+          </div>
         </div>
 
         <div class="relative">
@@ -412,8 +464,8 @@
         </div>
 
         <div>
-          <label class="text-xs font-bold text-slate-700 block mb-1">Account / Mobile Number</label>
-          <input type="text" id="wd-account-number" required placeholder="03xxxxxxxxx" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-[#00875a]">
+          <label class="text-xs font-bold text-slate-700 block mb-1">Account / Mobile Number (03xxxxxxxxx)</label>
+          <input type="tel" id="wd-account-number" maxlength="11" oninput="formatPakPhone(this)" required placeholder="03xxxxxxxxx" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-[#00875a] font-mono">
         </div>
 
         <div>
@@ -430,7 +482,7 @@
     </div>
   </div>
 
-  <!-- ==================== SUB-PAGES: HISTORIES (COMPACT CARDS) ==================== -->
+  <!-- ==================== SUB-PAGES: HISTORIES (LAZY LOADED) ==================== -->
   <div id="wd-history-page" class="fixed inset-0 z-50 bg-[#f8fafc] hidden flex-col max-w-md mx-auto overflow-y-auto">
     <div class="sticky top-0 bg-white/95 backdrop-blur-md px-5 py-4 border-b border-slate-100 flex items-center justify-between z-20">
       <button onclick="closeSubPage('wd-history-page')" class="p-1 -ml-1 text-slate-600 hover:text-slate-900 flex items-center gap-1 text-sm font-semibold">
@@ -561,6 +613,22 @@
           </div>
         </div>
 
+        <!-- PWA Install App Banner (Only appears on supported browsers) -->
+        <div id="pwa-install-banner" class="hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-3.5 flex items-center justify-between shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-[#00875a] text-white flex items-center justify-center shrink-0 shadow-xs">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold text-slate-900 leading-tight">Install Mobile App</h4>
+              <p class="text-[10px] text-slate-500 font-medium mt-0.5">Fast 1-click access from home screen</p>
+            </div>
+          </div>
+          <button onclick="installPWAApp()" class="primary-btn text-white text-xs font-bold px-3.5 py-2 rounded-xl active:scale-95 transition shadow-xs">
+            Install
+          </button>
+        </div>
+
         <!-- Metrics & Action Cards Grid -->
         <div class="grid grid-cols-2 gap-3">
           <!-- Earned Today -->
@@ -596,7 +664,7 @@
             </div>
           </div>
 
-          <!-- Promo Code Card (Updated: Icon at top, Text below icon, Above Claim Button) -->
+          <!-- Promo Code Card -->
           <div onclick="openSubPage('promo-page')" class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm flex flex-col justify-between cursor-pointer hover:border-[#00875a]/50 transition">
             <div class="space-y-1.5">
               <div class="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
@@ -918,7 +986,6 @@
     let currentUserData = null;
     let isSignUp = false;
     let inviterUid = null;
-    let inviterData = null;
     let selectedPackage = null;
     let selectedPayment = null;
     let base64Screenshot = "";
@@ -926,15 +993,16 @@
     let appWithdrawMethods = DEFAULT_WITHDRAW_METHODS;
     let appRewardLevels = DEFAULT_REWARD_LEVELS;
     let appPaymentAccounts = DEFAULT_PAYMENT_ACCOUNTS;
-    let userPendingDeposits = {}; // Plan names in pending state for current user
-    let userNotifications = {};
+    let userPendingDeposits = {};
     let globalNotifications = {};
+    let userNotifications = {};
     let whatsappChannelUrl = "https://whatsapp.com/channel";
     let telegramChannelUrl = "https://t.me";
     let freeBonusVerificationCode = "58291";
     let checkoutFieldsConfig = { showTrxId: true, showSenderAccount: true, showScreenshot: true };
 
     let countdownInterval = null;
+    let isSettingsLoaded = false;
 
     function getTodayDateStr() {
       const now = new Date();
@@ -947,6 +1015,17 @@
       const end = acc.slice(-3);
       return `${start}****${end}`;
     }
+
+    // ==================== 12. TAB BACKGROUND / MINIMIZE FREE CONNECTION ====================
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        // App minimize hone par foran connection free karein
+        db.goOffline();
+      } else {
+        // App samne aane par foran reconnect karein
+        db.goOnline();
+      }
+    });
 
     // 2. Animated Toast Message
     function showToast(message, type = "success") {
@@ -986,7 +1065,7 @@
       }, 3000);
     }
 
-    // 3. App Initialization & Referral Detection
+    // ==================== 8. FAST LIGHTWEIGHT REFERRAL LOOKUP ====================
     window.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('auth-form').reset();
       
@@ -994,119 +1073,115 @@
       const refCodeParam = urlParams.get('ref');
 
       if (refCodeParam) {
+        const cleanCode = refCodeParam.trim().toUpperCase();
         try {
-          const snap = await db.ref('users').orderByChild('referralCode').equalTo(refCodeParam.toUpperCase()).once('value');
-          if (snap.exists()) {
-            const data = snap.val();
-            inviterUid = Object.keys(data)[0];
-            inviterData = data[inviterUid];
+          // Direct tiny string read: poora users table scan nahi hota
+          const codeSnap = await db.ref('referralCodes/' + cleanCode).once('value');
+          if (codeSnap.exists()) {
+            inviterUid = codeSnap.val();
             isSignUp = true;
             renderAuthUI();
-            document.getElementById('auth-inviter').value = refCodeParam.toUpperCase();
+            document.getElementById('auth-inviter').value = cleanCode;
           } else {
-            const directSnap = await db.ref('users/' + refCodeParam).once('value');
-            if (directSnap.exists()) {
-              inviterUid = refCodeParam;
-              inviterData = directSnap.val();
+            // Backward compatibility fallback for legacy users
+            const fallbackSnap = await db.ref('users').orderByChild('referralCode').equalTo(cleanCode).once('value');
+            if (fallbackSnap.exists()) {
+              inviterUid = Object.keys(fallbackSnap.val())[0];
               isSignUp = true;
               renderAuthUI();
-              document.getElementById('auth-inviter').value = inviterData.referralCode || refCodeParam.substring(0, 8).toUpperCase();
+              document.getElementById('auth-inviter').value = cleanCode;
             }
           }
         } catch (e) { console.error(e); }
       }
-
-      bindDynamicSettings();
     });
 
-    // 4. Dynamic Firebase Settings
-    function bindDynamicSettings() {
-      // 1. Packages
-      db.ref('packages').on('value', snap => {
-        if (snap.exists() && snap.val()) {
-          const val = snap.val();
-          appPackages = Array.isArray(val) ? val : Object.values(val);
-        } else {
-          appPackages = DEFAULT_PACKAGES;
+    // ==================== 2 & 11. SINGLE ONCE READS WITH LOCALSTORAGE CACHE ====================
+    async function bindDynamicSettingsOnce() {
+      if (isSettingsLoaded) return;
+      isSettingsLoaded = true;
+
+      // 1. Pehle LocalStorage Cache se 0-millisecond mein instant load karein
+      try {
+        const cachedSettings = localStorage.getItem('app_cached_settings');
+        const cachedPackages = localStorage.getItem('app_cached_packages');
+        if (cachedSettings) {
+          const s = JSON.parse(cachedSettings);
+          if (s.withdrawMethods) appWithdrawMethods = s.withdrawMethods;
+          if (s.rewardLevels) appRewardLevels = s.rewardLevels;
+          if (s.whatsappChannel) whatsappChannelUrl = s.whatsappChannel;
+          if (s.telegramChannel) telegramChannelUrl = s.telegramChannel;
+          if (s.freeBonusCode) freeBonusVerificationCode = s.freeBonusCode;
+          if (s.checkoutFields) Object.assign(checkoutFieldsConfig, s.checkoutFields);
+          if (s.paymentAccounts) appPaymentAccounts = s.paymentAccounts;
         }
+        if (cachedPackages) {
+          appPackages = JSON.parse(cachedPackages);
+        }
+        // Cache se instant render
         renderPackagesUI();
-      });
-
-      // 2. Withdraw Methods
-      db.ref('settings/withdrawMethods').on('value', snap => {
-        if (snap.exists() && snap.val()) {
-          const val = snap.val();
-          appWithdrawMethods = Array.isArray(val) ? val : Object.values(val);
-        } else {
-          appWithdrawMethods = DEFAULT_WITHDRAW_METHODS;
-        }
         renderWithdrawDropdown();
-      });
-
-      // 3. Payment Accounts
-      db.ref('settings/paymentAccounts').on('value', snap => {
-        if (snap.exists() && snap.val()) {
-          const val = snap.val();
-          if (Array.isArray(val)) {
-            appPaymentAccounts = val.filter(item => item && item.account);
-          } else if (typeof val === 'object') {
-            appPaymentAccounts = Object.keys(val).map(k => {
-              const item = val[k];
-              if (typeof item === 'object') {
-                return {
-                  method: item.method || k,
-                  account: item.account || item.number || '',
-                  title: item.title || 'Task Hub Earn'
-                };
-              }
-              return { method: k, account: item, title: "Task Hub Earn" };
-            }).filter(item => item.account);
-          }
-        } else {
-          appPaymentAccounts = DEFAULT_PAYMENT_ACCOUNTS;
-        }
         renderPaymentMethodsList();
-      });
-
-      // 4. Reward Levels
-      db.ref('settings/rewardLevels').on('value', snap => {
-        if (snap.exists() && snap.val()) {
-          const val = snap.val();
-          appRewardLevels = Array.isArray(val) ? val : Object.values(val);
-        } else {
-          appRewardLevels = DEFAULT_REWARD_LEVELS;
-        }
         renderCashRewardLevels();
-      });
-
-      // 5. Official Channels & Free Bonus Code
-      db.ref('settings/whatsappChannel').on('value', snap => {
-        if (snap.exists() && snap.val()) whatsappChannelUrl = snap.val();
-      });
-
-      db.ref('settings/telegramChannel').on('value', snap => {
-        if (snap.exists() && snap.val()) telegramChannelUrl = snap.val();
-      });
-
-      db.ref('settings/freeBonusCode').on('value', snap => {
-        if (snap.exists() && snap.val()) {
-          freeBonusVerificationCode = String(snap.val()).trim();
-        }
-      });
-
-      // 6. Dynamic Checkout Fields
-      db.ref('settings/checkoutFields').on('value', snap => {
-        if (snap.exists() && snap.val()) {
-          checkoutFieldsConfig = Object.assign(checkoutFieldsConfig, snap.val());
-        }
         renderDynamicCheckoutFields();
-      });
+      } catch (e) { console.error("Cache read error:", e); }
 
-      // 7. Global Notifications Listener (Live Sync)
-      db.ref('globalNotifications').on('value', snap => {
-        globalNotifications = snap.val() || {};
-        renderCombinedNotifications();
-      });
+      // 2. Phir Firebase se background mein fresh data update karein
+      try {
+        const settingsSnap = await db.ref('settings').once('value');
+        if (settingsSnap.exists()) {
+          const s = settingsSnap.val();
+          if (s.withdrawMethods) appWithdrawMethods = Array.isArray(s.withdrawMethods) ? s.withdrawMethods : Object.values(s.withdrawMethods);
+          if (s.rewardLevels) appRewardLevels = Array.isArray(s.rewardLevels) ? s.rewardLevels : Object.values(s.rewardLevels);
+          if (s.whatsappChannel) whatsappChannelUrl = s.whatsappChannel;
+          if (s.telegramChannel) telegramChannelUrl = s.telegramChannel;
+          if (s.freeBonusCode) freeBonusVerificationCode = String(s.freeBonusCode).trim();
+          if (s.checkoutFields) Object.assign(checkoutFieldsConfig, s.checkoutFields);
+
+          if (s.paymentAccounts) {
+            const val = s.paymentAccounts;
+            if (Array.isArray(val)) {
+              appPaymentAccounts = val.filter(i => i && i.account);
+            } else if (typeof val === 'object') {
+              appPaymentAccounts = Object.keys(val).map(k => {
+                const item = val[k];
+                return typeof item === 'object' ? { method: item.method || k, account: item.account || item.number || '', title: item.title || 'Task Hub Earn' } : { method: k, account: item, title: "Task Hub Earn" };
+              }).filter(i => i.account);
+            }
+          }
+          // Fresh settings cache mein save
+          localStorage.setItem('app_cached_settings', JSON.stringify({
+            withdrawMethods: appWithdrawMethods,
+            rewardLevels: appRewardLevels,
+            whatsappChannel: whatsappChannelUrl,
+            telegramChannel: telegramChannelUrl,
+            freeBonusCode: freeBonusVerificationCode,
+            checkoutFields: checkoutFieldsConfig,
+            paymentAccounts: appPaymentAccounts
+          }));
+        }
+
+        const pkgSnap = await db.ref('packages').once('value');
+        if (pkgSnap.exists() && pkgSnap.val()) {
+          const p = pkgSnap.val();
+          appPackages = Array.isArray(p) ? p : Object.values(p);
+          localStorage.setItem('app_cached_packages', JSON.stringify(appPackages));
+        }
+
+        const notifSnap = await db.ref('globalNotifications').limitToLast(5).once('value');
+        if (notifSnap.exists()) {
+          globalNotifications = notifSnap.val() || {};
+        }
+
+        // Fresh data se re-render
+        renderPackagesUI();
+        renderWithdrawDropdown();
+        renderPaymentMethodsList();
+        renderCashRewardLevels();
+        renderDynamicCheckoutFields();
+      } catch (err) {
+        console.error("Error loading settings:", err);
+      }
     }
 
     function renderDynamicCheckoutFields() {
@@ -1125,16 +1200,19 @@
       showToast(`Opening ${type === 'whatsapp' ? 'WhatsApp' : 'Telegram'} Channel...`, "success");
     }
 
-    // 5. Auth State Observer
+    // ==================== 11. AUTH OBSERVER (START DATA ONLY AFTER AUTH) ====================
     auth.onAuthStateChanged(user => {
       if (user) {
         currentUser = user;
         document.getElementById('auth-modal').classList.add('hidden');
         document.getElementById('app-container').classList.remove('hidden');
+        bindDynamicSettingsOnce();
         bindUserRealtime(user.uid);
       } else {
+        detachAllListeners();
         currentUser = null;
         currentUserData = null;
+        isSettingsLoaded = false;
         if (countdownInterval) clearInterval(countdownInterval);
         resetAllAppInputsAndForms();
         document.getElementById('auth-modal').classList.remove('hidden');
@@ -1143,19 +1221,28 @@
       }
     });
 
-    // 6. Realtime User Listeners (With Midnight Reset for Earned Today & Withdrawable Limit)
+    // ==================== 4. LISTENER CLEANUP ====================
+    function detachAllListeners() {
+      if (currentUser) {
+        db.ref('users/' + currentUser.uid).off();
+        db.ref('notifications/' + currentUser.uid).off();
+      }
+    }
+
+    // ==================== REALTIME USER LISTENER (LIGHTWEIGHT) ====================
     function bindUserRealtime(uid) {
+      // Sirf user ka main node realtime listen hoga (Balance updates ke liye)
       db.ref('users/' + uid).on('value', snap => {
         const val = snap.val();
         if (val) {
           currentUserData = val;
 
-          // Midnight 12:00 AM Reset for BOTH Earned Today & Withdrawable Balance Limit
+          // Midnight 12:00 AM Reset for Earned Today & Limit
           const currentDayStr = getTodayDateStr();
           if (val.todayDate !== currentDayStr) {
             db.ref('users/' + uid).update({
               earnedToday: 0,
-              withdrawableBalance: 0, // Reset to zero at 12:00 AM if not withdrawn
+              withdrawableBalance: 0,
               todayDate: currentDayStr
             });
             val.earnedToday = 0;
@@ -1167,8 +1254,8 @@
         }
       });
 
-      // User Deposits Listener (Tracks Pending packages to disable invest button)
-      db.ref('deposits').orderByChild('userId').equalTo(uid).on('value', snap => {
+      // Page refresh hone par bhi Pending Packages ka status check karein (Sirf aakhri 5 deposits)
+      db.ref('deposits').orderByChild('userId').equalTo(uid).limitToLast(5).once('value', snap => {
         const deps = snap.val() || {};
         userPendingDeposits = {};
         Object.values(deps).forEach(d => {
@@ -1177,61 +1264,24 @@
             userPendingDeposits[key] = true;
           }
         });
-        renderDepositHistoryUI(deps);
         renderPackagesUI();
       });
 
-      db.ref('withdrawals').orderByChild('userId').equalTo(uid).on('value', snap => {
-        renderWithdrawalHistoryUI(snap.val());
-      });
-
-      db.ref('balanceLogs/' + uid).on('value', snap => {
-        renderBalanceHistoryUI(snap.val());
-      });
-
-      db.ref(`users/${uid}/promoClaims`).on('value', snap => {
-        renderPromoHistory(snap.val());
-      });
-
-      // Individual User Notifications Listener
-      db.ref('notifications/' + uid).on('value', snap => {
+      // User notifications (Limit to Last 5)
+      db.ref('notifications/' + uid).limitToLast(5).on('value', snap => {
         userNotifications = snap.val() || {};
         renderCombinedNotifications();
       });
-
-      // Team Network Data
-      db.ref('referrals/' + uid).on('value', snap => {
-        const refs = snap.val() || {};
-        const memberCount = Object.keys(refs).length;
-        let totalInvest = 0;
-        let totalComm = 0;
-
-        Object.values(refs).forEach(r => {
-          totalInvest += Number(r.depositTotal) || 0;
-          totalComm += Number(r.commissionEarned) || 0;
-        });
-
-        document.getElementById('inv-total-members').innerText = memberCount;
-        document.getElementById('inv-team-deposits').innerText = `${totalInvest.toFixed(2)} PKR`;
-        document.getElementById('inv-total-commission').innerText = `${totalComm.toFixed(2)} PKR`;
-        document.getElementById('team-investment-stat').innerText = `PKR ${totalInvest.toLocaleString()}`;
-        renderCashRewardLevels(totalInvest);
-      });
     }
 
-    // 6.1 Combined Notifications (Single User + Global, Real-Time Edit/Delete Support)
     function renderCombinedNotifications() {
       const container = document.getElementById('notifications-list-container');
       const badge = document.getElementById('notif-badge');
 
       const combined = [];
-      
-      // Global notices
       Object.keys(globalNotifications).forEach(k => {
         combined.push({ id: k, ...globalNotifications[k], isGlobal: true });
       });
-
-      // Personal notices
       Object.keys(userNotifications).forEach(k => {
         combined.push({ id: k, ...userNotifications[k], isGlobal: false });
       });
@@ -1281,18 +1331,15 @@
       const activePkgs = getUserActivePackages(data);
       const activeCount = Object.keys(activePkgs).length;
 
-      // Home Screen
       document.getElementById('home-username-display').innerText = data.name || 'Investor';
       document.getElementById('home-wallet-balance').innerText = `Rs ${balance.toLocaleString()}`;
       document.getElementById('home-earned-today').innerText = `Rs ${earnedToday.toLocaleString()}`;
       document.getElementById('home-total-earned').innerText = `Rs ${totalEarned.toLocaleString()}`;
       document.getElementById('home-active-plans-count').innerText = activeCount;
 
-      // Withdraw Screen
       document.getElementById('wd-dash-bal').innerText = `PKR ${balance.toFixed(2)}`;
       document.getElementById('wd-withdrawable-bal').innerText = `PKR ${withdrawableBalance.toFixed(2)}`;
 
-      // Profile Screen & Referral Code
       const refCode = data.referralCode || currentUser.uid.substring(0, 8).toUpperCase();
       document.getElementById('prof-user-name').innerText = data.name || 'Investor';
       document.getElementById('prof-user-email').innerText = data.email || 'user@gmail.com';
@@ -1322,16 +1369,11 @@
       if (pkg.cardColor && (pkg.cardColor.startsWith('#') || pkg.cardColor.startsWith('rgb'))) {
         return { style: `style="background: ${pkg.cardColor};"`, classes: '' };
       }
-      if (pkg.cardColor) {
-        return { style: '', classes: pkg.cardColor };
-      }
-      if (pkg.gradient) {
-        return { style: '', classes: `bg-gradient-to-b ${pkg.gradient}` };
-      }
+      if (pkg.cardColor) return { style: '', classes: pkg.cardColor };
+      if (pkg.gradient) return { style: '', classes: `bg-gradient-to-b ${pkg.gradient}` };
       return { style: '', classes: `bg-gradient-to-b ${defaultGradient}` };
     }
 
-    // 8. Render Dynamic Packages (With Pending Status Button & Formatted Discount Tag)
     function renderPackagesUI() {
       const container = document.getElementById('packages-list-container');
       const activePkgs = getUserActivePackages(currentUserData || {});
@@ -1353,7 +1395,6 @@
         
         const headerStyleObj = getCardHeaderStyle(pkg, defaultGradients[index % defaultGradients.length]);
 
-        // Clean formatted discount tag (e.g. 20%)
         let formattedDiscount = '';
         if (pkg.discount) {
           const dStr = String(pkg.discount).trim();
@@ -1368,7 +1409,6 @@
           ? `<span class="line-through text-xs text-white/70 block mt-0.5">Rs. ${Number(pkg.originalPrice).toLocaleString()}</span>` 
           : '';
 
-        // Dynamic Action Button State (Activated, Pending or Invest)
         let actionBtn = '';
         if (isCurrent) {
           actionBtn = `<button disabled class="w-full bg-[#00875a]/20 text-[#00875a] font-bold py-3 rounded-2xl text-xs flex items-center justify-center gap-1.5 cursor-default">
@@ -1424,10 +1464,10 @@
       container.innerHTML = html;
     }
 
-    // 8.1 Rs. 100 Free Bonus Section (Blank placeholder as requested)
+    // ==================== 17. ZERO REDUNDANT READS FROM MEMORY ====================
     function renderBonusClaimSection(userData) {
       const box = document.getElementById('bonus-claim-container');
-      const isClaimed = userData && (userData.claimedFreeBonus === true || (userData.promoClaims && userData.promoClaims['FREE100_CHANNEL']));
+      const isClaimed = userData && (userData.claimedFreeBonus === true);
 
       if (isClaimed) {
         box.innerHTML = `
@@ -1472,17 +1512,17 @@
         return;
       }
 
+      // 17. Memory se check (database call ki bachat)
+      if (currentUserData.claimedFreeBonus === true) {
+        showToast("You have already claimed this bonus!", "error");
+        renderBonusClaimSection({ claimedFreeBonus: true });
+        return;
+      }
+
       btn.disabled = true;
       btn.innerText = "Verifying...";
 
       try {
-        const checkSnap = await db.ref(`users/${currentUser.uid}/claimedFreeBonus`).once('value');
-        if (checkSnap.exists() && checkSnap.val() === true) {
-          showToast("You have already claimed this bonus!", "error");
-          renderBonusClaimSection({ claimedFreeBonus: true });
-          return;
-        }
-
         const bonusAmount = 100;
         const curBal = Number(currentUserData.balance) || 0;
         const curToday = Number(currentUserData.earnedToday) || 0;
@@ -1619,6 +1659,11 @@
           createdAt: Date.now()
         });
 
+        // Local cache for immediate pending lock
+        const key = selectedPackage.name.toLowerCase().replace(/\s+/g, '');
+        userPendingDeposits[key] = true;
+        renderPackagesUI();
+
         showToast("Payment request submitted!", "success");
         closeDepositPages();
         openSubPage('dep-history-page');
@@ -1727,9 +1772,15 @@
       countdownInterval = setInterval(updateTimers, 1000);
     }
 
+    // ==================== 1. DOUBLE CLICK LOCK & ATOMIC TASK ====================
+    let isTaskLocked = false;
+
     async function startSinglePackageTask(pkgKey, dailyReward, planName, btn) {
       if (!currentUser || !currentUserData) return;
+      if (isTaskLocked) return; // Prevent double click / multi-tab click
+      isTaskLocked = true;
       btn.disabled = true;
+      btn.style.pointerEvents = 'none';
 
       try {
         const currentBal = Number(currentUserData.balance) || 0;
@@ -1737,12 +1788,10 @@
         const totalEarned = Number(currentUserData.totalEarned) || 0;
         const todayStr = getTodayDateStr();
 
-        await db.ref(`users/${currentUser.uid}/taskClaims/${pkgKey}`).set({
-          lastClaimDate: todayStr,
-          lastClaimTimestamp: Date.now()
-        });
-
+        // Single atomic update (50% writes bachat)
         await db.ref('users/' + currentUser.uid).update({
+          [`taskClaims/${pkgKey}/lastClaimDate`]: todayStr,
+          [`taskClaims/${pkgKey}/lastClaimTimestamp`]: Date.now(),
           balance: currentBal + dailyReward,
           earnedToday: earnedToday + dailyReward,
           totalEarned: totalEarned + dailyReward,
@@ -1767,10 +1816,12 @@
         showToast("Error: " + e.message, "error");
         btn.disabled = false;
         btn.innerText = "Start Task";
+      } finally {
+        isTaskLocked = false;
       }
     }
 
-    // 11. Promo Code System
+    // ==================== 15 & 16. PROMO CLAIMS IN SEPARATE LIGHTWEIGHT NODE ====================
     async function handleClaimPromo(e) {
       e.preventDefault();
       const codeInput = document.getElementById('promo-input-code');
@@ -1782,7 +1833,8 @@
       btn.innerText = "Verifying...";
 
       try {
-        const userClaimSnap = await db.ref(`users/${currentUser.uid}/promoClaims/${code}`).once('value');
+        // Alag node se check (main user heavy nahi hota)
+        const userClaimSnap = await db.ref(`promoClaims/${currentUser.uid}/${code}`).once('value');
         if (userClaimSnap.exists()) {
           showToast("Already claimed this promo code!", "error");
           btn.disabled = false;
@@ -1795,7 +1847,6 @@
 
         if (!promoData && DEFAULT_PROMOS[code]) {
           promoData = DEFAULT_PROMOS[code];
-          await db.ref(`promoCodes/${code}`).set(promoData);
         }
 
         if (!promoData || !promoData.active) {
@@ -1834,11 +1885,13 @@
           createdAt: Date.now()
         };
 
-        await db.ref(`users/${currentUser.uid}/promoClaims/${code}`).set(claimRecord);
+        // Separate promo node par save
+        await db.ref(`promoClaims/${currentUser.uid}/${code}`).set(claimRecord);
         await logBalanceActivity(currentUser.uid, `Promo Code (${code})`, rewardAmount, 'credit');
 
         showToast(`Promo Applied! +Rs. ${rewardAmount}`, "success");
         codeInput.value = '';
+        loadPromoClaimsHistory();
       } catch (err) {
         showToast("Failed to claim promo.", "error");
       } finally {
@@ -1847,29 +1900,35 @@
       }
     }
 
-    function renderPromoHistory(claims) {
+    // ==================== 5. LAZY LOAD PROMO HISTORY ====================
+    async function loadPromoClaimsHistory() {
+      if (!currentUser) return;
       const list = document.getElementById('promo-history-list');
-      if (!claims || Object.keys(claims).length === 0) {
-        list.innerHTML = `<p class="text-slate-400 py-3 text-center font-medium">No promo claims yet.</p>`;
-        return;
-      }
+      try {
+        const snap = await db.ref(`promoClaims/${currentUser.uid}`).limitToLast(5).once('value');
+        const claims = snap.val();
+        if (!claims || Object.keys(claims).length === 0) {
+          list.innerHTML = `<p class="text-slate-400 py-3 text-center font-medium">No promo claims yet.</p>`;
+          return;
+        }
 
-      const claimArray = Object.values(claims).sort((a,b) => b.createdAt - a.createdAt).slice(0, 5);
-      let html = '';
-
-      claimArray.forEach(c => {
-        html += `
-          <div class="bg-slate-50 border border-slate-100 rounded-2xl p-3 flex items-center justify-between">
-            <div>
-              <span class="font-bold text-slate-800 font-mono tracking-wide">${c.code}</span>
-              <p class="text-[10px] text-slate-400 mt-0.5">${c.timestamp}</p>
+        const claimArray = Object.values(claims).sort((a,b) => b.createdAt - a.createdAt);
+        let html = '';
+        claimArray.forEach(c => {
+          html += `
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-3 flex items-center justify-between">
+              <div>
+                <span class="font-bold text-slate-800 font-mono tracking-wide">${c.code}</span>
+                <p class="text-[10px] text-slate-400 mt-0.5">${c.timestamp}</p>
+              </div>
+              <span class="font-black text-[#00875a]">+Rs. ${c.amount}</span>
             </div>
-            <span class="font-black text-[#00875a]">+Rs. ${c.amount}</span>
-          </div>
-        `;
-      });
-
-      list.innerHTML = html;
+          `;
+        });
+        list.innerHTML = html;
+      } catch (e) {
+        console.error(e);
+      }
     }
 
     // 12. Withdrawal Dropdown & Handler
@@ -1904,6 +1963,7 @@
       renderWithdrawDropdown();
     }
 
+    // ==================== 3. CLIENT BALANCE OVERWRITE GUARD ====================
     async function handleWithdrawalSubmit(e) {
       e.preventDefault();
       const amount = Number(document.getElementById('wd-amount').value);
@@ -1917,6 +1977,11 @@
 
       if (Object.keys(activePkgs).length === 0) {
         showToast("You must have an active package to withdraw!", "error");
+        return;
+      }
+
+      if (!/^03[0-9]{9}$/.test(accNumber)) {
+        showToast("Enter a valid 11-digit number starting with 03 (e.g. 0346xxxxxxx).", "error");
         return;
       }
 
@@ -1971,7 +2036,7 @@
       }
     }
 
-    // 13. Cash Rewards Levels (Deleted double tick mark)
+    // 13. Cash Rewards Levels
     function renderCashRewardLevels(teamInvestment = 0) {
       const container = document.getElementById('cash-levels-container');
       let html = '';
@@ -1987,7 +2052,6 @@
 
         let btnState = '';
         if (isClaimed) {
-          // Exactly 1 checkmark icon (deleted the second duplicate text tick mark)
           btnState = `<button disabled class="w-full bg-white/20 text-white/90 font-black py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-not-allowed">
                         <svg class="w-4 h-4 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                         <span>Claimed</span>
@@ -2036,6 +2100,7 @@
       container.innerHTML = html;
     }
 
+    // ==================== 18. SINGLE ATOMIC UPDATE PER CASH REWARD ====================
     async function claimCashReward(level, rewardAmount) {
       if (!currentUser) return;
       if (currentUserData?.claimedRewardLevels?.[level]) {
@@ -2052,8 +2117,9 @@
         const curToday = Number(currentUserData.earnedToday) || 0;
         const curTotal = Number(currentUserData.totalEarned) || 0;
 
-        await db.ref(`users/${currentUser.uid}/claimedRewardLevels/${level}`).set(true);
+        // Single atomic update
         await db.ref('users/' + currentUser.uid).update({
+          [`claimedRewardLevels/${level}`]: true,
           balance: curBal + rewardAmount,
           earnedToday: curToday + rewardAmount,
           totalEarned: curTotal + rewardAmount
@@ -2066,7 +2132,6 @@
       }
     }
 
-    // 14. Activity Logger & Compact History Cards
     async function logBalanceActivity(uid, title, amount, type) {
       try {
         await db.ref(`balanceLogs/${uid}`).push().set({
@@ -2077,6 +2142,41 @@
           createdAt: Date.now()
         });
       } catch (e) { console.error(e); }
+    }
+
+    // ==================== SKELETON SHIMMER PLACEHOLDERS (TIP 5) ====================
+    function getSkeletonShimmerHtml(count = 3) {
+      let html = '';
+      for (let i = 0; i < count; i++) {
+        html += `
+          <div class="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-xs space-y-2.5 animate-pulse">
+            <div class="flex justify-between items-center">
+              <div class="h-4 bg-slate-200 rounded-md w-24"></div>
+              <div class="h-4 bg-slate-200 rounded-md w-16"></div>
+            </div>
+            <div class="flex justify-between items-center">
+              <div class="h-3 bg-slate-100 rounded w-28"></div>
+              <div class="h-3 bg-slate-100 rounded w-20"></div>
+            </div>
+            <div class="h-2.5 bg-slate-100 rounded w-36 pt-1"></div>
+          </div>
+        `;
+      }
+      return html;
+    }
+
+    // ==================== 5 & 6. LAZY LOADED HISTORIES (WITH SKELETON) ====================
+    async function fetchBalanceHistory() {
+      if (!currentUser) return;
+      const container = document.getElementById('bal-history-container');
+      container.innerHTML = getSkeletonShimmerHtml(3); // Shimmer animation
+
+      try {
+        const snap = await db.ref(`balanceLogs/${currentUser.uid}`).limitToLast(20).once('value');
+        renderBalanceHistoryUI(snap.val());
+      } catch (e) {
+        container.innerHTML = `<p class="text-xs text-rose-500 text-center py-6">Failed to load.</p>`;
+      }
     }
 
     function renderBalanceHistoryUI(records) {
@@ -2120,7 +2220,19 @@
       container.innerHTML = html;
     }
 
-    // Deposit History: Clean, compact and less spacing
+    async function fetchDepositHistory() {
+      if (!currentUser) return;
+      const container = document.getElementById('dep-history-container');
+      container.innerHTML = getSkeletonShimmerHtml(3); // Shimmer animation
+
+      try {
+        const snap = await db.ref('deposits').orderByChild('userId').equalTo(currentUser.uid).limitToLast(20).once('value');
+        renderDepositHistoryUI(snap.val());
+      } catch (e) {
+        container.innerHTML = `<p class="text-xs text-rose-500 text-center py-6">Failed to load deposits.</p>`;
+      }
+    }
+
     function renderDepositHistoryUI(records) {
       const container = document.getElementById('dep-history-container');
       if (!records || Object.keys(records).length === 0) {
@@ -2160,7 +2272,19 @@
       container.innerHTML = html;
     }
 
-    // Withdrawal History: Compact size & masked account number
+    async function fetchWithdrawalHistory() {
+      if (!currentUser) return;
+      const container = document.getElementById('wd-history-container');
+      container.innerHTML = getSkeletonShimmerHtml(3); // Shimmer animation
+
+      try {
+        const snap = await db.ref('withdrawals').orderByChild('userId').equalTo(currentUser.uid).limitToLast(20).once('value');
+        renderWithdrawalHistoryUI(snap.val());
+      } catch (e) {
+        container.innerHTML = `<p class="text-xs text-rose-500 text-center py-6">Failed to load withdrawals.</p>`;
+      }
+    }
+
     function renderWithdrawalHistoryUI(records) {
       const container = document.getElementById('wd-history-container');
       if (!records || Object.keys(records).length === 0) {
@@ -2198,6 +2322,31 @@
         `;
       });
       container.innerHTML = html;
+    }
+
+    // ==================== 5 & 10. LAZY LOAD REFERRAL SUMMARY ====================
+    async function loadReferralData() {
+      if (!currentUser) return;
+      try {
+        const snap = await db.ref('referrals/' + currentUser.uid).once('value');
+        const refs = snap.val() || {};
+        const memberCount = Object.keys(refs).length;
+        let totalInvest = 0;
+        let totalComm = 0;
+
+        Object.values(refs).forEach(r => {
+          totalInvest += Number(r.depositTotal) || 0;
+          totalComm += Number(r.commissionEarned) || 0;
+        });
+
+        document.getElementById('inv-total-members').innerText = memberCount;
+        document.getElementById('inv-team-deposits').innerText = `${totalInvest.toFixed(2)} PKR`;
+        document.getElementById('inv-total-commission').innerText = `${totalComm.toFixed(2)} PKR`;
+        document.getElementById('team-investment-stat').innerText = `PKR ${totalInvest.toLocaleString()}`;
+        renderCashRewardLevels(totalInvest);
+      } catch (e) {
+        console.error(e);
+      }
     }
 
     // 15. Sign In / Sign Up Handlers
@@ -2244,6 +2393,7 @@
       showToast(msg, "error");
     }
 
+    // ==================== 8 & 10. CLEAN REGISTRATION (TINY LOOKUP NODE) ====================
     async function handleAuth(e) {
       e.preventDefault();
       const submitBtn = document.getElementById('auth-submit-btn');
@@ -2282,9 +2432,10 @@
         try {
           let finalInviterUid = inviterUid;
           if (!finalInviterUid && manualRefCode) {
-            const checkRefSnap = await db.ref('users').orderByChild('referralCode').equalTo(manualRefCode).once('value');
-            if (checkRefSnap.exists()) {
-              finalInviterUid = Object.keys(checkRefSnap.val())[0];
+            // 8. Direct lookup check
+            const codeSnap = await db.ref('referralCodes/' + manualRefCode).once('value');
+            if (codeSnap.exists()) {
+              finalInviterUid = codeSnap.val();
             } else {
               setAuthError("Invalid Referral Code entered.");
               submitBtn.disabled = false;
@@ -2301,6 +2452,7 @@
           const welcomeBonus = finalInviterUid ? 50 : 0;
           const todayDateStr = getTodayDateStr();
 
+          // 15 & 16. Lightweight user structure
           const newUserData = {
             name: name,
             email: email,
@@ -2320,10 +2472,14 @@
 
           await db.ref('users/' + user.uid).set(newUserData);
 
+          // 8. Save tiny lookup string
+          await db.ref('referralCodes/' + newShortCode).set(user.uid);
+
           if (welcomeBonus > 0) {
             await logBalanceActivity(user.uid, "Welcome Bonus", welcomeBonus, "credit");
           }
 
+          // 10. Only save referral counter reference
           if (finalInviterUid) {
             await db.ref(`referrals/${finalInviterUid}/${user.uid}`).set({
               uid: user.uid,
@@ -2374,7 +2530,7 @@
       }
     }
 
-    // Fast Instant Logout & Auto-Clear Fields across entire website
+    // ==================== 4. LOGOUT & INSTANT LISTENER CLEANUP ====================
     function promptLogoutDialog() {
       document.getElementById('logout-modal').classList.remove('hidden');
       document.getElementById('logout-modal').classList.add('flex');
@@ -2386,64 +2542,71 @@
     }
 
     function resetAllAppInputsAndForms() {
-  document.querySelectorAll('form').forEach(f => f.reset());
-  document.querySelectorAll('input:not([readonly])').forEach(i => {
-    if (i.type !== 'submit' && i.type !== 'button' && i.id !== 'inv-link-input') {
-      i.value = '';
+      document.querySelectorAll('form').forEach(f => f.reset());
+      document.querySelectorAll('input:not([readonly])').forEach(i => {
+        if (i.type !== 'submit' && i.type !== 'button' && i.id !== 'inv-link-input') {
+          i.value = '';
+        }
+      });
+      const fileText = document.getElementById('screenshot-filename');
+      if (fileText) fileText.innerText = "Tap to upload screenshot";
+      base64Screenshot = "";
     }
-  });
-  const fileText = document.getElementById('screenshot-filename');
-  if (fileText) fileText.innerText = "Tap to upload screenshot";
-  base64Screenshot = "";
-}
 
     function confirmLogoutAction() {
+      detachAllListeners();
       closeLogoutModal();
       resetAllAppInputsAndForms();
       auth.signOut();
       showToast("Signed out successfully.", "success");
     }
 
-    // 16. Tab Navigation Controls (Auto-resets inputs on page change)
+    // 16. Tab Navigation Controls (With Lazy Load Triggers)
     function switchTab(target) {
-  window.scrollTo({ top: 0, behavior: 'instant' });
-  resetAllAppInputsAndForms();
-  
-  // Ensure referral link always shows when opening invite tab
-  if (target === 'invite' && currentUser) {
-    const refCode = currentUserData?.referralCode || currentUser.uid.substring(0, 8).toUpperCase();
-    const cleanRefLink = `${window.location.origin}${window.location.pathname}?ref=${refCode}`;
-    const linkInput = document.getElementById('inv-link-input');
-    if (linkInput) linkInput.value = cleanRefLink;
-  }
-  
-  ['home', 'ads', 'packages', 'invite', 'profile'].forEach(tab => {
-    const view = document.getElementById(`${tab}-view`);
-    const navBtn = document.getElementById(`nav-${tab}`);
-    if (tab === target) {
-      view.classList.remove('hidden');
-      view.scrollTop = 0;
-      navBtn.className = 'flex flex-col items-center gap-1 text-[#00875a] transition flex-1';
-      navBtn.querySelector('span').className = 'text-[10px] font-bold';
-    } else {
-      view.classList.add('hidden');
-      navBtn.className = 'flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition flex-1';
-      navBtn.querySelector('span').className = 'text-[10px] font-medium';
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      resetAllAppInputsAndForms();
+      
+      if (target === 'invite' && currentUser) {
+        const refCode = currentUserData?.referralCode || currentUser.uid.substring(0, 8).toUpperCase();
+        const cleanRefLink = `${window.location.origin}${window.location.pathname}?ref=${refCode}`;
+        const linkInput = document.getElementById('inv-link-input');
+        if (linkInput) linkInput.value = cleanRefLink;
+        loadReferralData(); // Lazy load referrals
+      }
+      
+      ['home', 'ads', 'packages', 'invite', 'profile'].forEach(tab => {
+        const view = document.getElementById(`${tab}-view`);
+        const navBtn = document.getElementById(`nav-${tab}`);
+        if (tab === target) {
+          view.classList.remove('hidden');
+          view.scrollTop = 0;
+          navBtn.className = 'flex flex-col items-center gap-1 text-[#00875a] transition flex-1';
+          navBtn.querySelector('span').className = 'text-[10px] font-bold';
+        } else {
+          view.classList.add('hidden');
+          navBtn.className = 'flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition flex-1';
+          navBtn.querySelector('span').className = 'text-[10px] font-medium';
+        }
+      });
     }
-  });
-}
 
     function openSubPage(pageId) {
       window.scrollTo({ top: 0, behavior: 'instant' });
       const page = document.getElementById(pageId);
+      if (!page) return;
       
-      // Auto-clear inputs whenever any sub-page opens
       const form = page.querySelector('form');
       if (form) form.reset();
 
       page.scrollTop = 0;
       page.classList.remove('hidden');
       page.classList.add('flex');
+
+      // 5. Lazy loading hooks (Loop free)
+      if (pageId === 'promo-page') loadPromoClaimsHistory();
+      if (pageId === 'bal-history-page') fetchBalanceHistory();
+      if (pageId === 'dep-history-page') fetchDepositHistory();
+      if (pageId === 'wd-history-page') fetchWithdrawalHistory();
     }
 
     function closeSubPage(pageId) {
@@ -2494,9 +2657,16 @@
       }
     }
 
-    // Professional Share Referral Link
+    // Mobile Haptic Touch Vibration (Zero Firebase Load)
+    function triggerHaptic(ms = 35) {
+      if (navigator.vibrate) {
+        navigator.vibrate(ms);
+      }
+    }
+
     function copyText(str, btn) {
       navigator.clipboard.writeText(str);
+      triggerHaptic(40); // Soft vibration
       const orig = btn.innerHTML;
       btn.innerHTML = `<span class="text-xs font-bold text-[#00875a]">Copied!</span>`;
       setTimeout(() => btn.innerHTML = orig, 1500);
@@ -2536,6 +2706,65 @@ Join Pakistan's trusted daily returns community today!
         showToast("Invite message copied to clipboard!", "success");
       }
     }
+// Pakistani Phone Number Auto-Formatter
+    function formatPakPhone(input) {
+      input.value = input.value.replace(/[^0-9]/g, '');
+      if (input.value.length > 2 && !input.value.startsWith('03')) {
+        input.value = '03' + input.value.substring(2);
+      }
+    }
+
+    
+// Realtime 0% Fee Calculator for Withdrawal (Zero Firebase Cost)
+    function updateWithdrawSummary(val) {
+      const box = document.getElementById('wd-summary-box');
+      const num = Number(val) || 0;
+      if (num > 0) {
+        box.classList.remove('hidden');
+        document.getElementById('wd-sum-amount').innerText = `PKR ${num.toLocaleString()}`;
+        document.getElementById('wd-sum-final').innerText = `PKR ${num.toLocaleString()}`;
+      } else {
+        box.classList.add('hidden');
+      }
+    }
+
+    // ==================== PWA INSTALL APP LOGIC (ZERO FIREBASE COST) ====================
+    let deferredPrompt = null;
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
+      });
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const banner = document.getElementById('pwa-install-banner');
+      if (banner && !window.matchMedia('(display-mode: standalone)').matches) {
+        banner.classList.remove('hidden');
+      }
+    });
+
+    async function installPWAApp() {
+      if (!deferredPrompt) {
+        showToast("App already installed or browser does not support.", "error");
+        return;
+      }
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        const banner = document.getElementById('pwa-install-banner');
+        if (banner) banner.classList.add('hidden');
+        showToast("App installed successfully!", "success");
+      }
+      deferredPrompt = null;
+    }
+
+    window.addEventListener('appinstalled', () => {
+      const banner = document.getElementById('pwa-install-banner');
+      if (banner) banner.classList.add('hidden');
+    });
   </script>
 </body>
 </html>
