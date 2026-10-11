@@ -4,9 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Adds Hub Earn | Earn & Investment</title>
+  <link rel="icon" type="image/png" href="favicon.png">
   
   <!-- PWA App Manifest & Mobile Meta Tags -->
   <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="https://i.ibb.co/YF0ZSmbb/favicon.png">
   <meta name="theme-color" content="#00875a">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -85,6 +87,29 @@
   </style>
 </head>
 <body class="bg-[#f8fafc] text-slate-800 flex justify-center min-h-screen antialiased select-none">
+
+  <!-- ==================== PREMIUM IN-APP SPLASH SCREEN ==================== -->
+  <div id="app-splash-screen" class="fixed inset-0 z-[999999] bg-[#00875a] flex flex-col items-center justify-center transition-opacity duration-500 ease-out select-none">
+    <div class="flex flex-col items-center space-y-4">
+      <!-- Centered Logo with Subtle Pulse Glow -->
+      <div class="w-24 h-24 rounded-3xl p-1 bg-white/20 shadow-2xl flex items-center justify-center backdrop-blur-md border border-white/30 animate-pulse">
+        <img src="https://i.ibb.co/YF0ZSmbb/favicon.png" alt="Adds Hub Logo" class="w-20 h-20 rounded-2xl object-contain drop-shadow-md">
+      </div>
+      <!-- Brand Name -->
+      <div class="text-center text-white">
+        <h1 class="text-2xl font-black tracking-tight drop-shadow-sm">Adds Hub Earn</h1>
+        <p class="text-[11px] font-bold tracking-widest uppercase opacity-90 mt-0.5">Daily Returns Community</p>
+      </div>
+    </div>
+
+    <!-- Bottom Sleek Loading Bar -->
+    <div class="absolute bottom-12 flex flex-col items-center space-y-2">
+      <div class="w-36 h-1.5 bg-white/20 rounded-full overflow-hidden">
+        <div class="w-full h-full bg-white rounded-full animate-pulse"></div>
+      </div>
+      <span class="text-[10px] text-white/80 font-semibold tracking-wider">Loading...</span>
+    </div>
+  </div>
 
   <!-- ==================== TOAST ALERT (ABOVE BOTTOM NAVIGATION) ==================== -->
   <div id="toast-wrapper" class="fixed bottom-20 inset-x-0 mx-auto max-w-sm px-4 z-[9999] pointer-events-none space-y-2"></div>
@@ -935,13 +960,14 @@
   <script>
     // 1. Firebase Initialization
     const firebaseConfig = {
-      apiKey: "AIzaSyCQf40YXusJSGPdKd7GwGeCZ8Al3v3qo7g",
-      authDomain: "auto-ef807.firebaseapp.com",
-      projectId: "auto-ef807",
-      storageBucket: "auto-ef807.firebasestorage.app",
-      messagingSenderId: "294091824972",
-      appId: "1:294091824972:web:a29a9f07df510b13d039e9"
-    };
+    apiKey: "AIzaSyCol8u38wS5IaAbQiiohmQlRbBMyctodVY",
+    authDomain: "adds-hub-earn.firebaseapp.com",
+    projectId: "adds-hub-earn",
+    storageBucket: "adds-hub-earn.firebasestorage.app",
+    messagingSenderId: "335387012361",
+    appId: "1:335387012361:web:af36d16c7ad2af611777d8",
+    measurementId: "G-VB46V9XNN1"
+  };
 
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
@@ -2727,6 +2753,23 @@ Join Pakistan's trusted daily returns community today!
         box.classList.add('hidden');
       }
     }
+
+    // ==================== AUTO-DISMISS SPLASH SCREEN (1.5 SECONDS) ====================
+    function dismissAppSplash() {
+      const splash = document.getElementById('app-splash-screen');
+      if (splash) {
+        splash.style.opacity = '0';
+        splash.style.pointerEvents = 'none';
+        setTimeout(() => splash.remove(), 550); // DOM se safai
+      }
+    }
+
+    // Page load hone ke 1.4 second baad smoothly fade-out ho jaye
+    window.addEventListener('load', () => {
+      setTimeout(dismissAppSplash, 1400);
+    });
+    // Safety fallback agar slow internet ho (max 2.5s)
+    setTimeout(dismissAppSplash, 2500);
 
     // ==================== PWA INSTALL APP LOGIC (PERMANENT HIDE IF INSTALLED) ====================
     let deferredPrompt = null;
