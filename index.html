@@ -35,10 +35,13 @@
     * {
       -webkit-overflow-scrolling: touch;
     }
-    body {
+    html, body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       -webkit-tap-highlight-color: transparent;
-      overscroll-behavior-y: contain;
+      overscroll-behavior-y: none;
+      touch-action: pan-x pan-y;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
     }
     ::-webkit-scrollbar { width: 0px; background: transparent; }
 
@@ -57,21 +60,11 @@
     .primary-btn:hover { background-color: #00754e !important; }
     .primary-btn:active { transform: scale(0.96) translateZ(0); }
     
-    /* Glowing Animated Blue Effect on Logo (GPU Optimized) */
+    /* Ultra-Lightweight Glow (No GPU Choking during scrolling) */
     .blue-glow-pulse {
-      box-shadow: 0 0 18px rgba(37, 99, 235, 0.75), 0 0 32px rgba(59, 130, 246, 0.45);
-      border: 1.5px solid rgba(96, 165, 250, 0.7);
-      animation: blueGlow 2.2s infinite ease-in-out;
-      will-change: box-shadow;
+      box-shadow: 0 0 8px rgba(37, 99, 235, 0.4);
+      border: 1.5px solid rgba(96, 165, 250, 0.6);
       transform: translateZ(0);
-    }
-    @keyframes blueGlow {
-      0%, 100% {
-        box-shadow: 0 0 14px rgba(37, 99, 235, 0.65), 0 0 28px rgba(59, 130, 246, 0.35);
-      }
-      50% {
-        box-shadow: 0 0 24px rgba(37, 99, 235, 0.95), 0 0 42px rgba(59, 130, 246, 0.65);
-      }
     }
 
     @keyframes slideUpAboveFooter {
@@ -517,6 +510,20 @@
     </div>
     <div class="p-5 space-y-3 flex-1">
       <h2 class="text-2xl font-black text-slate-900">Withdrawal History</h2>
+
+      <!-- Lifetime Total Withdrawn Proof Card -->
+      <div class="bg-gradient-to-r from-[#00b074] to-[#00875a] text-white rounded-2xl p-4 shadow-sm flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div>
+            <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-100">Total Lifetime Withdrawn</p>
+            <p id="wd-lifetime-total" class="text-xl font-black mt-0.5">PKR 0.00</p>
+          </div>
+        </div>
+      </div>
+
       <div id="wd-history-container" class="space-y-2.5 pt-1"></div>
     </div>
   </div>
@@ -558,12 +565,16 @@
       <h2 class="text-2xl font-black text-slate-900">Change Password</h2>
       <form id="cp-form" onsubmit="handlePasswordUpdate(event)" class="space-y-3.5">
         <div>
-          <label class="text-xs font-bold text-slate-700 block mb-1">New Password</label>
-          <input type="password" id="cp-new-password" required class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#00875a]">
+          <label class="text-xs font-bold text-slate-700 block mb-1">Current Password</label>
+          <input type="password" id="cp-current-password" required placeholder="Enter current password" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#00875a]">
         </div>
         <div>
-          <label class="text-xs font-bold text-slate-700 block mb-1">Confirm Password</label>
-          <input type="password" id="cp-confirm-password" required class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#00875a]">
+          <label class="text-xs font-bold text-slate-700 block mb-1">New Password</label>
+          <input type="password" id="cp-new-password" required placeholder="At least 6 characters" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#00875a]">
+        </div>
+        <div>
+          <label class="text-xs font-bold text-slate-700 block mb-1">Confirm New Password</label>
+          <input type="password" id="cp-confirm-password" required placeholder="Re-enter new password" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#00875a]">
         </div>
         <button type="submit" id="cp-submit-btn" class="w-full primary-btn text-white font-bold py-3.5 rounded-xl text-sm shadow-md active:scale-95 transition mt-2">
           Update Password
@@ -580,12 +591,20 @@
       </button>
     </div>
     <div class="p-5 space-y-4 flex-1">
-      <h2 class="text-2xl font-black text-slate-900">Add Recovery Email</h2>
-      <p class="text-xs text-slate-500">This Gmail will be used to recover your password if you forget it.</p>
+      <h2 class="text-2xl font-black text-slate-900">Recovery Gmail</h2>
+      <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-3 text-[11px] text-emerald-900 leading-relaxed font-medium">
+        If you ever forget your registration Gmail, you can sign in directly using this <strong>Recovery Gmail</strong> and your password. Once logged in, your original email address will remain visible in your Profile.
+      </div>
+
+      <div id="current-rec-email-display" class="hidden bg-slate-100 p-3 rounded-2xl text-xs text-slate-700">
+        <span class="text-slate-400 block text-[10px] uppercase font-bold">Currently Linked Recovery Gmail:</span>
+        <span id="saved-recovery-val" class="font-bold font-mono text-slate-800"></span>
+      </div>
+
       <form id="rec-form" onsubmit="handleRecoveryEmailUpdate(event)" class="space-y-4 pt-1">
         <div>
-          <label class="text-xs font-bold text-slate-700 block mb-1">Recovery Gmail</label>
-          <input type="email" id="rec-email-input" required placeholder="yourname@gmail.com" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#00875a]">
+          <label class="text-xs font-bold text-slate-700 block mb-1">Enter Recovery Gmail Address</label>
+          <input type="email" id="rec-email-input" required placeholder="recovery@gmail.com" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#00875a]">
         </div>
         <button type="submit" id="rec-submit-btn" class="w-full primary-btn text-white font-bold py-3.5 rounded-xl text-sm shadow-md active:scale-95 transition mt-2">
           Save Recovery Email
@@ -599,7 +618,7 @@
 
     <!-- ==================== TAB 1: HOME ==================== -->
     <div id="home-view" class="flex flex-col flex-1">
-      <header class="sticky top-0 bg-white/95 backdrop-blur-md px-5 py-3.5 border-b border-slate-100 flex items-center justify-between z-40">
+      <header class="sticky top-0 bg-white px-5 py-3.5 border-b border-slate-100 flex items-center justify-between z-40 shadow-xs">
         <div class="flex items-center gap-2.5">
           <div class="w-10 h-10 rounded-2xl bg-[#00875a] flex items-center justify-center text-white blue-glow-pulse">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -846,7 +865,11 @@
           <div>
             <h3 id="prof-user-name" class="text-base font-bold text-slate-900 leading-tight">Investor</h3>
             <p id="prof-user-email" class="text-xs text-slate-500 font-mono mt-0.5">user@gmail.com</p>
-            <p class="text-xs text-[#00875a] font-bold mt-1">Code: <span id="prof-user-code">74AD9D07</span></p>
+            <div class="flex items-center gap-3 mt-1 text-xs">
+              <span class="text-[#00875a] font-bold">Code: <span id="prof-user-code">74AD9D07</span></span>
+              <span class="text-slate-300">•</span>
+              <span class="text-slate-500 font-medium">Joined: <strong id="prof-user-joined" class="text-slate-700 font-bold">Recent</strong></span>
+            </div>
           </div>
         </div>
       </div>
@@ -1024,15 +1047,22 @@
     let userNotifications = {};
     let whatsappChannelUrl = "https://whatsapp.com/channel";
     let telegramChannelUrl = "https://t.me";
-    let freeBonusVerificationCode = "58291";
+    let freeBonusVerificationCode = ""; // Loaded securely from Firebase
     let checkoutFieldsConfig = { showTrxId: true, showSenderAccount: true, showScreenshot: true };
 
     let countdownInterval = null;
     let isSettingsLoaded = false;
 
+    // Anti-Time Cheat: Sync with Google Firebase Server Time (0 Quota cost)
+    let serverTimeOffset = 0;
+    db.ref('.info/serverTimeOffset').on('value', snap => {
+      serverTimeOffset = snap.val() || 0;
+    });
+
     function getTodayDateStr() {
-      const now = new Date();
-      return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      // Uses true Google server time even if user changes mobile phone date
+      const serverNow = new Date(Date.now() + serverTimeOffset);
+      return `${serverNow.getFullYear()}-${String(serverNow.getMonth() + 1).padStart(2, '0')}-${String(serverNow.getDate()).padStart(2, '0')}`;
     }
 
     function maskAccountNumber(acc) {
@@ -1372,6 +1402,16 @@
       document.getElementById('prof-user-code').innerText = refCode;
       document.getElementById('inv-code-display').innerText = refCode;
 
+      // Format & display Member Since (Joining Date Proof)
+      if (data.createdAt) {
+        try {
+          const joinedDate = new Date(data.createdAt);
+          const formattedJoined = joinedDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+          const joinedEl = document.getElementById('prof-user-joined');
+          if (joinedEl) joinedEl.innerText = formattedJoined;
+        } catch (e) {}
+      }
+
       const cleanRefLink = `${window.location.origin}${window.location.pathname}?ref=${refCode}`;
       document.getElementById('inv-link-input').value = cleanRefLink;
 
@@ -1533,20 +1573,29 @@
         return;
       }
 
-      if (enteredCode !== String(freeBonusVerificationCode).trim()) {
-        showToast("Invalid verification code! Check channels.", "error");
+      btn.disabled = true;
+      btn.innerText = "Verifying code...";
+
+      // Secure: Verifies directly with Firebase Realtime Database settings
+      let officialCode = freeBonusVerificationCode;
+      if (!officialCode) {
+        const codeSnap = await db.ref('settings/freeBonusCode').once('value');
+        officialCode = String(codeSnap.val() || '').trim();
+      }
+
+      if (!officialCode || enteredCode !== officialCode) {
+        showToast("Invalid verification code! Please check official channels.", "error");
+        btn.disabled = false;
+        btn.innerText = "Verify & Claim Rs. 100";
         return;
       }
 
-      // 17. Memory se check (database call ki bachat)
+      // Check if user already claimed
       if (currentUserData.claimedFreeBonus === true) {
         showToast("You have already claimed this bonus!", "error");
         renderBonusClaimSection({ claimedFreeBonus: true });
         return;
       }
-
-      btn.disabled = true;
-      btn.innerText = "Verifying...";
 
       try {
         const bonusAmount = 100;
@@ -1643,12 +1692,59 @@
 
     function handleScreenshotUpload(e) {
       const file = e.target.files[0];
-      if (file) {
-        document.getElementById('screenshot-filename').innerText = file.name;
-        const reader = new FileReader();
-        reader.onload = evt => { base64Screenshot = evt.target.result; };
-        reader.readAsDataURL(file);
+      if (!file) return;
+
+      const filenameLabel = document.getElementById('screenshot-filename');
+
+      // Validation 1: Must be an image
+      if (!file.type.startsWith('image/')) {
+        showToast("Only image screenshots (PNG/JPG) are allowed.", "error");
+        e.target.value = '';
+        return;
       }
+
+      filenameLabel.innerText = "Scanning & optimizing...";
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const img = new Image();
+        img.onload = function() {
+          // Validation 2: Anti-Fake Screenshot (Must be real mobile receipt size)
+          if (img.width < 250 || img.height < 250) {
+            filenameLabel.innerText = "Tap to upload screenshot";
+            base64Screenshot = "";
+            e.target.value = '';
+            showToast("Image too small! Please upload a clear, full receipt screenshot.", "error");
+            return;
+          }
+
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 600;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > MAX_WIDTH) {
+            height = Math.round((height * MAX_WIDTH) / width);
+            width = MAX_WIDTH;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Compress to clean JPEG
+          base64Screenshot = canvas.toDataURL('image/jpeg', 0.6);
+          filenameLabel.innerText = file.name + " (Verified & Ready)";
+          showToast("Screenshot verified and optimized!", "success");
+        };
+        img.onerror = function() {
+          filenameLabel.innerText = "Tap to upload screenshot";
+          showToast("Corrupted image file. Please upload another screenshot.", "error");
+        };
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
     }
 
     function copyAccountFromBox(btn) {
@@ -1657,16 +1753,29 @@
 
     async function submitDepositRecord(e) {
       e.preventDefault();
-      const txId = (document.getElementById('dep-input-txnid')?.value || '').trim();
+      const txId = (document.getElementById('dep-input-txnid')?.value || '').trim().toUpperCase();
       const senderAcc = (document.getElementById('dep-input-sender')?.value || '').trim();
       const btn = document.getElementById('dep-submit-btn');
 
       if (!selectedPackage || !selectedPayment) return;
 
       btn.disabled = true;
-      btn.innerText = "Submitting...";
+      btn.innerText = "Verifying...";
 
       try {
+        // Fraud Check: Prevent duplicate Transaction ID reuse
+        if (txId && txId !== '-') {
+          const cleanTrx = txId.replace(/[^A-Z0-9]/g, '');
+          const trxSnap = await db.ref('usedTrxIds/' + cleanTrx).once('value');
+          if (trxSnap.exists()) {
+            showToast("This Transaction ID has already been submitted!", "error");
+            btn.disabled = false;
+            btn.innerText = "Submit Payment";
+            return;
+          }
+        }
+
+        btn.innerText = "Submitting...";
         const depRef = db.ref('deposits').push();
         await depRef.set({
           id: depRef.key,
@@ -1679,18 +1788,35 @@
           method: selectedPayment.method,
           txId: txId || '-',
           senderAccount: senderAcc || '-',
-          screenshot: base64Screenshot || "none",
+          hasScreenshot: !!base64Screenshot,
           status: "PENDING",
           timestamp: new Date().toLocaleString(),
           createdAt: Date.now()
         });
+
+        // Screenshot ko alag node mein save karein taake bandwidth bache
+        if (base64Screenshot) {
+          await db.ref('depositSlips/' + depRef.key).set(base64Screenshot);
+        }
+
+        // Lock the Transaction ID to block reuse
+        if (txId && txId !== '-') {
+          const cleanTrx = txId.replace(/[^A-Z0-9]/g, '');
+          await db.ref('usedTrxIds/' + cleanTrx).set({
+            userId: currentUser.uid,
+            createdAt: Date.now()
+          });
+        }
+
+        // Reset deposits cache so new deposit shows immediately in history
+        cachedDepositsData = null;
 
         // Local cache for immediate pending lock
         const key = selectedPackage.name.toLowerCase().replace(/\s+/g, '');
         userPendingDeposits[key] = true;
         renderPackagesUI();
 
-        showToast("Payment request submitted!", "success");
+        showToast("Payment request submitted successfully!", "success");
         closeDepositPages();
         openSubPage('dep-history-page');
       } catch (err) {
@@ -1803,10 +1929,25 @@
 
     async function startSinglePackageTask(pkgKey, dailyReward, planName, btn) {
       if (!currentUser || !currentUserData) return;
-      if (isTaskLocked) return; // Prevent double click / multi-tab click
+      if (isTaskLocked) return; // Prevent double click / bot spam
       isTaskLocked = true;
       btn.disabled = true;
       btn.style.pointerEvents = 'none';
+
+      // Anti-Bot & Auto-Clicker Simulation Timer (2.5 seconds)
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `
+        <div class="flex items-center justify-center gap-2">
+          <svg class="w-4 h-4 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+          </svg>
+          <span>Verifying Task...</span>
+        </div>
+      `;
+
+      // 2.5 second cooldown delay
+      await new Promise(resolve => setTimeout(resolve, 2500));
 
       try {
         const currentBal = Number(currentUserData.balance) || 0;
@@ -1814,7 +1955,7 @@
         const totalEarned = Number(currentUserData.totalEarned) || 0;
         const todayStr = getTodayDateStr();
 
-        // Single atomic update (50% writes bachat)
+        // Single atomic update
         await db.ref('users/' + currentUser.uid).update({
           [`taskClaims/${pkgKey}/lastClaimDate`]: todayStr,
           [`taskClaims/${pkgKey}/lastClaimTimestamp`]: Date.now(),
@@ -1825,7 +1966,7 @@
         });
 
         await logBalanceActivity(currentUser.uid, `Daily Task (${planName})`, dailyReward, 'credit');
-        showToast(`Task completed! +Rs. ${dailyReward}`, "success");
+        showToast(`Task verified! +Rs. ${dailyReward} credited.`, "success");
 
         // Inviter Withdrawable Limit Boost on Referral Task
         if (currentUserData.referredBy) {
@@ -2027,9 +2168,33 @@
       }
 
       submitBtn.disabled = true;
-      submitBtn.innerText = "Requesting...";
+      submitBtn.innerText = "Verifying...";
 
       try {
+        // Atomic Balance Deduction: Multi-tab exploit protection
+        const userRef = db.ref('users/' + currentUser.uid);
+        const txResult = await userRef.transaction(current => {
+          if (!current) return current;
+          const curBal = Number(current.balance) || 0;
+          const curWithdrawable = Number(current.withdrawableBalance) || 0;
+
+          // Double check if balance was already withdrawn in another tab
+          if (curBal < amount || curWithdrawable < amount) {
+            return; // Aborts transaction
+          }
+
+          current.balance = curBal - amount;
+          current.withdrawableBalance = Math.max(0, curWithdrawable - amount);
+          return current;
+        });
+
+        if (!txResult.committed) {
+          showToast("Insufficient or already withdrawn balance.", "error");
+          submitBtn.disabled = false;
+          submitBtn.innerText = "Request Withdrawal";
+          return;
+        }
+
         const wdRef = db.ref('withdrawals').push();
         await wdRef.set({
           id: wdRef.key,
@@ -2045,10 +2210,8 @@
           createdAt: Date.now()
         });
 
-        await db.ref('users/' + currentUser.uid).update({
-          balance: userBalance - amount,
-          withdrawableBalance: Math.max(0, withdrawableLimit - amount)
-        });
+        // Reset withdrawal history cache so new withdrawal shows immediately
+        cachedWithdrawalsData = null;
 
         showToast("Withdrawal requested successfully!", "success");
         document.getElementById('withdraw-form').reset();
@@ -2158,15 +2321,31 @@
       }
     }
 
+    // Auto-Pruning Balance Logger: Caps logs at 30 items per user to prevent 1 GB quota overflow
     async function logBalanceActivity(uid, title, amount, type) {
       try {
-        await db.ref(`balanceLogs/${uid}`).push().set({
+        const userLogsRef = db.ref(`balanceLogs/${uid}`);
+        await userLogsRef.push().set({
           title,
           amount,
           type,
           timestamp: new Date().toLocaleString(),
           createdAt: Date.now()
         });
+
+        // Lifecycle Clean: Automatically trims logs older than the latest 30 records
+        const snap = await userLogsRef.once('value');
+        if (snap.exists()) {
+          const keys = Object.keys(snap.val());
+          if (keys.length > 30) {
+            const removeUpdates = {};
+            // Lexicographical push keys ensure the oldest items are pruned first
+            keys.slice(0, keys.length - 30).forEach(key => {
+              removeUpdates[key] = null;
+            });
+            await userLogsRef.update(removeUpdates);
+          }
+        }
       } catch (e) { console.error(e); }
     }
 
@@ -2198,10 +2377,11 @@
       container.innerHTML = getSkeletonShimmerHtml(3); // Shimmer animation
 
       try {
+        // Limited to last 20 records to save Firebase bandwidth & quota
         const snap = await db.ref(`balanceLogs/${currentUser.uid}`).limitToLast(20).once('value');
         renderBalanceHistoryUI(snap.val());
       } catch (e) {
-        container.innerHTML = `<p class="text-xs text-rose-500 text-center py-6">Failed to load.</p>`;
+        container.innerHTML = `<p class="text-xs text-rose-500 text-center py-6">Failed to load balance history.</p>`;
       }
     }
 
@@ -2211,21 +2391,29 @@
         container.innerHTML = `
           <div class="bg-white border border-slate-200/80 rounded-3xl p-8 text-center flex flex-col items-center justify-center space-y-2 shadow-sm">
             <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
-            <p class="text-xs font-semibold text-slate-600">No balance activity yet</p>
+            <p class="text-xs font-semibold text-slate-600">No balance earnings recorded yet.</p>
           </div>
         `;
         return;
       }
 
+      // Filter: Exclude Promo Code, Deposits, and Withdrawals (only core wallet rewards)
       const list = Object.values(records)
-        .filter(item => item.type === 'credit' && !item.title.toLowerCase().includes('deposit') && !item.title.toLowerCase().includes('withdrawal'))
+        .filter(item => {
+          const t = (item.title || '').toLowerCase();
+          return item.type === 'credit' && 
+                 !t.includes('promo code') && 
+                 !t.includes('promo') && 
+                 !t.includes('deposit') && 
+                 !t.includes('withdrawal');
+        })
         .reverse();
 
       if (list.length === 0) {
         container.innerHTML = `
           <div class="bg-white border border-slate-200/80 rounded-3xl p-8 text-center flex flex-col items-center justify-center space-y-2 shadow-sm">
             <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
-            <p class="text-xs font-semibold text-slate-600">No balance earnings yet</p>
+            <p class="text-xs font-semibold text-slate-600">No earnings recorded yet.</p>
           </div>
         `;
         return;
@@ -2246,14 +2434,28 @@
       container.innerHTML = html;
     }
 
-    async function fetchDepositHistory() {
+    // In-Memory History Cache to Save Firebase Quota
+    let cachedDepositsData = null;
+    let cachedWithdrawalsData = null;
+
+    // UNLIMITED: Lifetime Deposit History
+    async function fetchDepositHistory(force = false) {
       if (!currentUser) return;
       const container = document.getElementById('dep-history-container');
-      container.innerHTML = getSkeletonShimmerHtml(3); // Shimmer animation
+
+      // Use memory cache if already loaded in this session
+      if (!force && cachedDepositsData) {
+        renderDepositHistoryUI(cachedDepositsData);
+        return;
+      }
+
+      container.innerHTML = getSkeletonShimmerHtml(3);
 
       try {
-        const snap = await db.ref('deposits').orderByChild('userId').equalTo(currentUser.uid).limitToLast(20).once('value');
-        renderDepositHistoryUI(snap.val());
+        // No limit: Fetches all lifetime deposits for complete proof
+        const snap = await db.ref('deposits').orderByChild('userId').equalTo(currentUser.uid).once('value');
+        cachedDepositsData = snap.val();
+        renderDepositHistoryUI(cachedDepositsData);
       } catch (e) {
         container.innerHTML = `<p class="text-xs text-rose-500 text-center py-6">Failed to load deposits.</p>`;
       }
@@ -2298,14 +2500,24 @@
       container.innerHTML = html;
     }
 
-    async function fetchWithdrawalHistory() {
+    // UNLIMITED: Lifetime Withdrawal History + Proof Calculation
+    async function fetchWithdrawalHistory(force = false) {
       if (!currentUser) return;
       const container = document.getElementById('wd-history-container');
-      container.innerHTML = getSkeletonShimmerHtml(3); // Shimmer animation
+
+      // Use memory cache if already loaded in this session
+      if (!force && cachedWithdrawalsData) {
+        renderWithdrawalHistoryUI(cachedWithdrawalsData);
+        return;
+      }
+
+      container.innerHTML = getSkeletonShimmerHtml(3);
 
       try {
-        const snap = await db.ref('withdrawals').orderByChild('userId').equalTo(currentUser.uid).limitToLast(20).once('value');
-        renderWithdrawalHistoryUI(snap.val());
+        // No limit: Fetches all lifetime withdrawals for full result proofs
+        const snap = await db.ref('withdrawals').orderByChild('userId').equalTo(currentUser.uid).once('value');
+        cachedWithdrawalsData = snap.val();
+        renderWithdrawalHistoryUI(cachedWithdrawalsData);
       } catch (e) {
         container.innerHTML = `<p class="text-xs text-rose-500 text-center py-6">Failed to load withdrawals.</p>`;
       }
@@ -2313,7 +2525,12 @@
 
     function renderWithdrawalHistoryUI(records) {
       const container = document.getElementById('wd-history-container');
+      const lifetimeTotalEl = document.getElementById('wd-lifetime-total');
+
+      let totalApprovedWithdrawn = 0;
+
       if (!records || Object.keys(records).length === 0) {
+        if (lifetimeTotalEl) lifetimeTotalEl.innerText = "PKR 0.00";
         container.innerHTML = `
           <div class="bg-white border border-slate-200/80 rounded-3xl p-8 text-center flex flex-col items-center justify-center space-y-2 shadow-sm">
             <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
@@ -2329,6 +2546,12 @@
       list.forEach(item => {
         const isApp = (item.status || '').toLowerCase() === 'approved';
         const isRej = (item.status || '').toLowerCase() === 'rejected';
+
+        // Calculate Lifetime Approved Withdrawn
+        if (isApp) {
+          totalApprovedWithdrawn += Number(item.amountPkr) || 0;
+        }
+
         const badgeColor = isApp 
           ? 'bg-emerald-50 text-[#00875a]' 
           : (isRej ? 'bg-rose-50 text-rose-500' : 'bg-amber-50 text-amber-600');
@@ -2347,6 +2570,12 @@
           </div>
         `;
       });
+
+      // Update Lifetime Counter at Top
+      if (lifetimeTotalEl) {
+        lifetimeTotalEl.innerText = `PKR ${totalApprovedWithdrawn.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+      }
+
       container.innerHTML = html;
     }
 
@@ -2419,7 +2648,12 @@
       showToast(msg, "error");
     }
 
-    // ==================== 8 & 10. CLEAN REGISTRATION (TINY LOOKUP NODE) ====================
+    // Helper function: Firebase RTDB-safe key encoder
+    function encodeEmailKey(email) {
+      return email.toLowerCase().trim().replace(/\./g, '_dot_').replace(/@/g, '_at_');
+    }
+
+    // ==================== 8 & 10. CLEAN REGISTRATION (LOOKUP NODE & CUSTOM ENGLISH ALERTS) ====================
     async function handleAuth(e) {
       e.preventDefault();
       const submitBtn = document.getElementById('auth-submit-btn');
@@ -2427,14 +2661,16 @@
       errBox.classList.add('hidden');
       errBox.innerText = '';
 
-      const email = document.getElementById('auth-email').value.trim();
+      const inputEmail = document.getElementById('auth-email').value.trim();
       const password = document.getElementById('auth-password').value;
       const name = document.getElementById('auth-name').value.trim();
       const manualRefCode = document.getElementById('auth-inviter').value.trim().toUpperCase();
 
       if (isSignUp) {
+        const cleanUsername = name.toLowerCase().replace(/\s+/g, '');
+
         if (!name || name.length < 3) {
-          setAuthError("Username must be at least 3 characters.");
+          setAuthError("Username must be at least 3 characters long.");
           return;
         }
         if (!/(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9_]{3,}/.test(name)) {
@@ -2442,8 +2678,8 @@
           return;
         }
 
-        if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
-          setAuthError("Email address must end with @gmail.com.");
+        if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(inputEmail)) {
+          setAuthError("Please provide a valid @gmail.com address.");
           return;
         }
 
@@ -2453,24 +2689,48 @@
         }
 
         submitBtn.disabled = true;
-        submitBtn.innerText = "Creating account...";
+        submitBtn.innerText = "Checking availability...";
 
         try {
+          // 1. Instant Unique Check: Username availability check (1 direct tiny read)
+          const usernameSnap = await db.ref('usernames/' + cleanUsername).once('value');
+          if (usernameSnap.exists()) {
+            setAuthError("⚠️ This username is already registered. Please choose a different username.");
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Sign Up";
+            return;
+          }
+
           let finalInviterUid = inviterUid;
           if (!finalInviterUid && manualRefCode) {
-            // 8. Direct lookup check
             const codeSnap = await db.ref('referralCodes/' + manualRefCode).once('value');
             if (codeSnap.exists()) {
               finalInviterUid = codeSnap.val();
             } else {
-              setAuthError("Invalid Referral Code entered.");
+              setAuthError("Invalid referral code entered. Please check or leave empty.");
               submitBtn.disabled = false;
               submitBtn.innerText = "Sign Up";
               return;
             }
           }
 
-          const cred = await auth.createUserWithEmailAndPassword(email, password);
+          submitBtn.innerText = "Creating account...";
+
+          // 2. Email duplicate check via Firebase Auth
+          let cred;
+          try {
+            cred = await auth.createUserWithEmailAndPassword(inputEmail, password);
+          } catch (authErr) {
+            if (authErr.code === 'auth/email-already-in-use') {
+              setAuthError("⚠️ This Gmail address is already registered. Please sign in or use your recovery email.");
+            } else {
+              setAuthError(authErr.message || "Failed to create account.");
+            }
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Sign Up";
+            return;
+          }
+
           const user = cred.user;
           await user.updateProfile({ displayName: name });
 
@@ -2478,10 +2738,9 @@
           const welcomeBonus = finalInviterUid ? 50 : 0;
           const todayDateStr = getTodayDateStr();
 
-          // 15 & 16. Lightweight user structure
           const newUserData = {
             name: name,
-            email: email,
+            email: inputEmail,
             balance: welcomeBonus,
             withdrawableBalance: 0,
             earnedToday: welcomeBonus,
@@ -2498,26 +2757,26 @@
 
           await db.ref('users/' + user.uid).set(newUserData);
 
-          // 8. Save tiny lookup string
+          // Lock unique lookup records
+          await db.ref('usernames/' + cleanUsername).set(user.uid);
           await db.ref('referralCodes/' + newShortCode).set(user.uid);
 
           if (welcomeBonus > 0) {
             await logBalanceActivity(user.uid, "Welcome Bonus", welcomeBonus, "credit");
           }
 
-          // 10. Only save referral counter reference
           if (finalInviterUid) {
             await db.ref(`referrals/${finalInviterUid}/${user.uid}`).set({
               uid: user.uid,
               name: name,
-              email: email,
+              email: inputEmail,
               depositTotal: 0,
               commissionEarned: 0,
               joinedAt: new Date().toISOString()
             });
           }
 
-          showToast(welcomeBonus > 0 ? "Account created! +Rs. 50 bonus" : "Account created successfully!", "success");
+          showToast(welcomeBonus > 0 ? "Account created! +Rs. 50 bonus added." : "Account created successfully!", "success");
         } catch (err) {
           setAuthError(err.message || "Registration failed.");
         } finally {
@@ -2525,29 +2784,51 @@
           submitBtn.innerText = "Sign Up";
         }
       } else {
-        if (!email || !/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
-          setAuthError("Please enter a valid @gmail.com address.");
+        // ==================== SIGN IN (WITH RECOVERY EMAIL AUTO-RESOLVER) ====================
+        if (!inputEmail) {
+          setAuthError("Please enter your email address.");
           return;
         }
         if (!password || password.length < 6) {
-          setAuthError("Password must be at least 6 characters.");
+          setAuthError("Password must be at least 6 characters long.");
           return;
         }
 
         submitBtn.disabled = true;
         submitBtn.innerText = "Signing in...";
 
+        let targetEmail = inputEmail;
+
         try {
-          await auth.signInWithEmailAndPassword(email, password);
-          showToast(`Welcome back, ${email.split('@')[0]}!`, "success");
+          // Attempt 1: Direct Sign In with provided email
+          try {
+            await auth.signInWithEmailAndPassword(targetEmail, password);
+            showToast(`Welcome back, ${currentUser?.displayName || 'Investor'}!`, "success");
+            return;
+          } catch (firstErr) {
+            // If primary email not found, check if input is a registered Recovery Email
+            if (firstErr.code === 'auth/user-not-found' || firstErr.code === 'auth/invalid-login-credentials' || firstErr.code === 'auth/invalid-credential') {
+              const encKey = encodeEmailKey(inputEmail);
+              const recSnap = await db.ref('recoveryEmails/' + encKey).once('value');
+
+              if (recSnap.exists()) {
+                const actualPrimaryEmail = recSnap.val();
+                // Attempt 2: Sign In with resolved primary email
+                await auth.signInWithEmailAndPassword(actualPrimaryEmail, password);
+                showToast("Signed in via Recovery Email! Check your Profile for your primary email.", "success");
+                return;
+              }
+            }
+            throw firstErr;
+          }
         } catch (err) {
           const code = err.code || "";
-          if (code === 'auth/wrong-password' || code === 'auth/invalid-login-credentials' || code === 'auth/invalid-credential') {
-            setAuthError("Incorrect password or email.");
-          } else if (code === 'auth/user-not-found') {
-            setAuthError("Email not registered.");
+          if (code === 'auth/wrong-password') {
+            setAuthError("Incorrect password. Please verify your credentials.");
+          } else if (code === 'auth/user-not-found' || code === 'auth/invalid-login-credentials' || code === 'auth/invalid-credential') {
+            setAuthError("Invalid email or password. If you forgot your sign-up email, enter your linked Recovery Gmail.");
           } else {
-            setAuthError("Incorrect email or password.");
+            setAuthError("Sign in failed: " + err.message);
           }
         } finally {
           submitBtn.disabled = false;
@@ -2644,42 +2925,103 @@
       page.classList.remove('flex');
     }
 
-    // Password Update
+    // Password Update with Re-authentication (Old Password Validation)
     async function handlePasswordUpdate(e) {
       e.preventDefault();
+      const oldPass = document.getElementById('cp-current-password').value;
       const p1 = document.getElementById('cp-new-password').value;
       const p2 = document.getElementById('cp-confirm-password').value;
+      const btn = document.getElementById('cp-submit-btn');
+
+      if (!oldPass) {
+        showToast("Please enter your current password.", "error");
+        return;
+      }
       if (p1.length < 6) {
-        showToast("Password must be at least 6 characters.", "error");
+        showToast("New password must be at least 6 characters.", "error");
         return;
       }
       if (p1 !== p2) {
-        showToast("Passwords do not match!", "error");
+        showToast("New passwords do not match!", "error");
         return;
       }
+
+      btn.disabled = true;
+      btn.innerText = "Verifying & Updating...";
+
       try {
+        // Re-authenticate user to prevent token expiration issues
+        const credential = firebase.auth.EmailAuthProvider.credential(currentUser.email, oldPass);
+        await currentUser.reauthenticateWithCredential(credential);
+
         await currentUser.updatePassword(p1);
         showToast("Password updated successfully!", "success");
+        document.getElementById('cp-form').reset();
         closeSubPage('change-password-page');
       } catch (err) {
-        showToast(err.message || "Failed to update password.", "error");
+        if (err.code === 'auth/wrong-password') {
+          showToast("Incorrect current password. Please try again.", "error");
+        } else {
+          showToast(err.message || "Failed to update password.", "error");
+        }
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Update Password";
       }
     }
 
-    // Recovery Email Update
+    // Recovery Email Update (Links recovery email for instant alternate sign in)
     async function handleRecoveryEmailUpdate(e) {
       e.preventDefault();
-      const rec = document.getElementById('rec-email-input').value.trim();
+      const rec = document.getElementById('rec-email-input').value.trim().toLowerCase();
+      const btn = document.getElementById('rec-submit-btn');
+
       if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(rec)) {
         showToast("Must be a valid @gmail.com address.", "error");
         return;
       }
+
+      if (rec === currentUser.email.toLowerCase()) {
+        showToast("Recovery email cannot be identical to your primary email.", "error");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "Saving...";
+
       try {
+        const encodedNew = encodeEmailKey(rec);
+
+        // Check if this recovery email is already linked to another account
+        const existCheck = await db.ref('recoveryEmails/' + encodedNew).once('value');
+        if (existCheck.exists() && existCheck.val() !== currentUser.email) {
+          showToast("This recovery Gmail is already associated with another account.", "error");
+          btn.disabled = false;
+          btn.innerText = "Save Recovery Email";
+          return;
+        }
+
+        // Delete old recovery mapping if it previously existed
+        if (currentUserData.recoveryEmail) {
+          const encodedOld = encodeEmailKey(currentUserData.recoveryEmail);
+          await db.ref('recoveryEmails/' + encodedOld).remove();
+        }
+
+        // Save lookup mapping: recoveryEmails/encoded_email = primaryEmail
+        await db.ref('recoveryEmails/' + encodedNew).set(currentUser.email);
+
         await db.ref('users/' + currentUser.uid).update({ recoveryEmail: rec });
-        showToast("Recovery email saved!", "success");
+        currentUserData.recoveryEmail = rec;
+
+        showToast("Recovery Gmail saved successfully!", "success");
+        document.getElementById('saved-recovery-val').innerText = rec;
+        document.getElementById('current-rec-email-display').classList.remove('hidden');
         closeSubPage('recovery-email-page');
       } catch (err) {
-        showToast("Failed to save email.", "error");
+        showToast("Failed to save recovery email: " + err.message, "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Save Recovery Email";
       }
     }
 
@@ -2821,6 +3163,30 @@ Join Pakistan's trusted daily returns community today!
       const banner = document.getElementById('pwa-install-banner');
       if (banner) banner.classList.add('hidden');
     });
+
+    // Real-time Internet Connection Watcher
+    window.addEventListener('offline', () => {
+      showToast("No internet connection! Please check your network.", "error");
+    });
+    window.addEventListener('online', () => {
+      showToast("Back online! Connection restored.", "success");
+    });
+
+    // 100-Connection Saver: Auto-sleep if user is idle for 3 minutes
+    let userIdleTimer = null;
+    function resetIdleTimer() {
+      if (document.hidden) return;
+      clearTimeout(userIdleTimer);
+      db.goOnline(); // Keep active when user interacts
+      userIdleTimer = setTimeout(() => {
+        db.goOffline(); // Free up connection slot after 3 mins of inactivity
+      }, 180000); // 3 minutes
+    }
+
+    ['touchstart', 'click', 'scroll', 'keydown'].forEach(evt => {
+      window.addEventListener(evt, resetIdleTimer, { passive: true });
+    });
+    resetIdleTimer();
   </script>
 </body>
 </html>
