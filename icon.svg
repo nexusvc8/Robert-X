@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="130" fill="#00875a"/>
-  <!-- Glowing subtle border -->
-  <rect x="8" y="8" width="496" height="496" rx="122" fill="none" stroke="#60a5fa" stroke-width="12" opacity="0.6"/>
-  <!-- Website Dollar Symbol -->
-  <path fill="none" stroke="#ffffff" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" d="M256 165c-38 0-70 20-70 45s32 45 70 45 70 20 70 45-32 45-70 45m0-180v-22m0 22v180m0 0v22m205-112c0 113-92 205-205 205S51 357 51 244 143 39 256 39s205 92 205 205z"/>
-</svg>
