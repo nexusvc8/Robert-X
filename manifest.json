@@ -1,0 +1,17 @@
+{
+  "name": "Adds Hub Earn",
+  "short_name": "AddsHub",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#00875a",
+  "theme_color": "#00875a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://i.ibb.co/YF0ZSmbb/favicon.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
