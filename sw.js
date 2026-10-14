@@ -1,5 +1,5 @@
 // Adds Hub Earn - High-Performance Cache-First Service Worker
-const CACHE_NAME = 'addshub-cache-v1';
+const CACHE_NAME = 'addshub-cache-v2';
 const STATIC_ASSETS = [
   './',
   './index.html',
